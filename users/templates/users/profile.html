@@ -1,0 +1,139 @@
+{% extends 'users/base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="profile-header text-center">
+    <div class="container">
+        <div class="d-flex justify-content-center mb-3">
+            <div class="bg-white rounded-circle p-1" style="width: 100px; height: 100px;">
+                <i class="bi bi-person-circle" style="font-size: 80px; color: #6f42c1;"></i>
+            </div>
+        </div>
+        <h1>{{ user.username }}</h1>
+        <p class="lead">{{ user.get_user_type_display }}</p>
+        {% if user.did %}
+        <div class="mt-2">
+            <span class="did-badge">
+                <i class="bi bi-shield-lock me-1"></i> {{ user.did }}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Username:</strong> {{ user.username }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{ user.email|default:"Not set" }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}
+                        </li>
+                        {% if user.is_issuer and profile %}
+                        <li class="list-group-item">
+                            <strong>Institution:</strong> {{ profile.name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Trust Status:</strong> 
+                            {% if is_trusted %}
+                                <span class="text-success">
+                                    <span class="blockchain-status status-verified"></span> Verified Issuer
+                                </span>
+                            {% else %}
+                                <span class="text-warning">
+                                    <span class="blockchain-status status-pending"></span> Pending Verification
+                                </span>
+                            {% endif %}
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            {% if user.is_issuer and profile %}
+            <div class="card mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Institution Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Institution Name</h6>
+                        <p>{{ profile.name }}</p>
+                    </div>
+                    
+                    {% if profile.description %}
+                    <div class="mb-3">
+                        <h6>Description</h6>
+                        <p>{{ profile.description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if profile.website %}
+                    <div class="mb-3">
+                        <h6>Website</h6>
+                        <p><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a></p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6>Accreditation Proof</h6>
+                        {% if profile.accreditation_proof %}
+                            <a href="{{ profile.accreditation_proof.url }}" target="_blank">
+                                View Document
+                            </a>
+                        {% else %}
+                            <p>No document uploaded</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if user.is_issuer and transactions %}
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Blockchain Transactions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for tx in transactions %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ tx.get_transaction_type_display }}</h6>
+                                <small class="text-muted">{{ tx.created_at|timesince }} ago</small>
+                            </div>
+                            <p class="mb-1 small text-muted">
+                                TX Hash: <code>{{ tx.tx_hash|truncatechars:20 }}</code>
+                            </p>
+                            <small>
+                                Status: 
+                                {% if tx.status == 'CONFIRMED' %}
+                                    <span class="text-success">Confirmed</span>
+                                {% elif tx.status == 'PENDING' %}
+                                    <span class="text-warning">Pending</span>
+                                {% else %}
+                                    <span class="text-danger">Failed</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
