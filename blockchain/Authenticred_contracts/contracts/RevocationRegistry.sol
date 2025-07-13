@@ -16,6 +16,10 @@ contract RevocationRegistry {
 }
 // This contract allows for the revocation of credentials by their unique identifiers.
 // It provides a way to mark credentials as revoked, ensuring that they can no longer be considered valid.
-// The `revokeCredential` function allows anyone to revoke a credential by providing its ID, while the `isRevoked` function checks if a given credential ID has been revoked.           
-// The `CredentialRevoked` event is emitted whenever a credential is successfully revoked, allowing for tracking and monitoring of revoked credentials on the blockchain.
-// This contract can be used in conjunction with other contracts, such as a DID registry or trust
+// The `revokeCredential` function allows anyone to revoke a credential by providing its ID, while the `isRevoked` function
+// checks if a given credential ID has been revoked.           
+// The `CredentialRevoked` event is emitted whenever a credential is successfully revoked, 
+// allowing for tracking and monitoring of revoked credentials on the blockchain.
+// This contract is typically used in conjunction with a DID registry 
+// or credential anchor to manage the lifecycle of digital credentials,
+// ensuring that revoked credentials are not mistakenly trusted or used in transactions.

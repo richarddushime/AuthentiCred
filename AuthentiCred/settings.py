@@ -35,13 +35,15 @@ INSTALLED_APPS = [
     'users',
     'credentials',
     'wallets',
+    'django_celery_results',
+    'django_celery_beat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'encrypted_model_fields', # For encrypted fields
+    'encrypted_model_fields',
 ]
 
 MIDDLEWARE = [
@@ -154,25 +156,24 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # This section configures the blockchain network and RPC URLs for interactions
 # Blockchain Configuration
 BLOCKCHAIN_NETWORK = 'ganache'
-BLOCKCHAIN_RPC_URL = 'http://127.0.0.1:8545'
+BLOCKCHAIN_RPC_URL = 'http://127.0.0.1:7545'
 GANACHE_CHAIN_ID = 1337
 
 # Contract addresses
-DIDREGISTRY_ADDRESS = '0x628ebf486EE1011773Cb847E3146B1Dc5a055636'
-TRUSTREGISTRY_ADDRESS = '0x6e9b0C461B4E31f38A031De757FcAf61A54Fd12d'
-CREDENTIALANCHOR_ADDRESS = '0x9719F6ea1a194084481801CBFDfa39D1E682395e'
-REVOCATIONREGISTRY_ADDRESS = '0x048a4921fA707239668D516eF80Aa55BC956e652'
+DIDREGISTRY_ADDRESS = '0x2C20e9cDbb07Be51CF7BC2098eE0B57d7AF3D340'
+TRUSTREGISTRY_ADDRESS = '0x140e19394017a90fd6f3f6745A35077Cd3F85dEB'
+CREDENTIALANCHOR_ADDRESS = '0x0e90921CA3D72e62B06Ecbfb56d0fcEEe04E7cc1'
+REVOCATIONREGISTRY_ADDRESS = '0x397d90a8D731cC2b70af1c4Ca700bAf5530f339A'
 
 # account from Ganache as operator
-BLOCKCHAIN_OPERATOR_KEY = '0x9fd786d565c995ec559a421e4a98fcf96f45b219bdb5cd8c236ace4019b39d9e'  # Ganache default private key
-BLOCKCHAIN_OPERATOR_ADDRESS = '0xFf875aE13AbaD884BDD67bAC925549bE88C397a9'  # Ganache default address
+BLOCKCHAIN_OPERATOR_KEY = '0x062f69a9da3236435b0f6c3bda1cc7f3a7d7c716f2bfd0283202cc6b258f8d38'  # Ganache  private key
+BLOCKCHAIN_OPERATOR_ADDRESS = '0x5794777802033929F19C1a901cc2D460480D76f6'  # Ganache  address
 
 # Celery configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_BEAT_SCHEDULE = {
-    'monitor_blockchain_transactions': {
-        'task': 'blockchain.tasks.monitor_transactions',
-        'schedule': 10.0,  # Every 10 seconds
-    },
-}
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = True

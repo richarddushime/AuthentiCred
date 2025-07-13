@@ -1,6 +1,5 @@
 # Core blockchain operations
 # blockchain/services.py
-import json
 import logging
 from web3 import Web3
 from django.conf import settings
@@ -135,3 +134,31 @@ class BlockchainService:
         
         return results
     
+    def is_transaction_confirmed(self, tx_hash):
+        """Check if transaction is confirmed on blockchain"""
+        try:
+            receipt = self.client.get_transaction_receipt(tx_hash)
+            return receipt is not None and receipt.status == 1
+        except Exception as e:
+            logger.error(f"Transaction confirmation check failed: {str(e)}")
+            return False
+
+    def update_issuer_trust_status(self, did, trusted=True):
+        """Update issuer trust status on blockchain and return transaction"""
+        try:
+            tx_hash = self.client.execute_contract_function(
+                'TrustRegistry',
+                'setIssuerTrustStatus',
+                did,
+                trusted
+            )
+            return self._create_transaction_record(
+                tx_hash, 
+                'TRUST_UPDATE', 
+                did=did,
+                trusted=trusted
+            )
+        except Exception as e:
+            logger.error(f"Trust status update failed: {str(e)}")
+            raise BlockchainError(f"Trust status update failed: {str(e)}") from e
+          

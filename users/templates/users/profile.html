@@ -45,14 +45,21 @@
                         </li>
                         <li class="list-group-item">
                             <strong>Trust Status:</strong> 
-                            {% if is_trusted %}
+                            {% if is_trusted is True %}
                                 <span class="text-success">
                                     <span class="blockchain-status status-verified"></span> Verified Issuer
                                 </span>
-                            {% else %}
+                            {% elif is_trusted is False %}
                                 <span class="text-warning">
                                     <span class="blockchain-status status-pending"></span> Pending Verification
                                 </span>
+                            {% else %}
+                                <span class="text-danger">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> Verification Error
+                                </span>
+                                <div class="mt-2 small text-muted">
+                                    Blockchain check failed: {{ is_trusted|default:"Unknown error" }}
+                                </div>
                             {% endif %}
                         </li>
                         {% endif %}

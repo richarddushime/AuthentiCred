@@ -43,6 +43,15 @@ class User(AbstractUser):
     
     def is_issuer(self):
         return self.user_type == 'INSTITUTION'
+
+    def get_trust_status(self):
+        if self.user_type == 'INSTITUTION':
+            try:
+                profile = self.institution_profile
+                return profile.is_trusted
+            except InstitutionProfile.DoesNotExist:
+                pass
+        return False
     
     def is_holder(self):
         return self.user_type == 'STUDENT'

@@ -14,3 +14,7 @@ contract TrustRegistry {
         return trustedIssuers[did];
     }
 }
+
+// This contract allows for the management of trust relationships in a decentralized manner.
+// It provides a way to set and check the trust status of issuers identified by their decentralized identifiers (DIDs).
+// The `setIssuerTrustStatus` function allows anyone to update the trust status of an issuer 

@@ -15,7 +15,6 @@ from io import BytesIO
 from wallets.utils import generate_key_pair
 from wallets.models import Wallet
 
-# wallets/views.py (add this function)
 @login_required
 def add_credential_to_wallet(request, credential_id):
     credential = get_object_or_404(Credential, id=credential_id, holder=request.user)
@@ -178,7 +177,6 @@ def download_credential(request, credential_id):
     credential = wallet_cred.credential
     
     # Create a PDF representation
-    # (In a real implementation, you'd use a library like ReportLab)
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{credential.credential_type}.pdf"'
     

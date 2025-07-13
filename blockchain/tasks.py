@@ -2,11 +2,16 @@
 from celery import shared_task
 from celery.schedules import crontab
 from celery.exceptions import MaxRetriesExceededError
+
+from blockchain import apps
+
+from .exceptions import BlockchainError
 from .services import BlockchainService
-from .models import OnChainTransaction
 from django.conf import settings
-import time
 import logging
+from .models import OnChainTransaction, DIDRegistration
+from django.utils import timezone
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,34 +54,47 @@ def anchor_credential_task(self, vc_hash):
 
 @shared_task
 def monitor_transactions():
-    """Periodic task to check transaction statuses"""
-    from web3 import Web3
-    from django.conf import settings
-    
-    w3 = Web3(Web3.HTTPProvider(settings.BLOCKCHAIN_RPC_URL))
+    """Monitor and update transaction statuses every 10 seconds"""
+    service = BlockchainService()
     pending_txs = OnChainTransaction.objects.filter(status='PENDING')
     
     for tx in pending_txs:
         try:
-            receipt = w3.eth.get_transaction_receipt(tx.tx_hash)
-            if receipt is None:
-                continue  # Still pending
-                
-            if receipt.status == 1:
+            if service.is_transaction_confirmed(tx.tx_hash):
                 tx.status = 'CONFIRMED'
-                tx.block_number = receipt.blockNumber
-            else:
-                tx.status = 'FAILED'
-            
-            tx.save()
-            
+                tx.updated_at = timezone.now()
+                tx.save()
+                logger.info(f"Transaction confirmed: {tx.tx_hash}")
         except Exception as e:
-            logger.error(f"Error checking tx {tx.tx_hash}: {str(e)}")
-            continue
+            logger.error(f"Error checking transaction {tx.tx_hash}: {str(e)}")
+            # Mark as failed after multiple attempts?
+            # tx.status = 'FAILED'
+            # tx.save()
 
-def start_celery_beat():
-    """Start Celery beat if not already running"""
-    from celery import current_app
-    if not current_app.conf.beat_schedule:
-        current_app.conf.beat_schedule = settings.CELERY_BEAT_SCHEDULE
-        
+@shared_task
+def process_did_registration_confirmation():
+    """Process confirmed DID registrations every 5 minutes"""
+    service = BlockchainService()
+    pending_registrations = DIDRegistration.objects.filter(
+        transaction__status='CONFIRMED',
+        trust_updated=False
+    ).select_related('transaction', 'institution')
+    
+    for registration in pending_registrations:
+        try:
+            # Update trust status on blockchain
+            trust_tx = service.update_issuer_trust_status(registration.did)
+            
+            # Update local state
+            registration.trust_updated = True
+            registration.save()
+            
+            # Update institution profile
+            institution = registration.institution
+            institution.is_trusted = True
+            institution.save()
+            
+            logger.info(f"Trust status updated for {registration.did}: {trust_tx.tx_hash}")
+        except Exception as e:
+            logger.error(f"Failed to update trust status for {registration.did}: {str(e)}")
+

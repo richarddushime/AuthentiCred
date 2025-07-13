@@ -16,6 +16,9 @@ contract CredentialAnchor {
 }
 // This contract allows for the anchoring of cryptographic proofs, such as hashes of credentials or other data.
 // It provides a way to store and verify these proofs on the blockchain, ensuring their integrity and authenticity.
-// The `storeProof` function allows anyone to anchor a proof by providing its hash, while the `verifyProof` function checks if a given proof hash has been anchored.
-// The `ProofAnchored` event is emitted whenever a proof is successfully anchored, allowing for tracking and monitoring of anchored proofs on the blockchain.
-// This contract can be used in conjunction with other contracts, such as a DID registry or trust registry, to enhance the security and trustworthiness of digital credentials and identities on the blockchain.
+// The `storeProof` function allows anyone to anchor a proof by providing its hash, while the `verifyProof` function
+// checks if a given proof hash has been anchored.
+// The `ProofAnchored` event is emitted whenever a proof is successfully anchored, 
+// allowing for tracking and monitoring of anchored proofs on the blockchain.
+// This contract is used in conjunction with other contracts, such as a DID registry or trust registry, 
+// to enhance the security and trustworthiness of digital credentials and identities on the blockchain.

@@ -1,0 +1,14 @@
+Instructions 
+
+python manage.py migrate django_celery_results
+
+# Terminal 1: Run the Celery worker
+celery -A AuthentiCred worker --loglevel=info
+
+celery -A AuthentiCred worker --pool=solo --loglevel=info
+celery -A AuthentiCred worker --pool=eventlet --loglevel=info
+
+# Terminal 2: Run the Celery beat scheduler
+celery -A AuthentiCred beat --loglevel=info
+
+docker run -d -p 6379:6379 redis

@@ -36,7 +36,15 @@ class DIDRegistration(models.Model):
         on_delete=models.CASCADE,
         related_name='dids'
     )
+    transaction = models.ForeignKey(
+        OnChainTransaction,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='did_registrations'
+    )
+    trust_updated = models.BooleanField(default=False)  # Tracking if trust status has been updated
     
     def __str__(self):
         return self.did
-    
+      

@@ -18,3 +18,10 @@ contract DIDRegistry {
         return didToPublicKey[did];
     }
 }
+
+// This contract serves as a decentralized identifier (DID) registry, allowing users to register and resolve DIDs.
+// The `registerDID` function allows anyone to register a DID along with its associated public key,
+// ensuring that the DID is unique and not already registered.
+// The `resolveDID` function allows anyone to retrieve the public key associated with a given DID.
+// The `DIDRegistered` event is emitted whenever a DID is successfully registered,
+// providing a way to track and monitor registrations on the blockchain. 

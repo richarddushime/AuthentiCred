@@ -1,17 +1,24 @@
-# users/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
+
+from blockchain.tasks import process_did_registration_confirmation
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import InstitutionProfile
 from blockchain.services import BlockchainService
-from blockchain.models import OnChainTransaction
+from blockchain.models import DIDRegistration, OnChainTransaction
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+import logging
+
+logger = logging.getLogger(__name__)
 
 def home(request):
     return render(request, 'users/home.html')
 
+@ensure_csrf_cookie
+@csrf_protect
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
@@ -19,33 +26,35 @@ def register_view(request):
             user = form.save()
             login(request, user)
             
-            # For institutions, start DID registration process
             if user.user_type == 'INSTITUTION':
                 blockchain_service = BlockchainService()
                 try:
-                    # Register DID on blockchain
+                    # Register DID
                     tx_hash = blockchain_service.register_did(user.did, user.public_key)
                     messages.info(request, f"DID registration initiated. Transaction: {tx_hash[:10]}...")
                     
-                    # Set institution as trusted (in this demo, we auto-approve)
-                    profile = user.institution_profile
-                    profile.is_trusted = True
-                    profile.save()
+                    # Create institution profile
+                    profile = InstitutionProfile.objects.create(user=user)
                     
-                    # Update trust status on blockchain
-                    tx_trust = blockchain_service.client.execute_contract_function(
-                        'TrustRegistry',
-                        'setIssuerTrustStatus',
-                        user.did,
-                        True
+                    # Create DID registration record
+                    tx = OnChainTransaction.objects.get(tx_hash=tx_hash)
+                    DIDRegistration.objects.create(
+                        did=user.did,
+                        public_key=user.public_key,
+                        institution=profile,
+                        transaction=tx
                     )
-                    messages.info(request, f"Institution trust status updated. Transaction: {tx_trust[:10]}...")
+                    
+                    # Schedule background check
+                    process_did_registration_confirmation.delay()
                     
                 except Exception as e:
-                    messages.error(request, f"Blockchain operation failed: {str(e)}")
+                    logger.error(f"Blockchain operation failed: {str(e)}")
+                    messages.error(request, "DID registration started, but trust status will be updated later.")
             
-            messages.success(request, 'Registration successful!')
             return redirect('profile')
+        else:
+            logger.warning(f"Registration form errors: {form.errors}")
     else:
         form = CustomUserCreationForm()
     
@@ -80,9 +89,8 @@ def profile_view(request):
             profile = InstitutionProfile.objects.get(user=user)
             context['profile'] = profile
             
-            # Check blockchain status
-            blockchain_service = BlockchainService()
-            context['is_trusted'] = blockchain_service.is_issuer_registered(user.did)
+            # Use the new trust status method
+            context['is_trusted'] = user.get_trust_status()
             
             # Get blockchain transactions
             context['transactions'] = OnChainTransaction.objects.filter(
@@ -90,7 +98,8 @@ def profile_view(request):
             ).order_by('-created_at')[:5]
             
         except InstitutionProfile.DoesNotExist:
-            pass
+            logger.warning(f"Institution profile missing for user: {user.id}")
+            messages.warning(request, "Institution profile not completed. Please update your profile.")
     
     return render(request, 'users/profile.html', context)
 
@@ -98,12 +107,13 @@ def profile_view(request):
 def dashboard_view(request):
     user = request.user
     context = {'user': user}
-    
+    # trust status to context
+    context['is_trusted'] = user.get_trust_status()
+    # Simplified user type checks using Django model methods
     if user.is_issuer():
         # Issuer dashboard
         context['issued_credentials'] = user.issued_credentials.all()[:5]
         context['pending_actions'] = [
-            {'title': 'Verify Accreditation', 'url': '#'},
             {'title': 'Issue New Credential', 'url': reverse('issue_credential')},
         ]
     
@@ -120,7 +130,6 @@ def dashboard_view(request):
         context['recent_verifications'] = []
         context['pending_actions'] = [
             {'title': 'Verify Credentials', 'url': reverse('verify_credential')},
-            {'title': 'Request Credentials', 'url': '#'},
         ]
     
     return render(request, 'users/dashboard.html', context)
