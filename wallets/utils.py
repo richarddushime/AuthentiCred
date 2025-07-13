@@ -22,14 +22,3 @@ def generate_key_pair():
     
     return private_str, public_str
 
-# # Example usage
-# from wallets.utils import generate_key_pair
-
-# private_key, public_key = generate_key_pair()
-# wallet = Wallet.objects.create(
-#     user=user,
-#     private_key=private_key
-# )
-# # Store public key on user
-# user.public_key = public_key
-# user.save()

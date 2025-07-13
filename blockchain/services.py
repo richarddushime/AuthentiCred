@@ -61,18 +61,21 @@ class BlockchainService:
             raise BlockchainError(f"Credential anchoring failed: {str(e)}") from e
     
     def revoke_credential(self, credential_id):
-        try:
-            tx_hash = self.client.execute_contract_function(
-                'RevocationRegistry',
-                'revokeCredential',
-                credential_id
-            )
-            self._create_transaction_record(tx_hash, 'CREDENTIAL_REVOCATION', credential_id=credential_id)
-            return tx_hash
-        except Exception as e:
-            logger.error(f"Credential revocation failed: {str(e)}")
-            raise BlockchainError(f"Credential revocation failed: {str(e)}") from e
-    
+        """Revoke a credential using its database ID"""
+        tx_hash = self.client.send_transaction(
+            'RevocationRegistry',
+            'revokeCredential',
+            str(credential_id)  # Convert to string as contract expects
+        )
+        return tx_hash
+
+    def is_credential_revoked(self, credential_id):
+        """Check revocation status using credential ID"""
+        return self.client.call_contract_function(
+            'RevocationRegistry',
+            'isRevoked',
+            str(credential_id)
+        )
     def is_issuer_registered(self, did):
         try:
             return self.client.call_contract_function(
@@ -84,17 +87,7 @@ class BlockchainService:
             logger.error(f"Issuer check failed: {str(e)}")
             raise BlockchainError(f"Issuer check failed: {str(e)}") from e
     
-    def is_credential_revoked(self, credential_id):
-        try:
-            return self.client.call_contract_function(
-                'RevocationRegistry',
-                'isRevoked',
-                credential_id
-            )
-        except Exception as e:
-            logger.error(f"Revocation check failed: {str(e)}")
-            raise BlockchainError(f"Revocation check failed: {str(e)}") from e
-    
+
     def _create_transaction_record(self, tx_hash, tx_type, **kwargs):
         OnChainTransaction.objects.create(
             tx_hash=tx_hash,

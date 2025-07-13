@@ -58,7 +58,12 @@ class User(AbstractUser):
     
     def is_verifier(self):
         return self.user_type == 'EMPLOYER'
-
+    @property
+    def did(self):
+        if self.public_key:
+            return f"did:authenticred:{self.public_key}"
+        return None
+    
 class InstitutionProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='institution_profile')
     name = models.CharField(max_length=255)

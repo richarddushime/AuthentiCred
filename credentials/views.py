@@ -1,4 +1,6 @@
 # credentials/views.py
+import hashlib
+import re
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -8,10 +10,125 @@ from .models import Credential, CredentialSchema
 from .forms import CredentialSchemaForm, CredentialIssueForm, CredentialRevokeForm
 from users.models import User
 from blockchain.services import BlockchainService
-from blockchain.utils.vc_proofs import sign_json_ld
+from blockchain.utils.vc_proofs import sign_json_ld, verify_json_ld
 from wallets.models import WalletCredential
 from datetime import datetime, timedelta
 from django.utils import timezone
+from wallets.utils import generate_key_pair
+from wallets.models import Wallet
+from blockchain.utils.vc_proofs import verify_json_ld_signature
+from django import forms
+import os
+import ecdsa
+from blockchain.utils.crypto import generate_public_key_from_private
+
+class CredentialVerificationForm(forms.Form):
+    """Form for submitting credential hash"""
+    credential_hash = forms.CharField(
+        label='Credential Hash',
+        max_length=64,
+        min_length=64,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter 64-character credential hash'}))
+    
+    def clean_credential_hash(self):
+        hash = self.cleaned_data['credential_hash'].strip()
+        if not all(c in '0123456789abcdef' for c in hash):
+            raise forms.ValidationError("Invalid hash format. Must be hexadecimal.")
+        return hash
+@login_required
+
+def verify_credential(request):
+    """Public credential verification view"""
+    if request.method == 'POST':
+        form = CredentialVerificationForm(request.POST)
+        if form.is_valid():
+            vc_hash = form.cleaned_data['credential_hash']
+            
+            try:
+                # Try to find credential in database
+                credential = Credential.objects.get(vc_hash=vc_hash)
+                return show_verification_result(request, credential)
+                
+            except Credential.DoesNotExist:
+                # Credential not in database - attempt external verification
+                return verify_external_credential(request, vc_hash)
+                
+    else:
+        form = CredentialVerificationForm()
+    
+    return render(request, 'credentials/verify_credential.html', {'form': form})
+
+def show_verification_result(request, credential):
+    blockchain_service = BlockchainService()
+    
+    # 1. Verify cryptographic signature
+    try:
+        # Get the JWS signature from the proof
+        jws = credential.vc_json['proof']['jws']
+        signature_hex = jws.split('=')[1]  # Extract signature part from "v=<signature>"
+        
+        # Recreate the original VC without the proof
+        vc_without_proof = {k: v for k, v in credential.vc_json.items() if k != 'proof'}
+        vc_json_str = json.dumps(vc_without_proof, separators=(',', ':'), sort_keys=True)
+        vc_bytes = vc_json_str.encode('utf-8')
+        
+        signature_valid = verify_json_ld(
+            vc_bytes,
+            signature_hex,
+            credential.issuer.wallet.public_key
+        )
+    except Exception as e:
+        signature_valid = False
+        
+    # 2. Check blockchain anchoring
+    is_anchored = blockchain_service.verify_anchored(credential.vc_hash)
+    
+    # 3. Check revocation status - using credential ID as string
+    try:
+        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+    except Exception:
+        is_revoked = None  # Indeterminate status
+    
+    # 4. Check issuer trust status
+    issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+    
+    # 5. Check expiration
+    is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
+    
+    return render(request, 'credentials/verification_result.html', {
+        'credential': credential,
+        'signature_valid': signature_valid,
+        'is_anchored': is_anchored,
+        'is_revoked': is_revoked,
+        'issuer_trusted': issuer_trusted,
+        'is_expired': is_expired,
+        'overall_valid': (
+            signature_valid and 
+            is_anchored and 
+            (is_revoked is not True) and  # Not revoked or indeterminate
+            issuer_trusted and 
+            not is_expired
+        ),
+        'source': 'internal'
+    })
+
+def verify_external_credential(request, vc_hash):
+    """Handle verification for credentials not in our database"""
+    blockchain_service = BlockchainService()
+    
+    # 1. Check if anchored on blockchain
+    is_anchored = blockchain_service.verify_anchored(vc_hash)
+    
+    # 2. For external credentials, we can't check revocation without the credential ID
+    is_revoked = None  # Unknown for external credentials
+    
+    return render(request, 'credentials/verification_result.html', {
+        'vc_hash': vc_hash,
+        'is_anchored': is_anchored,
+        'is_revoked': is_revoked,
+        'overall_valid': is_anchored,  # Only anchoring can be verified
+        'source': 'external'
+    })
 
 @login_required
 def schema_list(request):
@@ -71,11 +188,19 @@ def issue_credential(request, schema_id=None):
                 return render(request, 'credentials/issue_credential.html', {'form': form, 'schema': schema})
             
             # Build credential subject
-            subject_data = {"id": f"did:authenticred:{holder.id}"}
+            subject_data = {"id": holder.did}  # Use holder's DID
             if schema and schema.fields:
                 for field_name in schema.fields.keys():
                     subject_data[field_name] = form.cleaned_data.get(field_name, "")
-            
+            # Ensure issuer has a wallet
+            if not hasattr(request.user, 'wallet'):
+                from blockchain.utils.crypto import generate_key_pair
+                private_key_hex, public_key_hex = generate_key_pair()
+                
+                Wallet.objects.create(user=request.user, private_key=private_key_hex)
+                request.user.public_key = public_key_hex
+                request.user.save()
+                messages.info(request, "A wallet was created for your account")
             # Build Verifiable Credential
             vc = {
                 "@context": ["https://www.w3.org/2018/credentials/v1"],
@@ -88,14 +213,41 @@ def issue_credential(request, schema_id=None):
             # Sign the credential
             try:
                 wallet = request.user.wallet
-                signed_vc = sign_json_ld(vc, wallet.private_key)
+                private_key_hex = wallet.private_key
+                
+                # Clean the private key
+                private_key_hex = re.sub(r'[^0-9a-fA-F]', '', private_key_hex)
+                if private_key_hex.startswith('0x'):
+                    private_key_hex = private_key_hex[2:]
+                
+                if len(private_key_hex) != 64:
+                    raise ValueError(f"Invalid private key length: {len(private_key_hex)} chars, expected 64")
+                
+                vc_json_str = json.dumps(vc, separators=(',', ':'), sort_keys=True)
+                vc_bytes = vc_json_str.encode('utf-8')
+                
+                # Use the new sign_data function
+                from blockchain.utils.crypto import sign_data
+                signature_hex = sign_data(vc_bytes, private_key_hex)
+                
+                # Format as JWS (simplified version)
+                jws = f"v={signature_hex}"
             except Exception as e:
                 messages.error(request, f"Failed to sign credential: {str(e)}")
                 return render(request, 'credentials/issue_credential.html', {'form': form, 'schema': schema})
             
-            # Create credential instance
+            # Create credential instance with proof
             credential = Credential.objects.create(
-                vc_json=signed_vc,
+                vc_json={
+                    **vc,
+                    "proof": {
+                        "type": "EcdsaSecp256k1Signature2019",
+                        "created": datetime.utcnow().isoformat() + "Z",
+                        "proofPurpose": "assertionMethod",
+                        "verificationMethod": f"{request.user.did}#keys-1",
+                        "jws": jws
+                    }
+                },
                 issuer=request.user,
                 holder=holder,
                 title=form.cleaned_data['title'],
@@ -136,6 +288,17 @@ def issue_credential(request, schema_id=None):
         'schema': schema
     })
 
+def verify_data(data: bytes, signature_hex: str, public_key_hex: str) -> bool:
+    """Verify ECDSA signature"""
+    vk = ecdsa.VerifyingKey.from_string(
+        bytes.fromhex(public_key_hex),
+        curve=ecdsa.SECP256k1
+    )
+    try:
+        return vk.verify(bytes.fromhex(signature_hex), data, hashfunc=hashlib.sha256)
+    except ecdsa.BadSignatureError:
+        return False
+
 @login_required
 def issued_credentials(request):
     if not request.user.is_issuer():
@@ -157,7 +320,9 @@ def revoke_credential(request, credential_id):
                 # Revoke on blockchain
                 try:
                     blockchain_service = BlockchainService()
-                    tx_hash = blockchain_service.revoke_credential(str(credential.id))
+                    # tx_hash = blockchain_service.revoke_credential(str(credential.id))
+                    tx_hash = blockchain_service.revoke_credential(credential.id)
+
                     messages.info(request, f"Revocation recorded on blockchain. Transaction: {tx_hash[:10]}...")
                 except Exception as e:
                     messages.warning(request, f"Credential revoked but blockchain update failed: {str(e)}")
@@ -197,6 +362,7 @@ def credential_detail(request, credential_id):
     
     # Check revocation status
     is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+
     
     return render(request, 'credentials/credential_detail.html', {
         'credential': credential,

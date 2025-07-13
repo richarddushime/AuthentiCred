@@ -3,7 +3,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-
+from wallets.utils import generate_key_pair
+from wallets.models import Wallet
 from blockchain.tasks import process_did_registration_confirmation
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import InstitutionProfile
@@ -24,8 +25,15 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            # Create wallet with private key
+            private_key, public_key = generate_key_pair()
+            Wallet.objects.create(user=user, private_key=private_key)
             
+            # Store public key on user
+            user.public_key = public_key
+            user.save()
+            login(request, user)
+
             if user.user_type == 'INSTITUTION':
                 blockchain_service = BlockchainService()
                 try:

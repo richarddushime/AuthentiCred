@@ -45,8 +45,18 @@ def register_view(request):
 
 @login_required
 def wallet_home(request):
+    # Get or create wallet for the user
     wallet, created = Wallet.objects.get_or_create(user=request.user)
     
+    if created:
+        # Generate keys for new wallet
+        private_key, public_key = generate_key_pair()
+        wallet.private_key = private_key
+        wallet.save()
+        
+        # Update user's public key
+        request.user.public_key = public_key
+        request.user.save()
     # Get all credentials in the wallet
     credentials = wallet.wallet_credentials.filter(is_archived=False).select_related('credential')
     

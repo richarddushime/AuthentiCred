@@ -5,6 +5,10 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, PublicFormat, NoEncryption
 import base58
+import hashlib
+from ecdsa import SigningKey, VerifyingKey, SECP256k1
+from ecdsa.util import sigencode_der, sigdecode_der
+
 
 def generate_key_pair():
     """Generate Ed25519 key pair for DIDs"""
@@ -29,30 +33,31 @@ def compute_sha256(data: str) -> str:
     """Compute SHA256 hash of a string"""
     return hashes.Hash(hashes.SHA256()).update(data.encode()).finalize().hex()
 
-def sign_json_ld(credential, private_key_bytes):
-    """Sign a JSON-LD credential using Ed25519"""
-    # Create a copy without existing proof
-    credential = credential.copy()
-    if 'proof' in credential:
-        del credential['proof']
-    
-    # Canonicalize the document
-    canonical_doc = json.dumps(credential, sort_keys=True, separators=(',', ':'))
-    
-    # Sign the document
-    private_key = ed25519.Ed25519PrivateKey.from_private_bytes(private_key_bytes)
-    signature = private_key.sign(canonical_doc.encode('utf-8'))
-    
-    # Add proof to credential
-    credential['proof'] = {
-        'type': 'Ed25519Signature2020',
-        'created': datetime.utcnow().isoformat() + 'Z',
-        'proofPurpose': 'assertionMethod',
-        'verificationMethod': credential['issuer'],
-        'proofValue': base58.b58encode(signature).decode('utf-8')
-    }
-    
-    return credential
+
+def sign_json_ld(data_bytes, private_key_hex):
+    """
+    Sign JSON-LD data using ECDSA with secp256k1 curve
+    :param data_bytes: Bytes representation of the JSON-LD data
+    :param private_key_hex: Private key in hex format
+    :return: Signed JSON-LD document with proof
+    """
+    try:
+        # Ensure private key is in bytes format
+        if isinstance(private_key_hex, str):
+            private_key_bytes = bytes.fromhex(private_key_hex)
+        else:
+            private_key_bytes = private_key_hex
+            
+        # Create signing key
+        sk = SigningKey.from_string(private_key_bytes, curve=SECP256k1)
+        
+        # Create signature
+        signature = sk.sign(data_bytes, hashfunc=hashlib.sha256, sigencode=sigencode_der)
+        
+        # Return signature in hex format
+        return signature.hex()
+    except Exception as e:
+        raise RuntimeError(f"Signing failed: {str(e)}") from e
 
 def verify_json_ld_signature(credential, public_key_bytes):
     """Verify a JSON-LD signature"""
@@ -77,3 +82,29 @@ def verify_json_ld_signature(credential, public_key_bytes):
     except:
         return False
     
+
+def verify_json_ld(data_bytes, signature_hex, public_key_hex):
+    """
+    Verify JSON-LD signature
+    :param data_bytes: Original data in bytes
+    :param signature_hex: Signature in hex format
+    :param public_key_hex: Public key in hex format
+    :return: True if valid, False otherwise
+    """
+    try:
+        # Convert keys to bytes
+        if isinstance(public_key_hex, str):
+            public_key_bytes = bytes.fromhex(public_key_hex)
+        else:
+            public_key_bytes = public_key_hex
+            
+        signature_bytes = bytes.fromhex(signature_hex)
+        
+        # Create verifying key
+        vk = VerifyingKey.from_string(public_key_bytes, curve=SECP256k1)
+        
+        # Verify signature
+        return vk.verify(signature_bytes, data_bytes, hashfunc=hashlib.sha256, sigdecode=sigdecode_der)
+    except Exception:
+        return False
+   
