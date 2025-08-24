@@ -103,7 +103,7 @@ SESSION_COOKIE_SECURE = False  # Disabled for debugging
 CSRF_COOKIE_SECURE = False  # Disabled for debugging
 X_FRAME_OPTIONS = 'DENY'
 
-# Logging configuration
+# Logging configuration - enhanced for debugging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -129,6 +129,16 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'gunicorn': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
@@ -164,3 +174,10 @@ CACHES = {
         'LOCATION': os.environ.get('REDIS_URL', 'redis://localhost:6379/1'),
     }
 }
+
+# Print startup information
+print(f"🚀 AuthentiCred Production Settings Loaded")
+print(f"   DEBUG: {DEBUG}")
+print(f"   ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+print(f"   DATABASE: {DATABASES['default']['ENGINE']}")
+print(f"   STATIC_ROOT: {STATIC_ROOT}")
