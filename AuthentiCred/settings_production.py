@@ -14,11 +14,10 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable is required in production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True  # Set to True for debugging
 
-# Force DEBUG to False in production unless explicitly set
-if not os.environ.get('DEBUG'):
-    DEBUG = False
+# Force DEBUG to True for debugging
+DEBUG = True
 
 # Railway automatically sets the PORT environment variable
 ALLOWED_HOSTS = [

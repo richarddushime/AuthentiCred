@@ -7,7 +7,7 @@ bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
 backlog = 2048
 
 # Worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+workers = 1  # Use only 1 worker for debugging
 worker_class = "sync"
 worker_connections = 1000
 max_requests = 1000
@@ -19,10 +19,10 @@ keepalive = 2
 max_requests = 1000
 max_requests_jitter = 50
 
-# Logging
+# Logging - enhanced for debugging
 accesslog = "-"
 errorlog = "-"
-loglevel = "info"
+loglevel = "debug"  # Set to debug for more information
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
 
 # Process naming
@@ -40,15 +40,23 @@ tmp_upload_dir = None
 # certfile = None
 
 # Preload app for better performance
-preload_app = True
+preload_app = False  # Disable preload for debugging
 
 # Worker timeout for long-running requests (blockchain operations)
 timeout = 120
 
 # Enable auto-reload in development
-reload = os.environ.get('DEBUG', 'False').lower() == 'true'
+reload = True  # Enable reload for debugging
 
 # Security
 limit_request_line = 4094
 limit_request_fields = 100
 limit_request_field_size = 8190
+
+# Print configuration for debugging
+print(f"🔧 Gunicorn Configuration:")
+print(f"   Bind: {bind}")
+print(f"   Workers: {workers}")
+print(f"   Log Level: {loglevel}")
+print(f"   Reload: {reload}")
+print(f"   Preload App: {preload_app}")
