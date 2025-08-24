@@ -40,12 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'encrypted_model_fields',
-    'django_celery_results',
-    'django_celery_beat',
+    # Temporarily comment out complex apps for debugging
+    # 'encrypted_model_fields',
+    # 'django_celery_results',
+    # 'django_celery_beat',
     'tailwind',
     'theme',
-    'blockchain',
+    # 'blockchain',
     'users',
     'credentials',
     'wallets',
@@ -61,7 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wallets.middleware.WalletCheckMiddleware',
+    # Temporarily comment out wallet middleware for debugging
+    # 'wallets.middleware.WalletCheckMiddleware',
 ]
 
 # Database - use SQLite as fallback if DATABASE_URL is not set
