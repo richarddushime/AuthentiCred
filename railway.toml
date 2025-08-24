@@ -1,0 +1,24 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+numReplicas = 1
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[deploy.healthcheck]
+path = "/"
+interval = "30s"
+timeout = "10s"
+retries = 3
+
+[deploy.startCommand]
+command = "gunicorn AuthentiCred.wsgi:application -c gunicorn.conf.py"
+
+[deploy.variables]
+PYTHON_VERSION = "3.11.0"
+NODE_VERSION = "18.0.0"
+
+[deploy.volumes]
+staticfiles = "/app/staticfiles"
+media = "/app/media"
