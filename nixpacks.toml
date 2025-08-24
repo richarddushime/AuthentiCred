@@ -1,16 +1,12 @@
 [phases.setup]
-nixPkgs = ["python311", "nodejs_18", "npm", "postgresql", "postgresql.lib", "libpq"]
+nixPkgs = ["python311", "nodejs_18", "npm"]
 
 [phases.install]
-cmds = [
-    "pip install -r requirements.txt",
-    "cd theme && npm install && npm run build-prod && cd .."
-]
+cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
 cmds = [
-    "python manage.py migrate",
-    "python manage.py collectstatic --noinput"
+    "cd theme && npm install && npm run build-prod && cd .."
 ]
 
 [start]
