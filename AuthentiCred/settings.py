@@ -22,9 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', '.up.railway.app', '*']
 
 # Application definition
 
@@ -76,15 +76,52 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'AuthentiCred.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# Database configuration for Railway PostgreSQL
+import dj_database_url
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Check for DATABASE_URL first (user-created variable)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Use the DATABASE_URL variable you created
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
     }
-}
+elif os.environ.get('RAILWAY_ENVIRONMENT'):
+    # Fallback to Railway's individual PostgreSQL environment variables
+    PGHOST = os.environ.get('PGHOST')
+    PGUSER = os.environ.get('PGUSER')
+    PGPASSWORD = os.environ.get('PGPASSWORD')
+    PGDATABASE = os.environ.get('PGDATABASE')
+    PGPORT = os.environ.get('PGPORT')
+
+    if PGHOST and PGUSER and PGPASSWORD:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': PGDATABASE or 'railway',
+                'USER': PGUSER,
+                'PASSWORD': PGPASSWORD,
+                'HOST': PGHOST,
+                'PORT': PGPORT or '5432',
+                'OPTIONS': {
+                    'sslmode': 'require',  # SSL required for Railway production
+                },
+            }
+        }
+    else:
+        # We're on Railway but no database variables - this means database service isn't connected
+        raise Exception(
+            "Database variables not found. Please connect your PostgreSQL service to this app in Railway dashboard."
+        )
+else:
+    # Fallback for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -180,3 +217,19 @@ CELERY_ENABLE_UTC = True
 # Tailwind CSS Configuration
 TAILWIND_APP_NAME = 'theme'
 NPM_BIN_PATH = "npm"
+
+# Production settings
+if os.environ.get('RAILWAY') or os.environ.get('RAILWAY_ENVIRONMENT'):
+    # Add WhiteNoise middleware for static files in production
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    
+    # Security settings for production
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Field encryption key from environment
+    FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w=')
+    
+    print(f"🚀 Production settings loaded - DEBUG: {DEBUG}")
+    print(f"📊 Database: {DATABASES['default']['ENGINE']}")
