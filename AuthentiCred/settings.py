@@ -15,176 +15,172 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Check if we're on Railway
+if os.environ.get('RAILWAY'):
+    from .settings_production import *
+else:
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = 'django-insecure-)iivz2w4g9f)mxn2^#!e5^1-!clif%i63ww66^!-c+-8wxyxo&'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)iivz2w4g9f)mxn2^#!e5^1-!clif%i63ww66^!-c+-8wxyxo&'
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+    ALLOWED_HOSTS = []
 
-ALLOWED_HOSTS = []
+    # Application definition
 
+    INSTALLED_APPS = [
+        'tailwind',
+        'theme',
+        'blockchain',
+        'users',
+        'credentials',
+        'wallets',
+        'django_celery_results',
+        'django_celery_beat',
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'encrypted_model_fields',
+    ]
 
-# Application definition
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'wallets.middleware.WalletCheckMiddleware',
+    ]
 
-INSTALLED_APPS = [
-    'tailwind',
-    'theme',
-    'blockchain',
-    'users',
-    'credentials',
-    'wallets',
-    'django_celery_results',
-    'django_celery_beat',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'encrypted_model_fields',
-]
+    ROOT_URLCONF = 'AuthentiCred.urls'
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wallets.middleware.WalletCheckMiddleware',
-]
-
-ROOT_URLCONF = 'AuthentiCred.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+            },
         },
-    },
-]
+    ]
 
-WSGI_APPLICATION = 'AuthentiCred.wsgi.application'
+    WSGI_APPLICATION = 'AuthentiCred.wsgi.application'
 
+    # Database
+    # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
+    # Password validation
+    # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+    # Internationalization
+    # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
+    LANGUAGE_CODE = 'en-us'
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+    TIME_ZONE = 'UTC'
 
-LANGUAGE_CODE = 'en-us'
+    USE_I18N = True
 
-TIME_ZONE = 'UTC'
+    USE_TZ = True
 
-USE_I18N = True
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-USE_TZ = True
+    STATIC_URL = 'static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
 
+    # Default primary key field type
+    # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+    DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+    # Generate key if doesn't exist
+    # python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key())"
+    FIELD_ENCRYPTION_KEY = b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w='
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+    # custom user model
+    # This setting tells Django to use the custom User model defined in the users app
+    AUTH_USER_MODEL = 'users.User'
+    # authentication backends
+    AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.ModelBackend',
+    ]
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+    # Login settings
+    LOGIN_URL = '/login/'
+    LOGIN_REDIRECT_URL = '/dashboard/'
+    LOGOUT_REDIRECT_URL = '/'
 
+    # Media files
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
-# Generate key if doesn't exist
-# python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key())"
-FIELD_ENCRYPTION_KEY = b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w='
+    # Blockchain app network configuration
 
-# custom user model
-# This setting tells Django to use the custom User model defined in the users app
-AUTH_USER_MODEL = 'users.User'
-# authentication backends
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+    # This section configures the blockchain network and RPC URLs for interactions
+    # Blockchain Configuration
+    BLOCKCHAIN_NETWORK = 'ganache'
+    BLOCKCHAIN_RPC_URL = 'http://127.0.0.1:7545'
+    GANACHE_CHAIN_ID = 1337
 
-# Login settings
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/'
+    # Contract addresses
+    DIDREGISTRY_ADDRESS = '0x2C20e9cDbb07Be51CF7BC2098eE0B57d7AF3D340'
+    TRUSTREGISTRY_ADDRESS = '0x140e19394017a90fd6f3f6745A35077Cd3F85dEB'
+    CREDENTIALANCHOR_ADDRESS = '0x0e90921CA3D72e62B06Ecbfb56d0fcEEe04E7cc1'
+    REVOCATIONREGISTRY_ADDRESS = '0x397d90a8D731cC2b70af1c4Ca700bAf5530f339A'
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+    # account from Ganache as operator
+    BLOCKCHAIN_OPERATOR_KEY = '0x062f69a9da3236435b0f6c3bda1cc7f3a7d7c716f2bfd0283202cc6b258f8d38'  # Ganache  private key
+    BLOCKCHAIN_OPERATOR_ADDRESS = '0x5794777802033929F19C1a901cc2D460480D76f6'  # Ganache  address
 
+    # Celery configuration
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+    CELERY_ACCEPT_CONTENT = ['json']
+    CELERY_TIMEZONE = 'UTC'
+    CELERY_ENABLE_UTC = True
 
-# Blockchain app network configuration
-
-# This section configures the blockchain network and RPC URLs for interactions
-# Blockchain Configuration
-BLOCKCHAIN_NETWORK = 'ganache'
-BLOCKCHAIN_RPC_URL = 'http://127.0.0.1:7545'
-GANACHE_CHAIN_ID = 1337
-
-# Contract addresses
-DIDREGISTRY_ADDRESS = '0x2C20e9cDbb07Be51CF7BC2098eE0B57d7AF3D340'
-TRUSTREGISTRY_ADDRESS = '0x140e19394017a90fd6f3f6745A35077Cd3F85dEB'
-CREDENTIALANCHOR_ADDRESS = '0x0e90921CA3D72e62B06Ecbfb56d0fcEEe04E7cc1'
-REVOCATIONREGISTRY_ADDRESS = '0x397d90a8D731cC2b70af1c4Ca700bAf5530f339A'
-
-# account from Ganache as operator
-BLOCKCHAIN_OPERATOR_KEY = '0x062f69a9da3236435b0f6c3bda1cc7f3a7d7c716f2bfd0283202cc6b258f8d38'  # Ganache  private key
-BLOCKCHAIN_OPERATOR_ADDRESS = '0x5794777802033929F19C1a901cc2D460480D76f6'  # Ganache  address
-
-# Celery configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TIMEZONE = 'UTC'
-CELERY_ENABLE_UTC = True
-
-# Tailwind CSS Configuration
-TAILWIND_APP_NAME = 'theme'
-NPM_BIN_PATH = "npm"
+    # Tailwind CSS Configuration
+    TAILWIND_APP_NAME = 'theme'
+    NPM_BIN_PATH = "npm"

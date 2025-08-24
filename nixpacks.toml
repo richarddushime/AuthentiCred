@@ -1,0 +1,21 @@
+[phases.setup]
+nixPkgs = ["python311", "nodejs_18", "npm", "postgresql"]
+
+[phases.install]
+cmds = [
+    "pip install -r requirements.txt",
+    "cd theme && npm install && npm run build-prod && cd .."
+]
+
+[phases.build]
+cmds = [
+    "python manage.py migrate",
+    "python manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "gunicorn AuthentiCred.wsgi:application -c gunicorn.conf.py"
+
+[variables]
+PYTHON_VERSION = "3.11"
+NODE_VERSION = "18"
