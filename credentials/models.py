@@ -3,7 +3,6 @@ import uuid
 import json
 from django.db import models
 from django.utils import timezone
-from users.models import User
 from blockchain.utils.vc_proofs import compute_sha256
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -21,7 +20,7 @@ class CredentialSchema(models.Model):
     version = models.CharField(max_length=50, default="1.0")
     type = models.CharField(max_length=50, choices=SCHEMA_TYPES, default='OTHER')
     fields = models.JSONField(help_text="JSON structure defining the credential fields")
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='schemas')
+    created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='schemas')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -38,8 +37,8 @@ class Credential(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vc_json = models.JSONField()
-    issuer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issued_credentials')
-    holder = models.ForeignKey(User, on_delete=models.CASCADE, related_name='credentials')
+    issuer = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='issued_credentials')
+    holder = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='credentials')
     schema = models.ForeignKey(CredentialSchema, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)

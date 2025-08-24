@@ -2,12 +2,11 @@
 import uuid
 from django.db import models
 from encrypted_model_fields.fields import EncryptedCharField  # Updated import
-from users.models import User
 from credentials.models import Credential
 
 class Wallet(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wallet')
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE, related_name='wallet')
     name = models.CharField(max_length=100, default="My AuthentiCred Wallet")
     private_key = EncryptedCharField(max_length=255)  # Use EncryptedCharField
     created_at = models.DateTimeField(auto_now_add=True)

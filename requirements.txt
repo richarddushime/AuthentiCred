@@ -70,6 +70,7 @@ platformdirs==4.3.8
 pluggy==1.6.0
 prompt_toolkit==3.0.51
 propcache==0.3.2
+psycopg2-binary==2.9.10
 pyarrow==21.0.0
 pycparser==2.22
 pycryptodome==3.23.0
