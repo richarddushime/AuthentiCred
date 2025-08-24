@@ -28,6 +28,7 @@ distlib==0.4.0
 Django==5.2.5
 django-celery-beat==2.8.1
 django-encrypted-model-fields==0.6.5
+django-tailwind==3.8.0
 django-timezone-field==7.1
 django_celery_results==2.6.0
 ecdsa==0.19.1
