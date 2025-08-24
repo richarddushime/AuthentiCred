@@ -77,7 +77,7 @@ jobs:
         aws s3 ls s3://$BACKUP_BUCKET/backups/ | sort -r | tail -n +8 | awk '{print $4}' | xargs -I {} aws s3 rm s3://$BACKUP_BUCKET/backups/{}
     
     - name: Upload backup as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: database-backup
         path: backups/
