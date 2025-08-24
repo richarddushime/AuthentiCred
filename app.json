@@ -2,7 +2,7 @@
   "name": "AuthentiCred",
   "description": "A blockchain-based credential verification system",
   "repository": "https://github.com/richarddushime/AuthentiCred",
-  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "logo": "",
   "keywords": ["django", "blockchain", "credentials", "verification"],
   "env": {
     "SECRET_KEY": {
