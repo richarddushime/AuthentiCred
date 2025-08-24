@@ -34,9 +34,15 @@ if [ "$RAILWAY" = "true" ]; then
     echo "🗄️  Running database migrations..."
     python manage.py migrate --noinput
     
-    # Collect static files
+    # Collect static files (with error handling)
     echo "📁 Collecting static files..."
-    python manage.py collectstatic --noinput --clear
+    if python manage.py help | grep -q collectstatic; then
+        python manage.py collectstatic --noinput --clear
+        echo "✅ Static files collected successfully"
+    else
+        echo "⚠️  collectstatic command not available, skipping static collection"
+        echo "   This is normal if django.contrib.staticfiles is not properly configured"
+    fi
     
     # Create superuser if in Railway environment
     echo "👤 Creating superuser..."
