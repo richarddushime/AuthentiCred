@@ -17,13 +17,6 @@ jobs:
       with:
         python-version: '3.11'
     
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: theme/package-lock.json
-    
     - name: Install Railway CLI
       run: npm install -g @railway/cli
     
@@ -31,18 +24,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Install Node.js dependencies
-      run: |
-        cd theme
-        npm ci
-        cd ..
-    
-    - name: Build Tailwind CSS
-      run: |
-        cd theme
-        npm run build-prod
-        cd ..
     
     - name: Run tests before deployment
       env:
