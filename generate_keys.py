@@ -6,6 +6,7 @@ Generates secure keys for Django and encryption
 
 import os
 import sys
+from datetime import datetime
 
 def generate_django_secret_key():
     """Generate a Django secret key"""
@@ -55,7 +56,7 @@ def main():
     if save == 'y':
         with open('keys.txt', 'w') as f:
             f.write(f"# Generated keys for AuthentiCred\n")
-            f.write(f"# Generated on: {os.popen('date').read().strip()}\n\n")
+            f.write(f"# Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             f.write(f"SECRET_KEY={django_key}\n")
             f.write(f"FIELD_ENCRYPTION_KEY={encryption_key}\n")
         print("✅ Keys saved to keys.txt")

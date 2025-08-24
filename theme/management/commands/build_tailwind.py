@@ -20,6 +20,45 @@ class Command(BaseCommand):
             help='Minify the output CSS',
         )
 
+    def _run_command(self, cmd, cwd, description):
+        """Safely run a command with proper error handling"""
+        try:
+            # Validate command is safe (only npm commands)
+            if not isinstance(cmd, list) or not cmd or cmd[0] not in ['npm']:
+                raise ValueError(f"Invalid command: {cmd}")
+            
+            result = subprocess.run(
+                cmd, 
+                cwd=cwd, 
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            self.stdout.write(
+                self.style.SUCCESS(f'Successfully {description}')
+            )
+            return result
+        except subprocess.CalledProcessError as e:
+            self.stdout.write(
+                self.style.ERROR(f'Failed to {description}: {e}')
+            )
+            if e.stdout:
+                self.stdout.write(f'STDOUT: {e.stdout}')
+            if e.stderr:
+                self.stdout.write(f'STDERR: {e.stderr}')
+            return None
+        except subprocess.TimeoutExpired:
+            self.stdout.write(
+                self.style.ERROR(f'Command timed out while {description}')
+            )
+            return None
+        except FileNotFoundError:
+            self.stdout.write(
+                self.style.ERROR('npm not found. Please install Node.js and npm first.')
+            )
+            return None
+
     def handle(self, *args, **options):
         theme_dir = os.path.join(settings.BASE_DIR, 'theme')
         
@@ -33,42 +72,20 @@ class Command(BaseCommand):
         node_modules_path = os.path.join(theme_dir, 'node_modules')
         if not os.path.exists(node_modules_path):
             self.stdout.write('Installing npm dependencies...')
-            try:
-                subprocess.run(['npm', 'install'], cwd=theme_dir, check=True)
-                self.stdout.write(
-                    self.style.SUCCESS('Successfully installed npm dependencies')
-                )
-            except subprocess.CalledProcessError as e:
-                self.stdout.write(
-                    self.style.ERROR(f'Failed to install npm dependencies: {e}')
-                )
-                return
-            except FileNotFoundError:
-                self.stdout.write(
-                    self.style.ERROR('npm not found. Please install Node.js and npm first.')
-                )
+            result = self._run_command(['npm', 'install'], theme_dir, 'installed npm dependencies')
+            if not result:
                 return
 
         # Build Tailwind CSS
-        try:
-            if options['watch']:
-                self.stdout.write('Starting Tailwind CSS build in watch mode...')
+        if options['watch']:
+            self.stdout.write('Starting Tailwind CSS build in watch mode...')
+            try:
                 subprocess.run(['npm', 'run', 'build'], cwd=theme_dir)
-            elif options['minify']:
-                self.stdout.write('Building minified Tailwind CSS...')
-                subprocess.run(['npm', 'run', 'build-prod'], cwd=theme_dir, check=True)
-                self.stdout.write(
-                    self.style.SUCCESS('Successfully built minified Tailwind CSS')
-                )
-            else:
-                self.stdout.write('Building Tailwind CSS...')
-                subprocess.run(['npm', 'run', 'build-prod'], cwd=theme_dir, check=True)
-                self.stdout.write(
-                    self.style.SUCCESS('Successfully built Tailwind CSS')
-                )
-        except subprocess.CalledProcessError as e:
-            self.stdout.write(
-                self.style.ERROR(f'Failed to build Tailwind CSS: {e}')
-            )
-        except KeyboardInterrupt:
-            self.stdout.write('\nBuild process interrupted.')
+            except KeyboardInterrupt:
+                self.stdout.write('\nBuild process interrupted.')
+        elif options['minify']:
+            self.stdout.write('Building minified Tailwind CSS...')
+            self._run_command(['npm', 'run', 'build-prod'], theme_dir, 'built minified Tailwind CSS')
+        else:
+            self.stdout.write('Building Tailwind CSS...')
+            self._run_command(['npm', 'run', 'build-prod'], theme_dir, 'built Tailwind CSS')

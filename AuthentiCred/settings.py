@@ -23,7 +23,7 @@ else:
     # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = 'zp-f+3iaol4+xcgnb=da6l-$!pjcai=!8r$0w!wmlg-+49cqh&'
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-production')
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
