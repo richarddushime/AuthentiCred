@@ -1,0 +1,40 @@
+{
+  "name": "AuthentiCred",
+  "description": "A blockchain-based credential verification system",
+  "repository": "https://github.com/richarddushime/AuthentiCred",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["django", "blockchain", "credentials", "verification"],
+  "env": {
+    "SECRET_KEY": {
+      "description": "A secret key for Django",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "description": "Debug mode",
+      "value": "False"
+    },
+    "FIELD_ENCRYPTION_KEY": {
+      "description": "Encryption key for model fields",
+      "generator": "secret"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:mini"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}

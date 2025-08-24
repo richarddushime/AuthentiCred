@@ -219,7 +219,7 @@ TAILWIND_APP_NAME = 'theme'
 NPM_BIN_PATH = "npm"
 
 # Production settings
-if os.environ.get('RAILWAY') or os.environ.get('RAILWAY_ENVIRONMENT'):
+if os.environ.get('HEROKU') or os.environ.get('DYNO'):
     # Add WhiteNoise middleware for static files in production
     MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
     
@@ -231,5 +231,5 @@ if os.environ.get('RAILWAY') or os.environ.get('RAILWAY_ENVIRONMENT'):
     # Field encryption key from environment
     FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w=')
     
-    print(f"🚀 Production settings loaded - DEBUG: {DEBUG}")
+    print(f"🚀 Heroku production settings loaded - DEBUG: {DEBUG}")
     print(f"📊 Database: {DATABASES['default']['ENGINE']}")
