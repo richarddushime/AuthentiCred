@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '0 2 * * 1'  # Run weekly on Mondays at 2 AM
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   security:
     runs-on: ubuntu-latest
@@ -92,9 +97,14 @@ jobs:
             comment += '❌ **Bandit scan failed**\n';
           }
           
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });
+          try {
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          } catch (error) {
+            console.log('Failed to create comment:', error.message);
+            console.log('Comment content:', comment);
+          }
