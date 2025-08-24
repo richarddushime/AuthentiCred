@@ -9,10 +9,16 @@ from .settings import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is required in production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+# Force DEBUG to False in production unless explicitly set
+if not os.environ.get('DEBUG'):
+    DEBUG = False
 
 # Railway automatically sets the PORT environment variable
 ALLOWED_HOSTS = [
@@ -165,7 +171,9 @@ BLOCKCHAIN_OPERATOR_KEY = os.environ.get('BLOCKCHAIN_OPERATOR_KEY', '0x062f69a9d
 BLOCKCHAIN_OPERATOR_ADDRESS = os.environ.get('BLOCKCHAIN_OPERATOR_ADDRESS', '0x5794777802033929F19C1a901cc2D460480D76f6')
 
 # Field encryption key (should be set via environment variable)
-FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w=')
+FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY')
+if not FIELD_ENCRYPTION_KEY:
+    raise ValueError("FIELD_ENCRYPTION_KEY environment variable is required in production")
 
 # Cache configuration
 CACHES = {

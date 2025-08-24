@@ -1,5 +1,5 @@
 # Generated keys for AuthentiCred
-# Generated on: Sun Aug 24 18:22:46 CEST 2025
+# Generated on: 2025-08-24 22:20:23
 
-SECRET_KEY=zp-f+3iaol4+xcgnb=da6l-$!pjcai=!8r$0w!wmlg-+49cqh&
-FIELD_ENCRYPTION_KEY=kIVUTGHuq9WDuIovc4kSixbl4cgMvqpm5VatH4c6m54=
+SECRET_KEY=qu9f)pntm6g=^7$(n96^z&phcpgd5kvkd)5e8#rh%exdcfoxn2
+FIELD_ENCRYPTION_KEY=CyL_0nL4tTSGYvGbE2ESJqPehpryreCDChtNjGPhnt0=
