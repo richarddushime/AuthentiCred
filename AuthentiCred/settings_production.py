@@ -9,7 +9,7 @@ from .settings import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'zp-f+3iaol4+xcgnb=da6l-$!pjcai=!8r$0w!wmlg-+49cqh&')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
@@ -25,6 +25,25 @@ ALLOWED_HOSTS = [
 # Add your custom domain if you have one
 if os.environ.get('CUSTOM_DOMAIN'):
     ALLOWED_HOSTS.append(os.environ.get('CUSTOM_DOMAIN'))
+
+# Application definition - ensure all apps are loaded
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'encrypted_model_fields',
+    'django_celery_results',
+    'django_celery_beat',
+    'tailwind',
+    'theme',
+    'blockchain',
+    'users',
+    'credentials',
+    'wallets',
+]
 
 # Add WhiteNoise middleware for static files
 MIDDLEWARE = [
