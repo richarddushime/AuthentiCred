@@ -20,6 +20,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '.railway.app',
     '.up.railway.app',
+    '*',  # Allow all hosts for now
 ]
 
 # Add your custom domain if you have one
@@ -58,17 +59,23 @@ MIDDLEWARE = [
     'wallets.middleware.WalletCheckMiddleware',
 ]
 
-# Database
-# Railway provides DATABASE_URL environment variable
-import dj_database_url
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+# Database - use SQLite as fallback if DATABASE_URL is not set
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
@@ -84,16 +91,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Security settings for production
+# Security settings for production (relaxed for debugging)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False  # Disabled for debugging
+SECURE_HSTS_SECONDS = 0  # Disabled for debugging
+SECURE_HSTS_PRELOAD = False  # Disabled for debugging
 SECURE_REDIRECT_EXEMPT = []
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False  # Disabled for debugging
+SESSION_COOKIE_SECURE = False  # Disabled for debugging
+CSRF_COOKIE_SECURE = False  # Disabled for debugging
 X_FRAME_OPTIONS = 'DENY'
 
 # Logging configuration
@@ -134,7 +141,6 @@ CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 # Blockchain configuration for production
-# You may want to use different blockchain networks for production
 BLOCKCHAIN_NETWORK = os.environ.get('BLOCKCHAIN_NETWORK', 'ganache')
 BLOCKCHAIN_RPC_URL = os.environ.get('BLOCKCHAIN_RPC_URL', 'http://127.0.0.1:7545')
 

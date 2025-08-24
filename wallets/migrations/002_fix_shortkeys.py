@@ -15,11 +15,11 @@ def fix_short_keys(apps, schema_editor):
                 wallet.delete()
 
 class Migration(migrations.Migration):
-    # dependencies = [
-    #     ('wallets', '0001_initial'),  # 👈 Update with last migration
-    # ]
-    pass
-    # operations = [
-    #     migrations.RunPython(fix_short_keys),
-    # ]
+    dependencies = [
+        ('wallets', '0001_initial'),
+    ]
+    
+    operations = [
+        migrations.RunPython(fix_short_keys),
+    ]
     
