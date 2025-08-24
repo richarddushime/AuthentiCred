@@ -1,57 +1,76 @@
 #!/bin/bash
 
-# Exit on any error
+# AuthentiCred Railway Build Script
 set -e
 
 echo "🚀 Starting AuthentiCred deployment..."
 
-# Check if we're in a Railway environment
-if [ -n "$RAILWAY" ]; then
-    echo "📦 Railway environment detected"
-    echo "🔧 Using production settings"
-fi
-
-# Install Python dependencies
-echo "📦 Installing Python dependencies..."
-pip install -r requirements.txt
-
-# Install Node.js dependencies and build Tailwind CSS
-echo "🎨 Building Tailwind CSS..."
-if [ -d "theme" ]; then
-    cd theme
-    npm install --production=false
-    npm run build-prod
-    cd ..
-    echo "✅ Tailwind CSS built successfully"
-else:
-    echo "⚠️  Theme directory not found, skipping Tailwind build"
-fi
-
-# Run Django migrations
-echo "🗄️ Running database migrations..."
-python manage.py migrate --noinput
-
-# Collect static files
-echo "📁 Collecting static files..."
-python manage.py collectstatic --noinput --clear
-
-# Create superuser if not exists (only in Railway)
-if [ -n "$RAILWAY" ]; then
+# Check if we're in Railway environment
+if [ "$RAILWAY" = "true" ]; then
+    echo "✅ Running in Railway environment"
+    
+    # Install system dependencies for PostgreSQL
+    echo "📦 Installing system dependencies..."
+    apt-get update -qq
+    apt-get install -y -qq libpq-dev gcc python3-dev
+    
+    # Install Python dependencies
+    echo "🐍 Installing Python dependencies..."
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    
+    # Build Tailwind CSS if theme directory exists
+    if [ -d "theme" ]; then
+        echo "🎨 Building Tailwind CSS..."
+        cd theme
+        npm install --production=false
+        npm run build-prod
+        cd ..
+    else
+        echo "⚠️  Theme directory not found, skipping Tailwind build"
+    fi
+    
+    # Run Django migrations
+    echo "🗄️  Running database migrations..."
+    python manage.py migrate --noinput
+    
+    # Collect static files
+    echo "📁 Collecting static files..."
+    python manage.py collectstatic --noinput --clear
+    
+    # Create superuser if in Railway environment
     echo "👤 Creating superuser..."
     python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@authenticred.com', 'admin123')
-    print('✅ Superuser created: admin/admin123')
+    print('Superuser created successfully')
 else:
-    print('ℹ️  Superuser already exists')
+    print('Superuser already exists')
 "
+    
+    # Final deployment check
+    echo "🔍 Running deployment checks..."
+    python manage.py check --deploy
+    
+    echo "✅ Build completed successfully!"
+else
+    echo "⚠️  Not in Railway environment, skipping deployment-specific steps"
+    
+    # Install Python dependencies
+    echo "🐍 Installing Python dependencies..."
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    
+    # Build Tailwind CSS if theme directory exists
+    if [ -d "theme" ]; then
+        echo "🎨 Building Tailwind CSS..."
+        cd theme
+        npm install
+        npm run build-prod
+        cd ..
+    fi
+    
+    echo "✅ Local build completed successfully!"
 fi
-
-# Verify the application can start
-echo "🔍 Verifying application configuration..."
-python manage.py check --deploy
-
-echo "✅ Deployment setup complete!"
-echo "🌐 Application ready to start with gunicorn"
