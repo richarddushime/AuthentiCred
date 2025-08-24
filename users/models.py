@@ -58,9 +58,12 @@ class User(AbstractUser):
     
     def is_verifier(self):
         return self.user_type == 'EMPLOYER'
-    @property
-    def did(self):
-        if self.public_key:
+    
+    def get_did(self):
+        """Get the DID for the user"""
+        if self.did:
+            return self.did
+        elif self.public_key:
             return f"did:authenticred:{self.public_key}"
         return None
     

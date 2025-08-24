@@ -9,7 +9,7 @@ from .settings import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'a(awh&f3=#7hexdk2mvs3zww-hi_d%56ssk-*lu)^)80$f6x3=')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'zp-f+3iaol4+xcgnb=da6l-$!pjcai=!8r$0w!wmlg-+49cqh&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
@@ -70,6 +70,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_PRELOAD = True
 SECURE_REDIRECT_EXEMPT = []
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
 SESSION_COOKIE_SECURE = True
