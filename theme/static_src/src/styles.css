@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for AuthentiCred */
+@layer components {
+    .btn-primary {
+        @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg;
+    }
+    
+    .btn-secondary {
+        @apply border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    }
+    
+    .btn-outline {
+        @apply bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+    }
+    
+    .card {
+        @apply bg-white rounded-2xl shadow-lg p-6 border border-gray-100;
+    }
+    
+    .card-hover {
+        @apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-xl;
+    }
+    
+    .form-input {
+        @apply block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+    }
+    
+    .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-2;
+    }
+    
+    .form-error {
+        @apply mt-1 text-sm text-red-600;
+    }
+    
+    .badge {
+        @apply px-3 py-1 rounded-full text-sm font-medium;
+    }
+    
+    .badge-primary {
+        @apply bg-blue-100 text-blue-800;
+    }
+    
+    .badge-success {
+        @apply bg-green-100 text-green-800;
+    }
+    
+    .badge-warning {
+        @apply bg-yellow-100 text-yellow-800;
+    }
+    
+    .badge-danger {
+        @apply bg-red-100 text-red-800;
+    }
+    
+    .gradient-text {
+        @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+    }
+    
+    .gradient-bg {
+        @apply bg-gradient-to-r from-blue-600 to-purple-600;
+    }
+    
+    .did-badge {
+        @apply font-mono bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium;
+    }
+    
+    .blockchain-status {
+        @apply inline-block w-3 h-3 rounded-full mr-2;
+    }
+    
+    .status-verified {
+        @apply bg-green-500;
+    }
+    
+    .status-pending {
+        @apply bg-yellow-500;
+    }
+    
+    .status-error {
+        @apply bg-red-500;
+    }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive utilities */
+@layer utilities {
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+}
