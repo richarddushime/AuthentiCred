@@ -31,7 +31,11 @@ def generate_key_pair():
 
 def compute_sha256(data: str) -> str:
     """Compute SHA256 hash of a string"""
-    return hashes.Hash(hashes.SHA256()).update(data.encode()).finalize().hex()
+    if data is None:
+        raise ValueError("Data cannot be None")
+    
+    # Use hashlib instead of cryptography for simple SHA256
+    return hashlib.sha256(data.encode('utf-8')).hexdigest()
 
 
 def sign_json_ld(data_bytes, private_key_hex):

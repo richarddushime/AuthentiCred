@@ -54,7 +54,11 @@ class Credential(models.Model):
     
     @property
     def vc_hash(self):
-        return compute_sha256(json.dumps(self.vc_json))
+        if self.vc_json is None:
+            raise ValueError("Credential JSON data is None")
+        if not isinstance(self.vc_json, dict):
+            raise ValueError("Credential JSON data must be a dictionary")
+        return compute_sha256(json.dumps(self.vc_json, sort_keys=True, separators=(',', ':')))
     
     def issue(self):
         if self.status == 'DRAFT':

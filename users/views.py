@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-from wallets.utils import generate_key_pair
+from blockchain.utils.crypto import generate_key_pair
 from wallets.models import Wallet
 from blockchain.tasks import process_did_registration_confirmation
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
