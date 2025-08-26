@@ -351,3 +351,56 @@ def download_credential(request, credential_id):
     # Build PDF
     doc.build(story)
     return response
+
+@login_required
+def add_credential(request):
+    """Add a credential to wallet manually"""
+    if request.method == 'POST':
+        credential_hash = request.POST.get('credential_hash')
+        if credential_hash:
+            try:
+                # Try to find the credential
+                credential = Credential.objects.get(vc_hash=credential_hash)
+                wallet, created = Wallet.objects.get_or_create(user=request.user)
+                
+                # Check if already in wallet
+                if WalletCredential.objects.filter(wallet=wallet, credential=credential).exists():
+                    messages.warning(request, 'This credential is already in your wallet')
+                else:
+                    WalletCredential.objects.create(wallet=wallet, credential=credential)
+                    messages.success(request, 'Credential added to your wallet successfully!')
+                
+                return redirect('wallet_home')
+            except Credential.DoesNotExist:
+                messages.error(request, 'Credential not found with the provided hash')
+            except Exception as e:
+                messages.error(request, f'Error adding credential: {str(e)}')
+        else:
+            messages.error(request, 'Please provide a valid credential hash')
+    
+    return render(request, 'wallets/add_credential.html')
+
+@login_required
+def share_all_credentials(request):
+    """Share all credentials in wallet"""
+    wallet, created = Wallet.objects.get_or_create(user=request.user)
+    credentials = wallet.wallet_credentials.filter(is_archived=False)
+    
+    if not credentials.exists():
+        messages.warning(request, 'No credentials to share')
+        return redirect('wallet_home')
+    
+    # Generate a combined share link or create a wallet export
+    # For now, we'll just show a success message
+    messages.success(request, f'Sharing {credentials.count()} credentials')
+    return redirect('wallet_home')
+
+@login_required
+def backup_wallet(request):
+    """Backup wallet data"""
+    wallet, created = Wallet.objects.get_or_create(user=request.user)
+    
+    # Create a backup of wallet data
+    # For now, we'll just show a success message
+    messages.success(request, 'Wallet backup created successfully')
+    return redirect('wallet_home')

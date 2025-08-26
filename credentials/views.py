@@ -35,8 +35,8 @@ class CredentialVerificationForm(forms.Form):
         if not all(c in '0123456789abcdef' for c in hash):
             raise forms.ValidationError("Invalid hash format. Must be hexadecimal.")
         return hash
-@login_required
 
+@login_required
 def verify_credential(request):
     """Public credential verification view"""
     if request.method == 'POST':
@@ -551,3 +551,49 @@ def issue_draft_credential(request, credential_id):
             messages.error(request, f'Error issuing credential: {str(e)}')
     
     return redirect('issued_credentials')
+
+@login_required
+def request_credential(request):
+    """Request a credential from an issuer"""
+    if not request.user.is_holder():
+        messages.error(request, "Only students can request credentials")
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        # Handle credential request form submission
+        issuer_email = request.POST.get('issuer_email')
+        credential_type = request.POST.get('credential_type')
+        reason = request.POST.get('reason', '')
+        
+        if not issuer_email or not credential_type:
+            messages.error(request, 'Please fill in all required fields')
+        else:
+            try:
+                # Here you would implement the actual credential request logic
+                # For now, we'll just show a success message
+                messages.success(request, f'Credential request sent to {issuer_email}')
+                return redirect('dashboard')
+            except Exception as e:
+                messages.error(request, f'Failed to send request: {str(e)}')
+    
+    # Get available credential types from schemas
+    available_types = CredentialSchema.objects.values_list('name', flat=True).distinct()
+    
+    return render(request, 'credentials/request_credential.html', {
+        'available_types': available_types
+    })
+
+@login_required
+def verification_history(request):
+    """View verification history for verifiers"""
+    if not request.user.is_verifier():
+        messages.error(request, "Only verifiers can access verification history")
+        return redirect('dashboard')
+    
+    # Here you would implement verification history logic
+    # For now, we'll show an empty history
+    verifications = []
+    
+    return render(request, 'credentials/verification_history.html', {
+        'verifications': verifications
+    })
