@@ -21,6 +21,45 @@ Adding to the chaos, every college and training center operates on different, in
 - **Verifiers**: Employers, scholarship & grant programs, licensing boards, immigration services  
 
 
+## 🚀 Quick Start (Developers)
+
+### **Automated Setup (Recommended)**
+```bash
+# Clone the repository
+git clone <repository-url>
+cd AuthentiCred
+
+# Install dependencies
+npm install -g ganache
+pip install -r requirements.txt
+
+# Start everything with one command
+./start.sh
+```
+
+### **Manual Setup**
+```bash
+# 1. Start Ganache blockchain
+ganache --port 8545
+
+# 2. Deploy contracts
+python manage.py deploy_contracts
+
+# 3. Start Redis
+docker run -d -p 6379:6379 redis
+
+# 4. Run migrations
+python manage.py migrate
+
+# 5. Start Celery worker
+celery -A AuthentiCred worker --loglevel=info
+
+# 6. Start Django server
+python manage.py runserver
+```
+
+For detailed setup instructions, see [AUTOMATION_README.md](AUTOMATION_README.md)
+
 ## 📖 Getting Started
 
 1. **For Institutions**  
@@ -38,6 +77,17 @@ Adding to the chaos, every college and training center operates on different, in
    - Scan or paste the VC link  
    - Instantly confirm authenticity  
 
+## 🛠️ Development
+
+### **Available Scripts**
+- `./start.sh` - Start all services (automated)
+- `./stop.sh` - Stop all services
+- `python start_authenticred.py` - Advanced automation with options
+
+### **Network Configuration**
+- **Ganache**: `http://127.0.0.1:8545`
+- **Django**: `http://127.0.0.1:8000`
+- **Metamask**: Connect to `Localhost 8545`
 
 > **Ready to secure and simplify your credential journey?**  
 > Visit [authenticred.org]() or contact us 

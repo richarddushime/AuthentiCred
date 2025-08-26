@@ -14,7 +14,7 @@ from blockchain.utils.vc_proofs import sign_json_ld, verify_json_ld
 from wallets.models import WalletCredential
 from datetime import datetime, timedelta
 from django.utils import timezone
-from wallets.utils import generate_key_pair
+from blockchain.utils.crypto import generate_key_pair
 from wallets.models import Wallet
 from blockchain.utils.vc_proofs import verify_json_ld_signature
 from django import forms
@@ -213,15 +213,35 @@ def issue_credential(request, schema_id=None):
             # Sign the credential
             try:
                 wallet = request.user.wallet
-                private_key_hex = wallet.private_key
+                private_key = wallet.private_key
                 
-                # Clean the private key
-                private_key_hex = re.sub(r'[^0-9a-fA-F]', '', private_key_hex)
-                if private_key_hex.startswith('0x'):
-                    private_key_hex = private_key_hex[2:]
+                # Handle different private key formats
+                if len(private_key) == 44:  # Base64 encoded (32 bytes)
+                    # Convert base64 to hex
+                    import base64
+                    private_key_bytes = base64.b64decode(private_key)
+                    private_key_hex = private_key_bytes.hex()
+                else:
+                    # Assume hex format, clean it
+                    private_key_hex = re.sub(r'[^0-9a-fA-F]', '', private_key)
+                    if private_key_hex.startswith('0x'):
+                        private_key_hex = private_key_hex[2:]
                 
                 if len(private_key_hex) != 64:
-                    raise ValueError(f"Invalid private key length: {len(private_key_hex)} chars, expected 64")
+                    # If still not 64 chars, regenerate the wallet with proper keys
+                    from blockchain.utils.crypto import generate_key_pair
+                    new_private_key_hex, new_public_key_hex = generate_key_pair()
+                    
+                    # Update the wallet
+                    wallet.private_key = new_private_key_hex
+                    wallet.save()
+                    
+                    # Update user's public key
+                    request.user.public_key = new_public_key_hex
+                    request.user.save()
+                    
+                    private_key_hex = new_private_key_hex
+                    messages.info(request, "Wallet keys were regenerated to fix compatibility issues")
                 
                 vc_json_str = json.dumps(vc, separators=(',', ':'), sort_keys=True)
                 vc_bytes = vc_json_str.encode('utf-8')
@@ -348,21 +368,37 @@ def credential_detail(request, credential_id):
         messages.error(request, "You don't have permission to view this credential")
         return redirect('dashboard')
     
-    # Check blockchain status
-    blockchain_service = BlockchainService()
-    vc_hash = credential.vc_hash
-    is_anchored = blockchain_service.client.call_contract_function(
-        'CredentialAnchor',
-        'verifyProof',
-        vc_hash
-    )
+    # Initialize blockchain status variables
+    is_anchored = False
+    issuer_trusted = False
+    is_revoked = False
     
-    # Check issuer trust status
-    issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
-    
-    # Check revocation status
-    is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
-
+    try:
+        # Check blockchain status
+        blockchain_service = BlockchainService()
+        
+        # Get VC hash with error handling
+        try:
+            vc_hash = credential.vc_hash
+        except (ValueError, AttributeError) as e:
+            messages.error(request, f"Error computing credential hash: {str(e)}")
+            vc_hash = None
+        
+        if vc_hash:
+            is_anchored = blockchain_service.client.call_contract_function(
+                'CredentialAnchor',
+                'verifyProof',
+                vc_hash
+            )
+        
+        # Check issuer trust status
+        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        
+        # Check revocation status
+        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        
+    except Exception as e:
+        messages.warning(request, f"Blockchain verification failed: {str(e)}")
     
     return render(request, 'credentials/credential_detail.html', {
         'credential': credential,

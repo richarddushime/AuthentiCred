@@ -1,7 +1,7 @@
 # management/commands/create_missing_wallets.py
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from wallets.utils import generate_key_pair
+from blockchain.utils.crypto import generate_key_pair
 from wallets.models import Wallet
 
 class Command(BaseCommand):
