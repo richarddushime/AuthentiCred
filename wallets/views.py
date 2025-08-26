@@ -141,23 +141,57 @@ def share_credential(request, credential_id):
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
     
-    # Save QR code to in-memory buffer
+    # Save QR code to in-memory buffer and convert to base64
     buffer = BytesIO()
     img.save(buffer, format="PNG")
-    qr_img = buffer.getvalue()
+    import base64
+    qr_img = base64.b64encode(buffer.getvalue()).decode('utf-8')
     buffer.close()
     
     context = {
         'wallet_cred': wallet_cred,
+        'credential': wallet_cred.credential,  # Add the credential object
         'share_url': share_url,
         'qr_img': qr_img,
     }
     return render(request, 'wallets/share_credential.html', context)
 
-@login_required
 def view_shared_credential(request, credential_id):
+    """Public view for shared credentials - no login required"""
     wallet_cred = get_object_or_404(WalletCredential, id=credential_id)
-    return credential_detail(request, wallet_cred.credential.id)
+    credential = wallet_cred.credential
+    
+    # Check blockchain status
+    blockchain_service = BlockchainService()
+    is_anchored = False
+    issuer_trusted = False
+    is_revoked = False
+    
+    try:
+        # Get VC hash with error handling
+        vc_hash = credential.vc_hash
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            vc_hash
+        )
+        
+        # Check issuer trust status
+        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        
+        # Check revocation status
+        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        
+    except Exception as e:
+        # If blockchain verification fails, continue without it
+        pass
+    
+    return render(request, 'wallets/view_shared_credential.html', {
+        'credential': credential,
+        'is_anchored': is_anchored,
+        'issuer_trusted': issuer_trusted,
+        'is_revoked': is_revoked,
+    })
 
 @login_required
 def archive_credential(request, credential_id):
