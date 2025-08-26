@@ -95,7 +95,14 @@ def show_verification_result(request, credential):
         signature_valid = False
         
     # 2. Check blockchain anchoring
-    is_anchored = blockchain_service.verify_anchored(credential.vc_hash)
+    try:
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            credential.vc_hash
+        )
+    except Exception as e:
+        is_anchored = False
     
     # 3. Check revocation status - using credential ID as string
     try:
@@ -131,7 +138,14 @@ def verify_external_credential(request, vc_hash):
     blockchain_service = BlockchainService()
     
     # 1. Check if anchored on blockchain
-    is_anchored = blockchain_service.verify_anchored(vc_hash)
+    try:
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            vc_hash
+        )
+    except Exception as e:
+        is_anchored = False
     
     # 2. For external credentials, we can't check revocation without the credential ID
     is_revoked = None  # Unknown for external credentials
