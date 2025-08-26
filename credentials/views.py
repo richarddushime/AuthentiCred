@@ -116,12 +116,16 @@ def show_verification_result(request, credential):
     # 5. Check expiration
     is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
     
+    # 6. Check issued status
+    is_issued = credential.status == 'ISSUED'
+    
     overall_valid = (
         signature_valid and 
         is_anchored and 
         (is_revoked is not True) and  # Not revoked or indeterminate
         issuer_trusted and 
-        not is_expired
+        not is_expired and
+        is_issued
     )
     
     # Create verification record if user is logged in
@@ -137,6 +141,7 @@ def show_verification_result(request, credential):
                 'is_revoked': is_revoked,
                 'issuer_trusted': issuer_trusted,
                 'is_expired': is_expired,
+                'is_issued': is_issued,
                 'overall_valid': overall_valid
             },
             source='INTERNAL'
@@ -149,6 +154,7 @@ def show_verification_result(request, credential):
         'is_revoked': is_revoked,
         'issuer_trusted': issuer_trusted,
         'is_expired': is_expired,
+        'is_issued': is_issued,
         'overall_valid': overall_valid,
         'source': 'internal'
     })
@@ -170,6 +176,9 @@ def verify_external_credential(request, vc_hash):
     # 2. For external credentials, we can't check revocation without the credential ID
     is_revoked = None  # Unknown for external credentials
     
+    # 3. For external credentials, we can't check issued status
+    is_issued = None  # Unknown for external credentials
+    
     overall_valid = is_anchored  # Only anchoring can be verified
     
     # Create verification record if user is logged in
@@ -182,6 +191,7 @@ def verify_external_credential(request, vc_hash):
             verification_details={
                 'is_anchored': is_anchored,
                 'is_revoked': is_revoked,
+                'is_issued': is_issued,
                 'overall_valid': overall_valid
             },
             source='EXTERNAL'
@@ -191,6 +201,7 @@ def verify_external_credential(request, vc_hash):
         'vc_hash': vc_hash,
         'is_anchored': is_anchored,
         'is_revoked': is_revoked,
+        'is_issued': is_issued,
         'overall_valid': overall_valid,
         'source': 'external'
     })
