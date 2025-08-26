@@ -24,7 +24,13 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="bi bi-person text-gray-400"></i>
                         </div>
-                        {{ form.username }}
+                                                    {{ form.username }}
+                            <style>
+                                #id_username {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                         {% if form.username.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.username.errors.0 }}
@@ -41,7 +47,13 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="bi bi-envelope text-gray-400"></i>
                         </div>
-                        {{ form.email }}
+                                                    {{ form.email }}
+                            <style>
+                                #id_email {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                         {% if form.email.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.email.errors.0 }}
@@ -58,7 +70,13 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="bi bi-lock text-gray-400"></i>
                         </div>
-                        {{ form.password1 }}
+                                                    {{ form.password1 }}
+                            <style>
+                                #id_password1 {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                         {% if form.password1.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.password1.errors.0 }}
@@ -75,7 +93,13 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="bi bi-lock-fill text-gray-400"></i>
                         </div>
-                        {{ form.password2 }}
+                                                    {{ form.password2 }}
+                            <style>
+                                #id_password2 {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                         {% if form.password2.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.password2.errors.0 }}
@@ -123,6 +147,12 @@
                                 <i class="bi bi-building text-gray-400"></i>
                             </div>
                             {{ form.institution_name }}
+                            <style>
+                                #id_institution_name {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                             {% if form.institution_name.errors %}
                                 <div class="mt-1 text-sm text-red-600">
                                     {{ form.institution_name.errors.0 }}
@@ -140,6 +170,12 @@
                                 <i class="bi bi-globe text-gray-400"></i>
                             </div>
                             {{ form.institution_website }}
+                            <style>
+                                #id_institution_website {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                         </div>
                     </div>
                     
@@ -152,6 +188,12 @@
                                 <i class="bi bi-file-earmark-text text-gray-400"></i>
                             </div>
                             {{ form.accreditation_proof }}
+                            <style>
+                                #id_accreditation_proof {
+                                    padding-left: 2.5rem !important;
+                                    border-radius: 0.75rem !important;
+                                }
+                            </style>
                             {% if form.accreditation_proof.errors %}
                                 <div class="mt-1 text-sm text-red-600">
                                     {{ form.accreditation_proof.errors.0 }}
@@ -196,17 +238,5 @@
     </div>
 </div>
 
-<style>
-    #id_username, #id_email, #id_password1, #id_password2, #id_institution_name, #id_institution_website {
-        @apply block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-    }
-    
-    #id_accreditation_proof {
-        @apply block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-    }
-    
-    #id_username:focus, #id_email:focus, #id_password1:focus, #id_password2:focus, #id_institution_name:focus, #id_institution_website:focus, #id_accreditation_proof:focus {
-        @apply border-blue-500 ring-blue-500;
-    }
-</style>
+
 {% endblock %}

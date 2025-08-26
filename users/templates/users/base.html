@@ -60,6 +60,115 @@
         .status-error {
             background-color: #ef4444;
         }
+        
+        /* Form styling to ensure visibility and consistency */
+        input[type="text"], 
+        input[type="email"], 
+        input[type="password"], 
+        input[type="date"], 
+        input[type="number"], 
+        input[type="url"], 
+        input[type="tel"],
+        textarea, 
+        select {
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            color: #111827 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        input[type="text"]:focus, 
+        input[type="email"]:focus, 
+        input[type="password"]:focus, 
+        input[type="date"]:focus, 
+        input[type="number"]:focus, 
+        input[type="url"]:focus, 
+        input[type="tel"]:focus,
+        textarea:focus, 
+        select:focus {
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        input[type="text"]::placeholder, 
+        input[type="email"]::placeholder, 
+        input[type="password"]::placeholder, 
+        input[type="date"]::placeholder, 
+        input[type="number"]::placeholder, 
+        input[type="url"]::placeholder, 
+        input[type="tel"]::placeholder,
+        textarea::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        /* Django form field styling */
+        .form-control {
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            line-height: 1.25rem !important;
+            color: #111827 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .form-control:focus {
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        .form-control.is-invalid {
+            border-color: #ef4444 !important;
+        }
+        
+        .form-control.is-invalid:focus {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        
+        /* Error styling */
+        .errorlist {
+            color: #ef4444 !important;
+            font-size: 0.875rem !important;
+            margin-top: 0.25rem !important;
+            list-style: none !important;
+            padding: 0 !important;
+        }
+        
+        .errorlist li {
+            margin-bottom: 0.25rem !important;
+        }
+        
+        /* Checkbox and radio styling */
+        input[type="checkbox"], 
+        input[type="radio"] {
+            width: auto !important;
+            margin-right: 0.5rem !important;
+        }
+        
+        /* Textarea specific styling */
+        textarea {
+            resize: vertical !important;
+            min-height: 2.5rem !important;
+        }
+        
+        /* Select dropdown styling */
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-position: right 0.5rem center !important;
+            background-repeat: no-repeat !important;
+            background-size: 1.5em 1.5em !important;
+            padding-right: 2.5rem !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">

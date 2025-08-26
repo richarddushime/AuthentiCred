@@ -25,6 +25,12 @@
                             <i class="bi bi-person text-gray-400"></i>
                         </div>
                         {{ form.username }}
+                        <style>
+                            #id_username {
+                                padding-left: 2.5rem !important;
+                                border-radius: 0.75rem !important;
+                            }
+                        </style>
                         {% if form.username.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.username.errors.0 }}
@@ -42,6 +48,12 @@
                             <i class="bi bi-lock text-gray-400"></i>
                         </div>
                         {{ form.password }}
+                        <style>
+                            #id_password {
+                                padding-left: 2.5rem !important;
+                                border-radius: 0.75rem !important;
+                            }
+                        </style>
                         {% if form.password.errors %}
                             <div class="mt-1 text-sm text-red-600">
                                 {{ form.password.errors.0 }}
@@ -94,13 +106,5 @@
     </div>
 </div>
 
-<style>
-    #id_username, #id_password {
-        @apply block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-    }
-    
-    #id_username:focus, #id_password:focus {
-        @apply border-blue-500 ring-blue-500;
-    }
-</style>
+
 {% endblock %}

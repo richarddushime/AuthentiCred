@@ -3,169 +3,119 @@
 {% block title %}My Wallet{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Credential Wallet</h1>
-        <div>
-            <span class="badge bg-primary">{{ wallet_credentials.count }} Credentials</span>
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">My Credential Wallet</h1>
+        <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ wallet_credentials.count }} Credentials
+            </span>
         </div>
     </div>
 
     <!-- Wallet Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card border-primary h-100">
-                <div class="card-body text-center">
-                    <div class="mb-3">
-                        <i class="bi bi-shield-check" style="font-size: 2.5rem; color: #0d6efd;"></i>
-                    </div>
-                    <h5 class="card-title">Verified Credentials</h5>
-                    <p class="card-text">{{ wallet_credentials.verified.count }}</p>
-                </div>
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-lg border border-blue-200 p-6 text-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-shield-check text-blue-600 text-xl"></i>
             </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Verified Credentials</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ wallet_credentials.verified.count }}</p>
         </div>
         
-        <div class="col-md-4 mb-3">
-            <div class="card border-success h-100">
-                <div class="card-body text-center">
-                    <div class="mb-3">
-                        <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; color: #198754;"></i>
-                    </div>
-                    <h5 class="card-title">All Credentials</h5>
-                    <p class="card-text">{{ total_credentials }}</p>
-                </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-green-200 p-6 text-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-file-earmark-text text-green-600 text-xl"></i>
             </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">All Credentials</h3>
+            <p class="text-3xl font-bold text-green-600">{{ total_credentials }}</p>
         </div>
         
-        <div class="col-md-4 mb-3">
-            <div class="card border-warning h-100">
-                <div class="card-body text-center">
-                    <div class="mb-3">
-                        <i class="bi bi-archive" style="font-size: 2.5rem; color: #ffc107;"></i>
-                    </div>
-                    <h5 class="card-title">Archived</h5>
-                    <p class="card-text">{{ wallet.wallet_credentials.filter(is_archived=True).count }}</p>
-                </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-yellow-200 p-6 text-center">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-archive text-yellow-600 text-xl"></i>
             </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Archived</h3>
+            <p class="text-3xl font-bold text-yellow-600">{{ wallet.wallet_credentials.filter.is_archived.count }}</p>
         </div>
     </div>
 
     <!-- Credentials by Type -->
-    <div class="card mb-4">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">My Credentials</h5>
-            <a href="#" class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-plus-circle"></i> Add Credential
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-900">My Credentials</h2>
+            <a href="#" class="inline-flex items-center px-3 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                <i class="bi bi-plus-circle mr-1"></i> Add Credential
             </a>
         </div>
         
-        <div class="card-body">
+        <div class="p-6">
             {% if credential_types %}
-                <div class="accordion" id="credentialsAccordion">
+                <div class="space-y-6">
                     {% for cred_type, credentials in credential_types.items %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                    data-bs-target="#collapse{{ forloop.counter }}" 
-                                    aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                                {{ cred_type }} <span class="badge bg-secondary ms-2">{{ credentials|length }}</span>
-                            </button>
-                        </h2>
-                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse show" 
-                             aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#credentialsAccordion">
-                            <div class="accordion-body">
-                                <div class="row row-cols-1 row-cols-md-2 g-4">
-                                    {% for wc in credentials %}
-                                    <div class="col">
-                                        <div class="card h-100">
-                                            <div class="card-header d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <span class="badge bg-primary">{{ wc.credential.credential_type }}</span>
-                                                    {% if wc.credential.expiration_date %}
-                                                    <span class="badge bg-warning ms-1">Expires: {{ wc.credential.expiration_date|date:"Y-m-d" }}</span>
-                                                    {% endif %}
-                                                </div>
-                                                <div>
-                                                    <span class="badge bg-light text-dark">
-                                                        <i class="bi bi-calendar"></i> {{ wc.added_at|date:"M Y" }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <h6 class="card-title">{{ wc.credential.title }}</h6>
-                                                <p class="card-text">
-                                                    <small class="text-muted">
-                                                        Issued by: {{ wc.credential.issuer.username }}
-                                                    </small>
-                                                </p>
-                                                <p class="card-text">
-                                                    {{ wc.credential.description|truncatewords:15 }}
-                                                </p>
-                                            </div>
-                                            <div class="card-footer bg-white d-flex justify-content-end">
-                                                <a href="{% url 'credential_detail' wc.id %}" 
-                                                   class="btn btn-sm btn-outline-primary me-1">
-                                                    <i class="bi bi-eye"></i> View
-                                                </a>
-                                                <a href="{% url 'share_credential' wc.id %}" 
-                                                   class="btn btn-sm btn-outline-success me-1">
-                                                    <i class="bi bi-share"></i> Share
-                                                </a>
-                                                <a href="{% url 'archive_credential' wc.id %}" 
-                                                   class="btn btn-sm btn-outline-warning">
-                                                    <i class="bi bi-archive"></i> Archive
-                                                </a>
-                                            </div>
+                    <div class="border border-gray-200 rounded-lg">
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-medium text-gray-900">{{ cred_type }}</h3>
+                                <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                                    {{ credentials|length }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                {% for wc in credentials %}
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                                                {{ wc.credential.credential_type }}
+                                            </span>
+                                            {% if wc.credential.expiration_date %}
+                                            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
+                                                Expires: {{ wc.credential.expiration_date|date:"Y-m-d" }}
+                                            </span>
+                                            {% endif %}
                                         </div>
+                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium">
+                                            <i class="bi bi-calendar mr-1"></i> {{ wc.added_at|date:"M Y" }}
+                                        </span>
                                     </div>
-                                    {% endfor %}
+                                    <h4 class="font-medium text-gray-900 mb-2">{{ wc.credential.title }}</h4>
+                                    <p class="text-sm text-gray-600 mb-3">
+                                        Issued by: {{ wc.credential.issuer.username }}
+                                    </p>
+                                    <div class="flex space-x-2">
+                                        <a href="{% url 'credential_detail' wc.credential.id %}" 
+                                           class="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                                            <i class="bi bi-eye mr-1"></i> View
+                                        </a>
+                                        <a href="{% url 'share_credential' wc.id %}" 
+                                           class="inline-flex items-center px-3 py-1 border border-green-300 rounded-md text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 transition-colors">
+                                            <i class="bi bi-share mr-1"></i> Share
+                                        </a>
+                                    </div>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="text-center py-5">
-                    <i class="bi bi-wallet2" style="font-size: 4rem; color: #6c757d;"></i>
-                    <h4 class="mt-3">Your wallet is empty</h4>
-                    <p class="text-muted">You haven't added any credentials yet.</p>
-                    <a href="#" class="btn btn-primary mt-2">
-                        <i class="bi bi-plus-circle"></i> Add Your First Credential
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-wallet2 text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No credentials in your wallet</h3>
+                    <p class="text-gray-500 mb-6">Add credentials to your wallet to get started</p>
+                    <a href="#" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                        Add Credential
                     </a>
                 </div>
             {% endif %}
         </div>
     </div>
-    
-    <!-- Archived Credentials -->
-    {% with archived=wallet.wallet_credentials.filter(is_archived=True) %}
-    {% if archived.exists %}
-    <div class="card">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Archived Credentials</h5>
-            <span class="badge bg-warning">{{ archived.count }}</span>
-        </div>
-        <div class="card-body">
-            <div class="list-group">
-                {% for wc in archived %}
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-1">{{ wc.credential.credential_type }}: {{ wc.credential.title }}</h6>
-                        <small class="text-muted">Issued by: {{ wc.credential.issuer.username }}</small>
-                    </div>
-                    <div>
-                        <a href="{% url 'unarchive_credential' wc.id %}" 
-                           class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-box-arrow-up"></i> Restore
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {% endwith %}
 </div>
 {% endblock %}

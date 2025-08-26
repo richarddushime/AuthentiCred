@@ -2,106 +2,165 @@
 {% block title %}My Profile{% endblock %}
 
 {% block content %}
-<div class="profile-header text-center">
-    <div class="container">
-        <div class="d-flex justify-content-center mb-3">
-            <div class="bg-white rounded-circle p-1" style="width: 100px; height: 100px;">
-                <i class="bi bi-person-circle" style="font-size: 80px; color: #6f42c1;"></i>
+<div class="max-w-7xl mx-auto">
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+        <div class="p-8 text-center">
+            <div class="flex justify-center mb-6">
+                <div class="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                    <i class="bi bi-person-circle text-white text-4xl"></i>
+                </div>
             </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ user.username }}</h1>
+            <div class="flex items-center justify-center space-x-4 mb-4">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {{ user.get_user_type_display }}
+                </span>
+                {% if user.did %}
+                <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium did-badge">
+                    <i class="bi bi-shield-lock mr-1"></i> DID: {{ user.did|truncatechars:15 }}
+                </span>
+                {% endif %}
+            </div>
+            <p class="text-gray-600">Member since {{ user.date_joined|date:"F Y" }}</p>
         </div>
-        <h1>{{ user.username }}</h1>
-        <p class="lead">{{ user.get_user_type_display }}</p>
-        {% if user.did %}
-        <div class="mt-2">
-            <span class="did-badge">
-                <i class="bi bi-shield-lock me-1"></i> {{ user.did }}
-            </span>
-        </div>
-        {% endif %}
     </div>
-</div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Profile Information</h5>
+    <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Profile Information -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Profile Information</h2>
                 </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <strong>Username:</strong> {{ user.username }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Email:</strong> {{ user.email|default:"Not set" }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}
-                        </li>
-                        {% if user.is_issuer and profile %}
-                        <li class="list-group-item">
-                            <strong>Institution:</strong> {{ profile.name }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Trust Status:</strong> 
-                            {% if is_trusted is True %}
-                                <span class="text-success">
-                                    <span class="blockchain-status status-verified"></span> Verified Issuer
-                                </span>
-                            {% elif is_trusted is False %}
-                                <span class="text-warning">
-                                    <span class="blockchain-status status-pending"></span> Pending Verification
-                                </span>
-                            {% else %}
-                                <span class="text-danger">
-                                    <i class="bi bi-exclamation-triangle me-1"></i> Verification Error
-                                </span>
-                                <div class="mt-2 small text-muted">
-                                    Blockchain check failed: {{ is_trusted|default:"Unknown error" }}
+                <div class="p-6 space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="bi bi-person text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-700">Username</p>
+                                <p class="text-gray-900">{{ user.username }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="bi bi-envelope text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-700">Email</p>
+                                <p class="text-gray-900">{{ user.email|default:"Not set" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="bi bi-calendar text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-700">Joined</p>
+                                <p class="text-gray-900">{{ user.date_joined|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_issuer and profile %}
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Institution Details</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="bi bi-building text-orange-600"></i>
                                 </div>
-                            {% endif %}
-                        </li>
-                        {% endif %}
-                    </ul>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Institution</p>
+                                    <p class="text-gray-900">{{ profile.name }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="bi bi-shield-check text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Trust Status</p>
+                                    {% if is_trusted is True %}
+                                        <div class="flex items-center text-green-600">
+                                            <i class="bi bi-check-circle-fill mr-2"></i>
+                                            <span class="text-sm font-medium">Verified Issuer</span>
+                                        </div>
+                                    {% elif is_trusted is False %}
+                                        <div class="flex items-center text-yellow-600">
+                                            <i class="bi bi-clock-fill mr-2"></i>
+                                            <span class="text-sm font-medium">Pending Verification</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-center text-red-600">
+                                            <i class="bi bi-exclamation-triangle-fill mr-2"></i>
+                                            <span class="text-sm font-medium">Verification Error</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ is_trusted|default:"Unknown error" }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-8">
+
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
             {% if user.is_issuer and profile %}
-            <div class="card mb-4">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Institution Profile</h5>
+            <!-- Institution Profile -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Institution Profile</h2>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6>Institution Name</h6>
-                        <p>{{ profile.name }}</p>
+                <div class="p-6 space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">Institution Name</h3>
+                            <p class="text-gray-900 font-medium">{{ profile.name }}</p>
+                        </div>
+                        
+                        {% if profile.website %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">Website</h3>
+                            <a href="{{ profile.website }}" target="_blank" 
+                               class="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center">
+                                <i class="bi bi-box-arrow-up-right mr-1"></i>
+                                {{ profile.website }}
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     {% if profile.description %}
-                    <div class="mb-3">
-                        <h6>Description</h6>
-                        <p>{{ profile.description }}</p>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Description</h3>
+                        <p class="text-gray-900">{{ profile.description }}</p>
                     </div>
                     {% endif %}
                     
-                    {% if profile.website %}
-                    <div class="mb-3">
-                        <h6>Website</h6>
-                        <p><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a></p>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="mb-3">
-                        <h6>Accreditation Proof</h6>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Accreditation Proof</h3>
                         {% if profile.accreditation_proof %}
-                            <a href="{{ profile.accreditation_proof.url }}" target="_blank">
+                            <a href="{{ profile.accreditation_proof.url }}" target="_blank" 
+                               class="inline-flex items-center px-4 py-2 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                                <i class="bi bi-file-earmark-text mr-2"></i>
                                 View Document
                             </a>
                         {% else %}
-                            <p>No document uploaded</p>
+                            <div class="flex items-center text-gray-500">
+                                <i class="bi bi-file-earmark-x mr-2"></i>
+                                <span class="text-sm">No document uploaded</span>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -109,37 +168,86 @@
             {% endif %}
             
             {% if user.is_issuer and transactions %}
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Recent Blockchain Transactions</h5>
+            <!-- Blockchain Transactions -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Recent Blockchain Transactions</h2>
                 </div>
-                <div class="card-body">
-                    <div class="list-group">
+                <div class="p-6">
+                    {% if transactions %}
+                    <div class="space-y-4">
                         {% for tx in transactions %}
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">{{ tx.get_transaction_type_display }}</h6>
-                                <small class="text-muted">{{ tx.created_at|timesince }} ago</small>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="bi bi-arrow-repeat text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-gray-900">{{ tx.get_transaction_type_display }}</h3>
+                                        <p class="text-sm text-gray-500">{{ tx.created_at|timesince }} ago</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    {% if tx.status == 'CONFIRMED' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="bi bi-check-circle-fill mr-1"></i> Confirmed
+                                        </span>
+                                    {% elif tx.status == 'PENDING' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="bi bi-clock-fill mr-1"></i> Pending
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="bi bi-x-circle-fill mr-1"></i> Failed
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <p class="mb-1 small text-muted">
-                                TX Hash: <code>{{ tx.tx_hash|truncatechars:20 }}</code>
-                            </p>
-                            <small>
-                                Status: 
-                                {% if tx.status == 'CONFIRMED' %}
-                                    <span class="text-success">Confirmed</span>
-                                {% elif tx.status == 'PENDING' %}
-                                    <span class="text-warning">Pending</span>
-                                {% else %}
-                                    <span class="text-danger">Failed</span>
-                                {% endif %}
-                            </small>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-600 mb-1">Transaction Hash</p>
+                                <code class="text-sm text-gray-900 break-all">{{ tx.tx_hash }}</code>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="bi bi-arrow-repeat text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No transactions yet</h3>
+                        <p class="text-gray-500">Blockchain transactions will appear here when you issue credentials</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
+
+            <!-- Account Actions -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Account Actions</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                            <i class="bi bi-pencil mr-2"></i> Edit Profile
+                        </a>
+                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                            <i class="bi bi-key mr-2"></i> Change Password
+                        </a>
+                        {% if user.is_issuer %}
+                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                            <i class="bi bi-building mr-2"></i> Institution Settings
+                        </a>
+                        {% endif %}
+                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-red-300 rounded-lg text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 transition-colors">
+                            <i class="bi bi-trash mr-2"></i> Delete Account
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
