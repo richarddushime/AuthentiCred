@@ -172,136 +172,16 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{% url 'home' %}" class="flex items-center space-x-2 text-xl font-bold text-gray-900">
-                        <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="bi bi-shield-lock text-white text-sm"></i>
-                        </div>
-                        <span>AuthentiCred</span>
-                    </a>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Home
-                    </a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Dashboard
-                    </a>
-                    <a href="{% url 'profile' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                        Profile
-                    </a>
-                    {% endif %}
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    {% if user.is_authenticated %}
-                    <div class="flex items-center space-x-2 text-sm text-gray-700">
-                        <i class="bi bi-person-circle text-lg"></i>
-                        <span>{{ user.username }}</span>
-                    </div>
-                    <a href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        <i class="bi bi-box-arrow-right mr-1"></i> Logout
-                    </a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        <i class="bi bi-box-arrow-in-right mr-1"></i> Login
-                    </a>
-                    <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        <i class="bi bi-person-plus mr-1"></i> Register
-                    </a>
-                    {% endif %}
-                </div>
-                
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button type="button" class="text-gray-700 hover:text-blue-600 p-2 rounded-md" id="mobile-menu-button">
-                        <i class="bi bi-list text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Mobile menu -->
-            <div class="md:hidden hidden" id="mobile-menu">
-                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
-                        Home
-                    </a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
-                        Dashboard
-                    </a>
-                    <a href="{% url 'profile' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
-                        Profile
-                    </a>
-                    <div class="border-t border-gray-200 pt-4">
-                        <div class="flex items-center px-3 py-2 text-sm text-gray-700">
-                            <i class="bi bi-person-circle mr-2"></i>
-                            {{ user.username }}
-                        </div>
-                        <a href="{% url 'logout' %}" class="text-red-600 hover:text-red-700 block px-3 py-2 rounded-md text-base font-medium">
-                            <i class="bi bi-box-arrow-right mr-1"></i> Logout
-                        </a>
-                    </div>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
-                        <i class="bi bi-box-arrow-in-right mr-1"></i> Login
-                    </a>
-                    <a href="{% url 'register' %}" class="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium">
-                        <i class="bi bi-person-plus mr-1"></i> Register
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </nav>
+    {% include 'users/components/navbar.html' %}
 
-    <!-- Messages -->
-    {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        {% for message in messages %}
-        <div class="mb-4 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-700{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-400 text-yellow-700{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    {% if message.tags == 'error' %}
-                        <i class="bi bi-exclamation-triangle-fill mr-2"></i>
-                    {% elif message.tags == 'warning' %}
-                        <i class="bi bi-exclamation-circle-fill mr-2"></i>
-                    {% elif message.tags == 'success' %}
-                        <i class="bi bi-check-circle-fill mr-2"></i>
-                    {% else %}
-                        <i class="bi bi-info-circle-fill mr-2"></i>
-                    {% endif %}
-                    {{ message }}
-                </div>
-                <button type="button" class="text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
-                    <i class="bi bi-x text-lg"></i>
-                </button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+    {% include 'users/components/messages.html' %}
 
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center">
-                <p class="text-gray-600 mb-2">AuthentiCred - Blockchain-Powered Academic Credential Verification</p>
-                <p class="text-gray-400 text-sm">© {% now "Y" %} All rights reserved</p>
-            </div>
-        </div>
-    </footer>
+    {% include 'users/components/footer.html' %}
 
     <script>
         // Mobile menu toggle

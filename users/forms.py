@@ -74,3 +74,101 @@ class CustomAuthenticationForm(AuthenticationForm):
         label='Password',
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'})
     )
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].help_text = 'Enter a valid email address'
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        label='Current Password',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'})
+    )
+    new_password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+        help_text='Your password must contain at least 8 characters.'
+    )
+    new_password2 = forms.CharField(
+        label='Confirm New Password',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'})
+    )
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+    
+    def clean_current_password(self):
+        current_password = self.cleaned_data.get('current_password')
+        if not self.user.check_password(current_password):
+            raise forms.ValidationError('Current password is incorrect.')
+        return current_password
+    
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('Passwords do not match.')
+        return password2
+    
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        if commit:
+            self.user.save()
+        return self.user
+
+class DeleteAccountForm(forms.Form):
+    confirm_delete = forms.BooleanField(
+        label='I understand that this action cannot be undone',
+        required=True
+    )
+    password = forms.CharField(
+        label='Enter your password to confirm',
+        widget=forms.PasswordInput
+    )
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+    
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not self.user.check_password(password):
+            raise forms.ValidationError('Password is incorrect.')
+        return password
+
+class InstitutionSettingsForm(forms.ModelForm):
+    class Meta:
+        model = InstitutionProfile
+        fields = ['name', 'website', 'description', 'accreditation_proof']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        label='Your Name',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter your full name'})
+    )
+    email = forms.EmailField(
+        label='Email Address',
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email address'})
+    )
+    subject = forms.CharField(
+        max_length=200,
+        label='Subject',
+        widget=forms.TextInput(attrs={'placeholder': 'What is this about?'})
+    )
+    message = forms.CharField(
+        label='Message',
+        widget=forms.Textarea(attrs={
+            'rows': 6,
+            'placeholder': 'Tell us more about your inquiry...'
+        })
+    )

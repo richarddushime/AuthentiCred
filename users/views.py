@@ -6,7 +6,7 @@ from django.contrib import messages
 from blockchain.utils.crypto import generate_key_pair
 from wallets.models import Wallet
 from blockchain.tasks import process_did_registration_confirmation
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, EditProfileForm, ChangePasswordForm, DeleteAccountForm, InstitutionSettingsForm, ContactForm
 from .models import InstitutionProfile
 from blockchain.services import BlockchainService
 from blockchain.models import DIDRegistration, OnChainTransaction
@@ -141,3 +141,83 @@ def dashboard_view(request):
         ]
     
     return render(request, 'users/dashboard.html', context)
+
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, 'users/edit_profile.html', {'form': form})
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Password changed successfully!')
+            return redirect('profile')
+    else:
+        form = ChangePasswordForm(request.user)
+    
+    return render(request, 'users/change_password.html', {'form': form})
+
+@login_required
+def delete_account_view(request):
+    if request.method == 'POST':
+        form = DeleteAccountForm(request.user, request.POST)
+        if form.is_valid():
+            # Delete user account
+            user = request.user
+            logout(request)
+            user.delete()
+            messages.success(request, 'Your account has been deleted successfully.')
+            return redirect('home')
+    else:
+        form = DeleteAccountForm(request.user)
+    
+    return render(request, 'users/delete_account.html', {'form': form})
+
+@login_required
+def institution_settings_view(request):
+    if not request.user.is_issuer():
+        messages.error(request, "Only institutions can access institution settings")
+        return redirect('dashboard')
+    
+    try:
+        profile = InstitutionProfile.objects.get(user=request.user)
+    except InstitutionProfile.DoesNotExist:
+        profile = InstitutionProfile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        form = InstitutionSettingsForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Institution settings updated successfully!')
+            return redirect('institution_settings')
+    else:
+        form = InstitutionSettingsForm(instance=profile)
+    
+    return render(request, 'users/institution_settings.html', {'form': form})
+
+def about_view(request):
+    return render(request, 'users/about.html')
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Here you would typically send an email or save to database
+            # For now, we'll just show a success message
+            messages.success(request, 'Thank you for your message! We will get back to you soon.')
+            return redirect('contact')
+    else:
+        form = ContactForm()
+    
+    return render(request, 'users/contact.html', {'form': form})

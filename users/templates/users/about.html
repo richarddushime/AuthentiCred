@@ -1,0 +1,226 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}About - AuthentiCred{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg mb-8">
+        <div class="px-8 py-12 text-center text-white">
+            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="bi bi-shield-lock text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-4">About AuthentiCred</h1>
+            <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                Revolutionizing credential verification through blockchain technology and decentralized identity management.
+            </p>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+        <div class="px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
+                <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                    To create a secure, transparent, and efficient ecosystem for digital credential verification, 
+                    empowering institutions and individuals with trusted, tamper-proof credentials.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-shield-check text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Security</h3>
+                    <p class="text-gray-600">
+                        Blockchain-based verification ensures credentials are tamper-proof and permanently verifiable.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-globe text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Transparency</h3>
+                    <p class="text-gray-600">
+                        Open and transparent verification process that builds trust between all parties.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-lightning text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Efficiency</h3>
+                    <p class="text-gray-600">
+                        Instant verification reduces administrative overhead and speeds up credential validation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+        <div class="px-8 py-8">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">How It Works</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                        1
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Issue</h3>
+                    <p class="text-gray-600 text-sm">
+                        Institutions create and issue digital credentials to students or professionals.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                        2
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Store</h3>
+                    <p class="text-gray-600 text-sm">
+                        Credentials are securely stored in users' digital wallets with blockchain anchoring.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                        3
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Share</h3>
+                    <p class="text-gray-600 text-sm">
+                        Users can share credentials via secure links or QR codes with verifiers.
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                        4
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Verify</h3>
+                    <p class="text-gray-600 text-sm">
+                        Verifiers can instantly validate credentials against the blockchain.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+        <div class="px-8 py-8">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Key Features</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Blockchain Verification</h3>
+                            <p class="text-gray-600">All credentials are anchored on the blockchain for permanent verification.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Decentralized Identity</h3>
+                            <p class="text-gray-600">Users control their own digital identity and credentials.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Instant Verification</h3>
+                            <p class="text-gray-600">Real-time credential verification with immediate results.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">QR Code Sharing</h3>
+                            <p class="text-gray-600">Easy credential sharing through QR codes and secure links.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">PDF Export</h3>
+                            <p class="text-gray-600">Download credentials as professional PDF documents.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="bi bi-check-lg text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Multi-Role Support</h3>
+                            <p class="text-gray-600">Support for institutions, students, and verifiers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technology Stack Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+        <div class="px-8 py-8">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Technology Stack</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <i class="bi bi-code-slash text-3xl text-blue-600 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Django</h3>
+                    <p class="text-gray-600 text-sm">Python web framework for robust backend development</p>
+                </div>
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <i class="bi bi-link-45deg text-3xl text-green-600 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Blockchain</h3>
+                    <p class="text-gray-600 text-sm">Ethereum-based smart contracts for credential anchoring</p>
+                </div>
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <i class="bi bi-shield-lock text-3xl text-purple-600 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">DID</h3>
+                    <p class="text-gray-600 text-sm">Decentralized Identifiers for user identity management</p>
+                </div>
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <i class="bi bi-phone text-3xl text-orange-600 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">QR Codes</h3>
+                    <p class="text-gray-600 text-sm">Quick credential sharing and verification</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-center text-white p-8">
+        <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+        <p class="text-xl text-blue-100 mb-6">
+            Join the future of credential verification today.
+        </p>
+        <div class="space-x-4">
+            <a href="{% url 'register' %}" class="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                <i class="bi bi-person-plus mr-2"></i>
+                Get Started
+            </a>
+            <a href="{% url 'contact' %}" class="inline-flex items-center px-6 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                <i class="bi bi-envelope mr-2"></i>
+                Contact Us
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

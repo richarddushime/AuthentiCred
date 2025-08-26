@@ -1,0 +1,126 @@
+<!-- Footer -->
+<footer class="bg-white border-t border-gray-200 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Company Info -->
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="bi bi-shield-lock text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">AuthentiCred</span>
+                </div>
+                <p class="text-gray-600 mb-4 max-w-md">
+                    Revolutionizing credential verification through blockchain technology and decentralized identity management. 
+                    Secure, transparent, and efficient digital credentials for the modern world.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-envelope text-xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'about' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            About
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contact' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Contact
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'profile' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Profile
+                        </a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'register' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Support -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Support</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'contact' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Contact Support
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Documentation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            API Reference
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            Status Page
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="border-t border-gray-200 mt-8 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 text-sm mb-4 md:mb-0">
+                    © 2024 AuthentiCred. All rights reserved.
+                </div>
+                <div class="flex space-x-6 text-sm">
+                    <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        Privacy Policy
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        Terms of Service
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        Cookie Policy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
