@@ -1,0 +1,260 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - AuthentiCred{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg mb-8">
+        <div class="px-8 py-12 text-center text-white">
+            <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="bi bi-envelope text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-4">Contact Us</h1>
+            <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                Have questions about AuthentiCred? We're here to help you get started with blockchain-based credential verification.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+            <div class="px-8 py-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Name Field -->
+                    <div>
+                        <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.name.label }}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="bi bi-exclamation-triangle-fill text-red-600 mr-2"></i>
+                                    <span class="text-sm text-red-700">{{ form.name.errors }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="bi bi-exclamation-triangle-fill text-red-600 mr-2"></i>
+                                    <span class="text-sm text-red-700">{{ form.email.errors }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Subject Field -->
+                    <div>
+                        <label for="{{ form.subject.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.subject.label }}
+                        </label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="bi bi-exclamation-triangle-fill text-red-600 mr-2"></i>
+                                    <span class="text-sm text-red-700">{{ form.subject.errors }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Message Field -->
+                    <div>
+                        <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.message.label }}
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="bi bi-exclamation-triangle-fill text-red-600 mr-2"></i>
+                                    <span class="text-sm text-red-700">{{ form.message.errors }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button type="submit" 
+                                class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            <i class="bi bi-send mr-2"></i>
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="space-y-8">
+            <!-- General Information -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-8 py-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-envelope text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Email Support</h3>
+                                <p class="text-gray-600">support@authenticred.com</p>
+                                <p class="text-sm text-gray-500">We typically respond within 24 hours</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-clock text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Business Hours</h3>
+                                <p class="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM EST</p>
+                                <p class="text-sm text-gray-500">Weekend support available for urgent issues</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-geo-alt text-purple-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Location</h3>
+                                <p class="text-gray-600">Global - Remote First</p>
+                                <p class="text-sm text-gray-500">Serving institutions worldwide</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-8 py-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="border-b border-gray-200 pb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">How does AuthentiCred work?</h3>
+                            <p class="text-gray-600 text-sm">
+                                AuthentiCred uses blockchain technology to create tamper-proof digital credentials. 
+                                Institutions issue credentials that are anchored on the blockchain, making them permanently verifiable.
+                            </p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Is AuthentiCred secure?</h3>
+                            <p class="text-gray-600 text-sm">
+                                Yes, AuthentiCred uses industry-standard encryption and blockchain technology to ensure 
+                                the highest level of security for all credentials and user data.
+                            </p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">How much does it cost?</h3>
+                            <p class="text-gray-600 text-sm">
+                                AuthentiCred offers flexible pricing plans for institutions. Contact us for a custom quote 
+                                based on your specific needs and volume.
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I integrate with existing systems?</h3>
+                            <p class="text-gray-600 text-sm">
+                                Yes, AuthentiCred provides APIs and integration options to work with your existing 
+                                student information systems and credential management platforms.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Categories -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                <div class="px-8 py-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Support Categories</h2>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <a href="#" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-gear text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Technical Support</h3>
+                                <p class="text-sm text-gray-600">Help with setup, integration, and technical issues</p>
+                            </div>
+                        </a>
+                        
+                        <a href="#" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-calculator text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Pricing & Billing</h3>
+                                <p class="text-sm text-gray-600">Questions about plans, pricing, and billing</p>
+                            </div>
+                        </a>
+                        
+                        <a href="#" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-shield-check text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Security & Compliance</h3>
+                                <p class="text-sm text-gray-600">Security features and compliance requirements</p>
+                            </div>
+                        </a>
+                        
+                        <a href="#" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="bi bi-lightbulb text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Feature Requests</h3>
+                                <p class="text-sm text-gray-600">Suggest new features or improvements</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-center text-white p-8">
+        <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+        <p class="text-xl text-blue-100 mb-6">
+            Join thousands of institutions already using AuthentiCred for secure credential verification.
+        </p>
+        <div class="space-x-4">
+            <a href="{% url 'register' %}" class="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                <i class="bi bi-person-plus mr-2"></i>
+                Start Free Trial
+            </a>
+            <a href="{% url 'about' %}" class="inline-flex items-center px-6 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                <i class="bi bi-info-circle mr-2"></i>
+                Learn More
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

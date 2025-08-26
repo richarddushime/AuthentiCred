@@ -231,18 +231,18 @@
                 </div>
                 <div class="p-6">
                     <div class="grid md:grid-cols-2 gap-4">
-                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <a href="{% url 'edit_profile' %}" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                             <i class="bi bi-pencil mr-2"></i> Edit Profile
                         </a>
-                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <a href="{% url 'change_password' %}" class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                             <i class="bi bi-key mr-2"></i> Change Password
                         </a>
                         {% if user.is_issuer %}
-                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                        <a href="{% url 'institution_settings' %}" class="inline-flex items-center justify-center px-4 py-3 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
                             <i class="bi bi-building mr-2"></i> Institution Settings
                         </a>
                         {% endif %}
-                        <a href="#" class="inline-flex items-center justify-center px-4 py-3 border border-red-300 rounded-lg text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 transition-colors">
+                        <a href="{% url 'delete_account' %}" class="inline-flex items-center justify-center px-4 py-3 border border-red-300 rounded-lg text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 transition-colors">
                             <i class="bi bi-trash mr-2"></i> Delete Account
                         </a>
                     </div>
