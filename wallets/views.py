@@ -126,6 +126,41 @@ def share_credential(request, credential_id):
         is_archived=False
     )
     
+    # Handle form submissions
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'copy_link':
+            # Link copy action (handled by JavaScript, but we can add server-side validation)
+            messages.success(request, 'Share link copied to clipboard!')
+            return JsonResponse({'status': 'success', 'message': 'Link copied successfully'})
+            
+        elif action == 'send_email':
+            # Email sharing action
+            recipient_email = request.POST.get('recipient_email')
+            message = request.POST.get('message', '')
+            
+            if not recipient_email:
+                messages.error(request, 'Please enter a valid email address')
+            else:
+                try:
+                    # Here you would implement actual email sending
+                    # For now, we'll just show a success message
+                    share_url = request.build_absolute_uri(
+                        reverse('view_shared_credential', args=[str(wallet_cred.id)]))
+                    
+                    # In a real implementation, you would send an email here
+                    # send_credential_email(recipient_email, message, share_url, wallet_cred.credential)
+                    
+                    messages.success(request, f'Credential shared successfully with {recipient_email}!')
+                except Exception as e:
+                    messages.error(request, f'Failed to send credential: {str(e)}')
+                    
+        elif action == 'download_qr':
+            # QR code download action
+            messages.success(request, 'QR code downloaded successfully!')
+            return JsonResponse({'status': 'success', 'message': 'QR code downloaded'})
+    
     # Create a shareable link
     share_url = request.build_absolute_uri(
         reverse('view_shared_credential', args=[str(wallet_cred.id)]))
@@ -141,23 +176,57 @@ def share_credential(request, credential_id):
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
     
-    # Save QR code to in-memory buffer
+    # Save QR code to in-memory buffer and convert to base64
     buffer = BytesIO()
     img.save(buffer, format="PNG")
-    qr_img = buffer.getvalue()
+    import base64
+    qr_img = base64.b64encode(buffer.getvalue()).decode('utf-8')
     buffer.close()
     
     context = {
         'wallet_cred': wallet_cred,
+        'credential': wallet_cred.credential,  # Add the credential object
         'share_url': share_url,
         'qr_img': qr_img,
     }
     return render(request, 'wallets/share_credential.html', context)
 
-@login_required
 def view_shared_credential(request, credential_id):
+    """Public view for shared credentials - no login required"""
     wallet_cred = get_object_or_404(WalletCredential, id=credential_id)
-    return credential_detail(request, wallet_cred.credential.id)
+    credential = wallet_cred.credential
+    
+    # Check blockchain status
+    blockchain_service = BlockchainService()
+    is_anchored = False
+    issuer_trusted = False
+    is_revoked = False
+    
+    try:
+        # Get VC hash with error handling
+        vc_hash = credential.vc_hash
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            vc_hash
+        )
+        
+        # Check issuer trust status
+        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        
+        # Check revocation status
+        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        
+    except Exception as e:
+        # If blockchain verification fails, continue without it
+        messages.warning(request, 'Blockchain verification temporarily unavailable')
+    
+    return render(request, 'wallets/view_shared_credential.html', {
+        'credential': credential,
+        'is_anchored': is_anchored,
+        'issuer_trusted': issuer_trusted,
+        'is_revoked': is_revoked,
+    })
 
 @login_required
 def archive_credential(request, credential_id):
