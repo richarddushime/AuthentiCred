@@ -359,8 +359,21 @@ def add_credential(request):
         credential_hash = request.POST.get('credential_hash')
         if credential_hash:
             try:
-                # Try to find the credential
-                credential = Credential.objects.get(vc_hash=credential_hash)
+                # Try to find the credential by computing hash for each credential
+                credential = None
+                all_credentials = Credential.objects.all()
+                for cred in all_credentials:
+                    try:
+                        if cred.vc_hash == credential_hash:
+                            credential = cred
+                            break
+                    except (ValueError, AttributeError):
+                        # Skip credentials with invalid JSON data
+                        continue
+                
+                if not credential:
+                    messages.error(request, 'Credential not found with the provided hash')
+                    return render(request, 'wallets/add_credential.html')
                 wallet, created = Wallet.objects.get_or_create(user=request.user)
                 
                 # Check if already in wallet

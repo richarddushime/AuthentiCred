@@ -36,7 +36,6 @@ class CredentialVerificationForm(forms.Form):
             raise forms.ValidationError("Invalid hash format. Must be hexadecimal.")
         return hash
 
-@login_required
 def verify_credential(request):
     """Public credential verification view"""
     if request.method == 'POST':
@@ -44,13 +43,28 @@ def verify_credential(request):
         if form.is_valid():
             vc_hash = form.cleaned_data['credential_hash']
             
+            # Try to find credential in database by computing hash for each credential
+            credential = None
             try:
-                # Try to find credential in database
-                credential = Credential.objects.get(vc_hash=vc_hash)
-                return show_verification_result(request, credential)
+                # Get all credentials and check their computed hashes
+                all_credentials = Credential.objects.all()
+                for cred in all_credentials:
+                    try:
+                        if cred.vc_hash == vc_hash:
+                            credential = cred
+                            break
+                    except (ValueError, AttributeError):
+                        # Skip credentials with invalid JSON data
+                        continue
                 
-            except Credential.DoesNotExist:
-                # Credential not in database - attempt external verification
+                if credential:
+                    return show_verification_result(request, credential)
+                else:
+                    # Credential not in database - attempt external verification
+                    return verify_external_credential(request, vc_hash)
+                    
+            except Exception as e:
+                # If there's an error, fall back to external verification
                 return verify_external_credential(request, vc_hash)
                 
     else:
