@@ -406,3 +406,103 @@ def credential_detail(request, credential_id):
         'issuer_trusted': issuer_trusted,
         'is_revoked': is_revoked,
     })
+
+@login_required
+def edit_credential(request, credential_id):
+    """Edit a credential - only allowed for draft credentials"""
+    credential = get_object_or_404(Credential, id=credential_id, issuer=request.user)
+    
+    # Only allow editing of draft credentials
+    if credential.status != 'DRAFT':
+        messages.error(request, "Only draft credentials can be edited")
+        return redirect('credential_detail', credential_id=credential.id)
+    
+    if request.method == 'POST':
+        form = CredentialIssueForm(request.POST, issuer=request.user, instance=credential)
+        if form.is_valid():
+            # Update credential fields
+            credential.title = form.cleaned_data['title']
+            credential.description = form.cleaned_data['description']
+            credential.expiration_date = form.cleaned_data['expiration_date']
+            
+            # Update credential subject data if schema fields changed
+            if credential.schema and credential.schema.fields:
+                subject_data = {"id": credential.holder.did}
+                for field_name in credential.schema.fields.keys():
+                    subject_data[field_name] = form.cleaned_data.get(field_name, "")
+                
+                # Update the VC JSON
+                credential.vc_json['credentialSubject'] = subject_data
+                
+                # Re-sign the credential with updated data
+                try:
+                    wallet = request.user.wallet
+                    private_key = wallet.private_key
+                    
+                    # Handle different private key formats
+                    if len(private_key) == 44:  # Base64 encoded
+                        import base64
+                        private_key_bytes = base64.b64decode(private_key)
+                        private_key_hex = private_key_bytes.hex()
+                    else:
+                        private_key_hex = re.sub(r'[^0-9a-fA-F]', '', private_key)
+                        if private_key_hex.startswith('0x'):
+                            private_key_hex = private_key_hex[2:]
+                    
+                    if len(private_key_hex) != 64:
+                        from blockchain.utils.crypto import generate_key_pair
+                        new_private_key_hex, new_public_key_hex = generate_key_pair()
+                        wallet.private_key = new_private_key_hex
+                        wallet.save()
+                        request.user.public_key = new_public_key_hex
+                        request.user.save()
+                        private_key_hex = new_private_key_hex
+                    
+                    # Create new VC without proof for signing
+                    vc_without_proof = {k: v for k, v in credential.vc_json.items() if k != 'proof'}
+                    vc_json_str = json.dumps(vc_without_proof, separators=(',', ':'), sort_keys=True)
+                    vc_bytes = vc_json_str.encode('utf-8')
+                    
+                    # Sign the updated credential
+                    from blockchain.utils.crypto import sign_data
+                    signature_hex = sign_data(vc_bytes, private_key_hex)
+                    
+                    # Update the proof
+                    jws = f"v={signature_hex}"
+                    credential.vc_json['proof']['jws'] = jws
+                    credential.vc_json['proof']['created'] = datetime.utcnow().isoformat() + "Z"
+                    
+                except Exception as e:
+                    messages.error(request, f"Failed to re-sign credential: {str(e)}")
+                    return render(request, 'credentials/edit_credential.html', {
+                        'form': form,
+                        'credential': credential
+                    })
+            
+            credential.save()
+            messages.success(request, 'Credential updated successfully!')
+            return redirect('credential_detail', credential_id=credential.id)
+        else:
+            messages.error(request, 'Please correct the errors below')
+    else:
+        # Pre-populate form with existing data
+        initial_data = {
+            'title': credential.title,
+            'description': credential.description,
+            'expiration_date': credential.expiration_date,
+            'holder_email': credential.holder.email,
+        }
+        
+        # Add schema field values
+        if credential.schema and credential.schema.fields:
+            subject_data = credential.vc_json.get('credentialSubject', {})
+            for field_name in credential.schema.fields.keys():
+                if field_name in subject_data:
+                    initial_data[field_name] = subject_data[field_name]
+        
+        form = CredentialIssueForm(initial=initial_data, issuer=request.user)
+    
+    return render(request, 'credentials/edit_credential.html', {
+        'form': form,
+        'credential': credential
+    })
