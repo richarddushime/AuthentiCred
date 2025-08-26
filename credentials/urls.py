@@ -10,6 +10,7 @@ urlpatterns = [
     path('issued/', views.issued_credentials, name='issued_credentials'),
     path('credential/<uuid:credential_id>/', views.credential_detail, name='credential_detail'),
     path('credential/<uuid:credential_id>/edit/', views.edit_credential, name='edit_credential'),
+    path('credential/<uuid:credential_id>/issue/', views.issue_draft_credential, name='issue_draft_credential'),
     path('credential/<uuid:credential_id>/revoke/', views.revoke_credential, name='revoke_credential'),
     path('verify/', views.verify_credential, name='verify_credential'),
 ]

@@ -277,26 +277,34 @@ def issue_credential(request, schema_id=None):
                 schema=schema,
             )
             
-            # Issue the credential
-            if credential.issue():
-                # Add to holder's wallet
-                WalletCredential.objects.create(
-                    wallet=holder.wallet,
-                    credential=credential
-                )
-                
-                # Anchor to blockchain
-                try:
-                    blockchain_service = BlockchainService()
-                    tx_hash = blockchain_service.anchor_credential(credential.vc_hash)
-                    messages.info(request, f"Credential anchored to blockchain. Transaction: {tx_hash[:10]}...")
-                except Exception as e:
-                    messages.warning(request, f"Credential issued but blockchain anchoring failed: {str(e)}")
-                
-                messages.success(request, 'Credential issued successfully!')
+            # Check if user wants to save as draft or issue immediately
+            action = request.POST.get('action', 'issue')
+            
+            if action == 'draft':
+                # Save as draft
+                messages.success(request, 'Credential saved as draft!')
                 return redirect('issued_credentials')
             else:
-                messages.error(request, 'Failed to issue credential')
+                # Issue the credential
+                if credential.issue():
+                    # Add to holder's wallet
+                    WalletCredential.objects.create(
+                        wallet=holder.wallet,
+                        credential=credential
+                    )
+                    
+                    # Anchor to blockchain
+                    try:
+                        blockchain_service = BlockchainService()
+                        tx_hash = blockchain_service.anchor_credential(credential.vc_hash)
+                        messages.info(request, f"Credential anchored to blockchain. Transaction: {tx_hash[:10]}...")
+                    except Exception as e:
+                        messages.warning(request, f"Credential issued but blockchain anchoring failed: {str(e)}")
+                    
+                    messages.success(request, 'Credential issued successfully!')
+                    return redirect('issued_credentials')
+                else:
+                    messages.error(request, 'Failed to issue credential')
         else:
             messages.error(request, 'Please correct the errors below')
     else:
@@ -506,3 +514,40 @@ def edit_credential(request, credential_id):
         'form': form,
         'credential': credential
     })
+
+@login_required
+def issue_draft_credential(request, credential_id):
+    """Issue a draft credential"""
+    credential = get_object_or_404(Credential, id=credential_id, issuer=request.user)
+    
+    # Only allow issuing of draft credentials
+    if credential.status != 'DRAFT':
+        messages.error(request, "Only draft credentials can be issued")
+        return redirect('credential_detail', credential_id=credential.id)
+    
+    if request.method == 'POST':
+        try:
+            # Issue the credential
+            if credential.issue():
+                # Add to holder's wallet
+                WalletCredential.objects.create(
+                    wallet=credential.holder.wallet,
+                    credential=credential
+                )
+                
+                # Anchor to blockchain
+                try:
+                    blockchain_service = BlockchainService()
+                    tx_hash = blockchain_service.anchor_credential(credential.vc_hash)
+                    messages.info(request, f"Credential anchored to blockchain. Transaction: {tx_hash[:10]}...")
+                except Exception as e:
+                    messages.warning(request, f"Credential issued but blockchain anchoring failed: {str(e)}")
+                
+                messages.success(request, 'Credential issued successfully!')
+                return redirect('issued_credentials')
+            else:
+                messages.error(request, 'Failed to issue credential')
+        except Exception as e:
+            messages.error(request, f'Error issuing credential: {str(e)}')
+    
+    return redirect('issued_credentials')
