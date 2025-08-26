@@ -12,7 +12,13 @@ class GanacheClient:
             raise BlockchainError("Failed to connect to Ganache node")
         
         self.chain_id = settings.GANACHE_CHAIN_ID
-        self.private_key = settings.BLOCKCHAIN_OPERATOR_KEY
+        
+        # Handle private key format - remove 0x prefix if present
+        private_key = settings.BLOCKCHAIN_OPERATOR_KEY
+        if private_key.startswith('0x'):
+            private_key = private_key[2:]
+        self.private_key = private_key
+        
         self.sender_address = settings.BLOCKCHAIN_OPERATOR_ADDRESS
     
     def _load_contract(self, contract_name):
@@ -41,31 +47,53 @@ class GanacheClient:
     
     def execute_contract_function(self, contract_name, function_name, *args):
         """Execute a write function on a smart contract"""
-        contract = self._load_contract(contract_name)
-        nonce = self.w3.eth.get_transaction_count(self.sender_address)
-        
-        # Convert string arguments to proper format for bytes32
-        formatted_args = []
-        for arg in args:
-            if isinstance(arg, str) and len(arg) == 64 and all(c in '0123456789abcdefABCDEF' for c in arg):
-                # Convert hex string to bytes32
-                formatted_args.append(bytes.fromhex(arg))
-            else:
-                formatted_args.append(arg)
-        
-        # Build transaction
-        tx = contract.functions[function_name](*formatted_args).build_transaction({
-            'chainId': self.chain_id,
-            'gas': 500000,
-            'gasPrice': self.w3.to_wei('20', 'gwei'),
-            'nonce': nonce,
-            'from': self.sender_address,
-        })
-        
-        # Sign and send
-        signed_tx = self.w3.eth.account.sign_transaction(tx, self.private_key)
-        tx_hash = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-        return tx_hash.hex()
+        try:
+            contract = self._load_contract(contract_name)
+            nonce = self.w3.eth.get_transaction_count(self.sender_address)
+            
+            # Convert string arguments to proper format for bytes32
+            formatted_args = []
+            for arg in args:
+                if isinstance(arg, str) and len(arg) == 64 and all(c in '0123456789abcdefABCDEF' for c in arg):
+                    # Convert hex string to bytes32
+                    formatted_args.append(bytes.fromhex(arg))
+                else:
+                    formatted_args.append(arg)
+            
+            # Build transaction
+            tx = contract.functions[function_name](*formatted_args).build_transaction({
+                'chainId': self.chain_id,
+                'gas': 500000,
+                'gasPrice': self.w3.to_wei('20', 'gwei'),
+                'nonce': nonce,
+                'from': self.sender_address,
+            })
+            
+            # Sign and send
+            signed_tx = self.w3.eth.account.sign_transaction(tx, self.private_key)
+            
+            # Get the raw transaction bytes
+            try:
+                # Try the standard attribute first
+                raw_tx = signed_tx.rawTransaction
+            except AttributeError:
+                try:
+                    # Try alternative attribute name
+                    raw_tx = signed_tx.raw_transaction
+                except AttributeError:
+                    # For newer Web3.py versions, try to serialize the transaction
+                    if hasattr(signed_tx, 'rawTransaction'):
+                        raw_tx = signed_tx.rawTransaction
+                    elif hasattr(signed_tx, 'raw_transaction'):
+                        raw_tx = signed_tx.raw_transaction
+                    else:
+                        raise BlockchainError(f"Could not access raw transaction from signed transaction. Available attributes: {dir(signed_tx)}")
+            
+            tx_hash = self.w3.eth.send_raw_transaction(raw_tx)
+            return tx_hash.hex()
+            
+        except Exception as e:
+            raise BlockchainError(f"Contract execution failed for {contract_name}.{function_name}: {str(e)}") from e
     
     def call_contract_function(self, contract_name, function_name, *args):
         """Call a read function on a smart contract"""
