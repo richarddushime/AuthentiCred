@@ -48,12 +48,23 @@ class Credential(models.Model):
     issued_at = models.DateTimeField(null=True, blank=True)
     expiration_date = models.DateField(null=True, blank=True)
     revocation_reason = models.TextField(blank=True, null=True)
+    vc_hash = models.CharField(max_length=64, unique=True, null=True, blank=True, help_text="SHA256 hash of the credential JSON")
     
     def __str__(self):
         return f"{self.credential_type} - {self.title}"
     
+    def save(self, *args, **kwargs):
+        # Compute and store the hash before saving
+        if self.vc_json:
+            try:
+                self.vc_hash = compute_sha256(json.dumps(self.vc_json, sort_keys=True, separators=(',', ':')))
+            except Exception as e:
+                print(f"Error computing hash for credential {self.id}: {e}")
+        super().save(*args, **kwargs)
+    
     @property
-    def vc_hash(self):
+    def computed_vc_hash(self):
+        """Computed hash property for backward compatibility"""
         if self.vc_json is None:
             raise ValueError("Credential JSON data is None")
         if not isinstance(self.vc_json, dict):

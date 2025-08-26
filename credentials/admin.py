@@ -26,8 +26,8 @@ class CredentialSchemaAdmin(admin.ModelAdmin):
 class CredentialAdmin(admin.ModelAdmin):
     list_display = ('title', 'credential_type', 'issuer', 'holder', 'status', 'created_at', 'issued_at')
     list_filter = ('status', 'credential_type', 'created_at', 'issued_at', 'expiration_date')
-    search_fields = ('title', 'description', 'issuer__username', 'holder__username', 'issuer__email', 'holder__email')
-    readonly_fields = ('id', 'created_at', 'issued_at')
+    search_fields = ('title', 'description', 'issuer__username', 'holder__username', 'issuer__email', 'holder__email', 'vc_hash')
+    readonly_fields = ('id', 'created_at', 'issued_at', 'vc_hash')
     ordering = ('-created_at',)
     
     fieldsets = (
@@ -45,7 +45,7 @@ class CredentialAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Technical Details', {
-            'fields': ('vc_json',),
+            'fields': ('vc_json', 'vc_hash'),
             'classes': ('collapse',)
         }),
     )
