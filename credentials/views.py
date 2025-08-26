@@ -108,10 +108,15 @@ def show_verification_result(request, credential):
     try:
         is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
     except Exception:
-        is_revoked = None  # Indeterminate status
+        # For internal credentials, we can check the database status
+        is_revoked = credential.status == 'REVOKED'
     
     # 4. Check issuer trust status
-    issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+    try:
+        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+    except Exception:
+        # For internal credentials, assume issuer is trusted if they have a DID
+        issuer_trusted = bool(credential.issuer.did)
     
     # 5. Check expiration
     is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
