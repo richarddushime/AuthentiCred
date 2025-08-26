@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CredentialSchema, Credential
+from .models import CredentialSchema, Credential, VerificationRecord
 
 @admin.register(CredentialSchema)
 class CredentialSchemaAdmin(admin.ModelAdmin):
@@ -52,3 +52,27 @@ class CredentialAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('issuer', 'holder', 'schema')
+
+@admin.register(VerificationRecord)
+class VerificationRecordAdmin(admin.ModelAdmin):
+    list_display = ('verifier', 'credential_hash', 'verification_date', 'is_valid', 'source')
+    list_filter = ('is_valid', 'source', 'verification_date')
+    search_fields = ('verifier__username', 'verifier__email', 'credential_hash')
+    readonly_fields = ('id', 'verification_date')
+    ordering = ('-verification_date',)
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('verifier', 'credential_hash', 'credential')
+        }),
+        ('Verification Details', {
+            'fields': ('is_valid', 'source', 'verification_details')
+        }),
+        ('Timestamps', {
+            'fields': ('verification_date',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('verifier', 'credential')

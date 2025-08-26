@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Credential, CredentialSchema
+from .models import Credential, CredentialSchema, VerificationRecord
 from .forms import CredentialSchemaForm, CredentialIssueForm, CredentialRevokeForm
 from users.models import User
 from blockchain.services import BlockchainService
@@ -116,6 +116,32 @@ def show_verification_result(request, credential):
     # 5. Check expiration
     is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
     
+    overall_valid = (
+        signature_valid and 
+        is_anchored and 
+        (is_revoked is not True) and  # Not revoked or indeterminate
+        issuer_trusted and 
+        not is_expired
+    )
+    
+    # Create verification record if user is logged in
+    if request.user.is_authenticated:
+        VerificationRecord.objects.create(
+            verifier=request.user,
+            credential_hash=credential.vc_hash,
+            credential=credential,
+            is_valid=overall_valid,
+            verification_details={
+                'signature_valid': signature_valid,
+                'is_anchored': is_anchored,
+                'is_revoked': is_revoked,
+                'issuer_trusted': issuer_trusted,
+                'is_expired': is_expired,
+                'overall_valid': overall_valid
+            },
+            source='INTERNAL'
+        )
+    
     return render(request, 'credentials/verification_result.html', {
         'credential': credential,
         'signature_valid': signature_valid,
@@ -123,13 +149,7 @@ def show_verification_result(request, credential):
         'is_revoked': is_revoked,
         'issuer_trusted': issuer_trusted,
         'is_expired': is_expired,
-        'overall_valid': (
-            signature_valid and 
-            is_anchored and 
-            (is_revoked is not True) and  # Not revoked or indeterminate
-            issuer_trusted and 
-            not is_expired
-        ),
+        'overall_valid': overall_valid,
         'source': 'internal'
     })
 
@@ -150,11 +170,28 @@ def verify_external_credential(request, vc_hash):
     # 2. For external credentials, we can't check revocation without the credential ID
     is_revoked = None  # Unknown for external credentials
     
+    overall_valid = is_anchored  # Only anchoring can be verified
+    
+    # Create verification record if user is logged in
+    if request.user.is_authenticated:
+        VerificationRecord.objects.create(
+            verifier=request.user,
+            credential_hash=vc_hash,
+            credential=None,  # External credential
+            is_valid=overall_valid,
+            verification_details={
+                'is_anchored': is_anchored,
+                'is_revoked': is_revoked,
+                'overall_valid': overall_valid
+            },
+            source='EXTERNAL'
+        )
+    
     return render(request, 'credentials/verification_result.html', {
         'vc_hash': vc_hash,
         'is_anchored': is_anchored,
         'is_revoked': is_revoked,
-        'overall_valid': is_anchored,  # Only anchoring can be verified
+        'overall_valid': overall_valid,
         'source': 'external'
     })
 
@@ -618,10 +655,19 @@ def verification_history(request):
         messages.error(request, "Only verifiers can access verification history")
         return redirect('dashboard')
     
-    # Here you would implement verification history logic
-    # For now, we'll show an empty history
-    verifications = []
+    # Get verification records for the current user
+    verifications = VerificationRecord.objects.filter(verifier=request.user).select_related('credential').order_by('-verification_date')
+    
+    # Get statistics
+    total_verifications = verifications.count()
+    valid_verifications = verifications.filter(is_valid=True).count()
+    invalid_verifications = verifications.filter(is_valid=False).count()
+    success_rate = (valid_verifications / total_verifications * 100) if total_verifications > 0 else 0
     
     return render(request, 'credentials/verification_history.html', {
-        'verifications': verifications
+        'verifications': verifications,
+        'total_verifications': total_verifications,
+        'valid_verifications': valid_verifications,
+        'invalid_verifications': invalid_verifications,
+        'success_rate': round(success_rate, 1)
     })
