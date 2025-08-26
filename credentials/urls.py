@@ -13,4 +13,6 @@ urlpatterns = [
     path('credential/<uuid:credential_id>/issue/', views.issue_draft_credential, name='issue_draft_credential'),
     path('credential/<uuid:credential_id>/revoke/', views.revoke_credential, name='revoke_credential'),
     path('verify/', views.verify_credential, name='verify_credential'),
+    path('request/', views.request_credential, name='request_credential'),
+    path('verification-history/', views.verification_history, name='verification_history'),
 ]

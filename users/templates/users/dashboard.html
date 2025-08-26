@@ -173,7 +173,7 @@
                     <i class="bi bi-file-earmark-text text-gray-400 text-2xl"></i>
                 </div>
                 <p class="text-gray-500 mb-4">No credentials in your wallet yet</p>
-                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                <a href="{% url 'request_credential' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     Request Credentials
                 </a>
             </div>
@@ -203,13 +203,13 @@
                 <div>
                     <h3 class="font-medium text-gray-900 mb-3">Quick Actions</h3>
                     <div class="space-y-2">
-                        <a href="#" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                        <a href="{% url 'add_credential' %}" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
                             Add Credential
                         </a>
-                        <a href="#" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                        <a href="{% url 'share_all_credentials' %}" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
                             Share All
                         </a>
-                        <a href="#" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                        <a href="{% url 'backup_wallet' %}" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
                             Backup Wallet
                         </a>
                     </div>
@@ -223,7 +223,7 @@
         <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 card-hover">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-semibold text-gray-900">Recent Verifications</h2>
-                <a href="#" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <a href="{% url 'verification_history' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
                     View History
                 </a>
             </div>
@@ -268,10 +268,10 @@
                 <a href="{% url 'verify_credential' %}" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
                     <i class="bi bi-qr-code-scan mr-2"></i> Verify Credential
                 </a>
-                <a href="#" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                <a href="{% url 'request_credential' %}" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
                     <i class="bi bi-file-earmark-text mr-2"></i> Request Credentials
                 </a>
-                <a href="#" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                <a href="{% url 'verification_history' %}" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
                     <i class="bi bi-clock-history mr-2"></i> Verification History
                 </a>
             </div>

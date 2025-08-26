@@ -75,4 +75,40 @@ class Credential(models.Model):
             self.save()
             return True
         return False
+
+class VerificationRecord(models.Model):
+    """Model to track verification history"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    verifier = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='verifications_performed')
+    credential_hash = models.CharField(max_length=64, help_text="64-character hex hash of the credential")
+    credential = models.ForeignKey(Credential, on_delete=models.SET_NULL, null=True, blank=True, related_name='verification_records')
+    verification_date = models.DateTimeField(default=timezone.now)
+    is_valid = models.BooleanField(default=False)
+    verification_details = models.JSONField(default=dict, help_text="Detailed verification results")
+    source = models.CharField(max_length=20, choices=[
+        ('INTERNAL', 'Internal Database'),
+        ('EXTERNAL', 'External Credential'),
+    ], default='INTERNAL')
+    
+    class Meta:
+        ordering = ['-verification_date']
+        indexes = [
+            models.Index(fields=['verifier', '-verification_date']),
+            models.Index(fields=['credential_hash']),
+        ]
+    
+    def __str__(self):
+        return f"Verification by {self.verifier.username} on {self.verification_date.strftime('%Y-%m-%d %H:%M')}"
+    
+    @property
+    def issuer_name(self):
+        if self.credential and self.credential.issuer:
+            return self.credential.issuer.get_full_name() or self.credential.issuer.username
+        return "Unknown"
+    
+    @property
+    def holder_name(self):
+        if self.credential and self.credential.holder:
+            return self.credential.holder.get_full_name() or self.credential.holder.username
+        return "Unknown"
     

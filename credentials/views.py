@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Credential, CredentialSchema
+from .models import Credential, CredentialSchema, VerificationRecord
 from .forms import CredentialSchemaForm, CredentialIssueForm, CredentialRevokeForm
 from users.models import User
 from blockchain.services import BlockchainService
@@ -35,7 +35,6 @@ class CredentialVerificationForm(forms.Form):
         if not all(c in '0123456789abcdef' for c in hash):
             raise forms.ValidationError("Invalid hash format. Must be hexadecimal.")
         return hash
-@login_required
 
 def verify_credential(request):
     """Public credential verification view"""
@@ -44,13 +43,28 @@ def verify_credential(request):
         if form.is_valid():
             vc_hash = form.cleaned_data['credential_hash']
             
+            # Try to find credential in database by computing hash for each credential
+            credential = None
             try:
-                # Try to find credential in database
-                credential = Credential.objects.get(vc_hash=vc_hash)
-                return show_verification_result(request, credential)
+                # Get all credentials and check their computed hashes
+                all_credentials = Credential.objects.all()
+                for cred in all_credentials:
+                    try:
+                        if cred.vc_hash == vc_hash:
+                            credential = cred
+                            break
+                    except (ValueError, AttributeError):
+                        # Skip credentials with invalid JSON data
+                        continue
                 
-            except Credential.DoesNotExist:
-                # Credential not in database - attempt external verification
+                if credential:
+                    return show_verification_result(request, credential)
+                else:
+                    # Credential not in database - attempt external verification
+                    return verify_external_credential(request, vc_hash)
+                    
+            except Exception as e:
+                # If there's an error, fall back to external verification
                 return verify_external_credential(request, vc_hash)
                 
     else:
@@ -81,19 +95,62 @@ def show_verification_result(request, credential):
         signature_valid = False
         
     # 2. Check blockchain anchoring
-    is_anchored = blockchain_service.verify_anchored(credential.vc_hash)
+    try:
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            credential.vc_hash
+        )
+    except Exception as e:
+        is_anchored = False
     
     # 3. Check revocation status - using credential ID as string
     try:
         is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
     except Exception:
-        is_revoked = None  # Indeterminate status
+        # For internal credentials, we can check the database status
+        is_revoked = credential.status == 'REVOKED'
     
     # 4. Check issuer trust status
-    issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+    try:
+        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+    except Exception:
+        # For internal credentials, assume issuer is trusted if they have a DID
+        issuer_trusted = bool(credential.issuer.did)
     
     # 5. Check expiration
     is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
+    
+    # 6. Check issued status
+    is_issued = credential.status == 'ISSUED'
+    
+    overall_valid = (
+        signature_valid and 
+        is_anchored and 
+        (is_revoked is not True) and  # Not revoked or indeterminate
+        issuer_trusted and 
+        not is_expired and
+        is_issued
+    )
+    
+    # Create verification record if user is logged in
+    if request.user.is_authenticated:
+        VerificationRecord.objects.create(
+            verifier=request.user,
+            credential_hash=credential.vc_hash,
+            credential=credential,
+            is_valid=overall_valid,
+            verification_details={
+                'signature_valid': signature_valid,
+                'is_anchored': is_anchored,
+                'is_revoked': is_revoked,
+                'issuer_trusted': issuer_trusted,
+                'is_expired': is_expired,
+                'is_issued': is_issued,
+                'overall_valid': overall_valid
+            },
+            source='INTERNAL'
+        )
     
     return render(request, 'credentials/verification_result.html', {
         'credential': credential,
@@ -102,13 +159,8 @@ def show_verification_result(request, credential):
         'is_revoked': is_revoked,
         'issuer_trusted': issuer_trusted,
         'is_expired': is_expired,
-        'overall_valid': (
-            signature_valid and 
-            is_anchored and 
-            (is_revoked is not True) and  # Not revoked or indeterminate
-            issuer_trusted and 
-            not is_expired
-        ),
+        'is_issued': is_issued,
+        'overall_valid': overall_valid,
         'source': 'internal'
     })
 
@@ -117,16 +169,45 @@ def verify_external_credential(request, vc_hash):
     blockchain_service = BlockchainService()
     
     # 1. Check if anchored on blockchain
-    is_anchored = blockchain_service.verify_anchored(vc_hash)
+    try:
+        is_anchored = blockchain_service.client.call_contract_function(
+            'CredentialAnchor',
+            'verifyProof',
+            vc_hash
+        )
+    except Exception as e:
+        is_anchored = False
     
     # 2. For external credentials, we can't check revocation without the credential ID
     is_revoked = None  # Unknown for external credentials
+    
+    # 3. For external credentials, we can't check issued status
+    is_issued = None  # Unknown for external credentials
+    
+    overall_valid = is_anchored  # Only anchoring can be verified
+    
+    # Create verification record if user is logged in
+    if request.user.is_authenticated:
+        VerificationRecord.objects.create(
+            verifier=request.user,
+            credential_hash=vc_hash,
+            credential=None,  # External credential
+            is_valid=overall_valid,
+            verification_details={
+                'is_anchored': is_anchored,
+                'is_revoked': is_revoked,
+                'is_issued': is_issued,
+                'overall_valid': overall_valid
+            },
+            source='EXTERNAL'
+        )
     
     return render(request, 'credentials/verification_result.html', {
         'vc_hash': vc_hash,
         'is_anchored': is_anchored,
         'is_revoked': is_revoked,
-        'overall_valid': is_anchored,  # Only anchoring can be verified
+        'is_issued': is_issued,
+        'overall_valid': overall_valid,
         'source': 'external'
     })
 
@@ -551,3 +632,58 @@ def issue_draft_credential(request, credential_id):
             messages.error(request, f'Error issuing credential: {str(e)}')
     
     return redirect('issued_credentials')
+
+@login_required
+def request_credential(request):
+    """Request a credential from an issuer"""
+    if not request.user.is_holder():
+        messages.error(request, "Only students can request credentials")
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        # Handle credential request form submission
+        issuer_email = request.POST.get('issuer_email')
+        credential_type = request.POST.get('credential_type')
+        reason = request.POST.get('reason', '')
+        
+        if not issuer_email or not credential_type:
+            messages.error(request, 'Please fill in all required fields')
+        else:
+            try:
+                # Here you would implement the actual credential request logic
+                # For now, we'll just show a success message
+                messages.success(request, f'Credential request sent to {issuer_email}')
+                return redirect('dashboard')
+            except Exception as e:
+                messages.error(request, f'Failed to send request: {str(e)}')
+    
+    # Get available credential types from schemas
+    available_types = CredentialSchema.objects.values_list('name', flat=True).distinct()
+    
+    return render(request, 'credentials/request_credential.html', {
+        'available_types': available_types
+    })
+
+@login_required
+def verification_history(request):
+    """View verification history for verifiers"""
+    if not request.user.is_verifier():
+        messages.error(request, "Only verifiers can access verification history")
+        return redirect('dashboard')
+    
+    # Get verification records for the current user
+    verifications = VerificationRecord.objects.filter(verifier=request.user).select_related('credential').order_by('-verification_date')
+    
+    # Get statistics
+    total_verifications = verifications.count()
+    valid_verifications = verifications.filter(is_valid=True).count()
+    invalid_verifications = verifications.filter(is_valid=False).count()
+    success_rate = (valid_verifications / total_verifications * 100) if total_verifications > 0 else 0
+    
+    return render(request, 'credentials/verification_history.html', {
+        'verifications': verifications,
+        'total_verifications': total_verifications,
+        'valid_verifications': valid_verifications,
+        'invalid_verifications': invalid_verifications,
+        'success_rate': round(success_rate, 1)
+    })

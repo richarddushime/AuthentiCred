@@ -10,5 +10,8 @@ urlpatterns = [
     path('credential/<uuid:credential_id>/unarchive/', views.unarchive_credential, name='unarchive_credential'),
     path('credential/<uuid:credential_id>/download/', views.download_credential, name='download_credential'),
     path('shared/<uuid:credential_id>/', views.view_shared_credential, name='view_shared_credential'),
+    path('add-credential/', views.add_credential, name='add_credential'),
+    path('share-all/', views.share_all_credentials, name='share_all_credentials'),
+    path('backup/', views.backup_wallet, name='backup_wallet'),
 ]
 # This file defines the URL patterns for the wallets app, mapping URLs to views.
