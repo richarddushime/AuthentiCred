@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AuthentiCred - {% block title %}{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+    <meta name="theme-color" content="#3b82f6">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -168,6 +176,29 @@
             background-repeat: no-repeat !important;
             background-size: 1.5em 1.5em !important;
             padding-right: 2.5rem !important;
+        }
+        
+        /* Mobile navbar button styling */
+        @media (max-width: 640px) {
+            .navbar-auth-buttons a {
+                padding: 0.5rem !important;
+                min-width: 2.5rem !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            .navbar-auth-buttons a i {
+                margin-right: 0 !important;
+                font-size: 1.1rem !important;
+            }
+            
+            .navbar-username {
+                max-width: 6rem !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+            }
         }
     </style>
 </head>
