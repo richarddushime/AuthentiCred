@@ -1,0 +1,151 @@
+{% extends "users/base.html" %}
+
+{% block title %}Privacy Policy - AuthentiCred{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h1 class="text-3xl font-bold text-gray-900">Privacy Policy</h1>
+            <p class="text-gray-600 mt-2">Last updated: {{ "now"|date:"F d, Y" }}</p>
+        </div>
+        
+        <div class="p-6 space-y-6 text-gray-700">
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">1. Introduction</h2>
+                <p class="mb-4">
+                    AuthentiCred ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our blockchain-based credential verification platform.
+                </p>
+                <p>
+                    By using AuthentiCred, you agree to the collection and use of information in accordance with this policy.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">2. Information We Collect</h2>
+                
+                <h3 class="text-lg font-medium text-gray-900 mb-2">2.1 Personal Information</h3>
+                <ul class="list-disc list-inside space-y-1 mb-4">
+                    <li>Name and contact information (email address)</li>
+                    <li>Institution affiliation and role</li>
+                    <li>Digital wallet information</li>
+                    <li>DID (Decentralized Identifier) information</li>
+                </ul>
+
+                <h3 class="text-lg font-medium text-gray-900 mb-2">2.2 Credential Information</h3>
+                <ul class="list-disc list-inside space-y-1 mb-4">
+                    <li>Credential schemas and templates</li>
+                    <li>Issued credential data</li>
+                    <li>Verification records and history</li>
+                    <li>Blockchain transaction hashes</li>
+                </ul>
+
+                <h3 class="text-lg font-medium text-gray-900 mb-2">2.3 Technical Information</h3>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>IP addresses and device information</li>
+                    <li>Usage analytics and performance data</li>
+                    <li>Log files and error reports</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">3. How We Use Your Information</h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Provide and maintain our credential verification services</li>
+                    <li>Process credential issuance and verification requests</li>
+                    <li>Ensure platform security and prevent fraud</li>
+                    <li>Improve our services and user experience</li>
+                    <li>Comply with legal obligations and regulations</li>
+                    <li>Communicate with you about our services</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">4. Information Sharing and Disclosure</h2>
+                <p class="mb-4">We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:</p>
+                
+                <!-- <ul class="list-disc list-inside space-y-2">
+                    <li><strong>With your consent:</strong> When you explicitly authorize us to share your information</li>
+                    <li><strong>Service providers:</strong> With trusted third-party service providers who assist in operating our platform</li>
+                    <li><strong>Legal requirements:</strong> When required by law or to protect our rights and safety</li>
+                    <li><strong>Blockchain transparency:</strong> Credential hashes are publicly visible on the blockchain for verification purposes</li>
+                </ul> -->
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">5. Data Security</h2>
+                <p class="mb-4">We implement appropriate security measures to protect your information:</p>
+                
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Encryption of sensitive data in transit and at rest</li>
+                    <li>Secure blockchain-based credential storage</li>
+                    <li>Regular security audits and updates</li>
+                    <li>Access controls and authentication mechanisms</li>
+                    <li>Monitoring and detection of security threats</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">6. Your Rights and Choices</h2>
+                <p class="mb-4">You have the following rights regarding your personal information:</p>
+                
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Access:</strong> Request access to your personal information</li>
+                    <li><strong>Correction:</strong> Request correction of inaccurate information</li>
+                    <li><strong>Deletion:</strong> Request deletion of your personal information (subject to legal requirements)</li>
+                    <li><strong>Portability:</strong> Request a copy of your data in a portable format</li>
+                    <li><strong>Objection:</strong> Object to certain processing of your information</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">7. Data Retention</h2>
+                <p class="mb-4">We retain your information for as long as necessary to:</p>
+                
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Provide our services to you</li>
+                    <li>Comply with legal obligations</li>
+                    <li>Resolve disputes and enforce agreements</li>
+                    <li>Maintain the integrity of credential verification records</li>
+                </ul>
+                
+                <p class="mt-4">
+                    <strong>Note:</strong> Credential verification records may be retained indefinitely to maintain the integrity of the verification system.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">8. International Data Transfers</h2>
+                <!-- <p>
+                    Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with this Privacy Policy.
+                </p> -->
+            </div>
+
+            <!-- <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">9. Children's Privacy</h2>
+                <p>
+                    Our services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us.
+                </p>
+            </div> -->
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">10. Changes to This Privacy Policy</h2>
+                <p>
+                    We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. We encourage you to review this Privacy Policy periodically.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">11. Contact Us</h2>
+                <p class="mb-4">If you have any questions about this Privacy Policy, please contact us:</p>
+                
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p><strong>Email:</strong> privacy@authenticred.com</p>
+                    <p><strong>Address:</strong> Italy, Rome </p>
+                    <p><strong>Phone:</strong> +393926712171</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

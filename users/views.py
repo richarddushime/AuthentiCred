@@ -221,3 +221,15 @@ def contact_view(request):
         form = ContactForm()
     
     return render(request, 'users/contact.html', {'form': form})
+
+def privacy_policy_view(request):
+    """Privacy Policy page"""
+    return render(request, 'users/privacy_policy.html')
+
+def terms_of_service_view(request):
+    """Terms of Service page"""
+    return render(request, 'users/terms_of_service.html')
+
+def cookie_policy_view(request):
+    """Cookie Policy page"""
+    return render(request, 'users/cookie_policy.html')

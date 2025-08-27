@@ -14,4 +14,7 @@ urlpatterns = [
     path('profile/delete-account/', views.delete_account_view, name='delete_account'),
     path('institution/settings/', views.institution_settings_view, name='institution_settings'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('privacy-policy/', views.privacy_policy_view, name='privacy_policy'),
+    path('terms-of-service/', views.terms_of_service_view, name='terms_of_service'),
+    path('cookie-policy/', views.cookie_policy_view, name='cookie_policy'),
 ]
