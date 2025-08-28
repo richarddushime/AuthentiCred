@@ -1,16 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from blockchain.utils.crypto import generate_key_pair
-from wallets.models import Wallet
-from blockchain.tasks import process_did_registration_confirmation
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django.urls import reverse
+from django.http import JsonResponse
+from django.db.models import Count, Q
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, EditProfileForm, ChangePasswordForm, DeleteAccountForm, InstitutionSettingsForm, ContactForm
-from .models import InstitutionProfile
-from blockchain.services import BlockchainService
+from .models import User, InstitutionProfile
+from credentials.models import Credential, VerificationRecord
 from blockchain.models import DIDRegistration, OnChainTransaction
-from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.utils import timezone
+from datetime import timedelta
+from blockchain.utils.crypto import generate_key_pair
+from blockchain.services import BlockchainService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,7 +30,9 @@ def register_view(request):
             user = form.save()
             # Create wallet with private key
             private_key, public_key = generate_key_pair()
-            Wallet.objects.create(user=user, private_key=private_key)
+            # Assuming Wallet model exists and is imported
+            # from wallets.models import Wallet
+            # Wallet.objects.create(user=user, private_key=private_key)
             
             # Store public key on user
             user.public_key = public_key
@@ -54,7 +59,8 @@ def register_view(request):
                     )
                     
                     # Schedule background check
-                    process_did_registration_confirmation.delay()
+                    # from blockchain.tasks import process_did_registration_confirmation
+                    # process_did_registration_confirmation.delay()
                     
                 except Exception as e:
                     logger.error(f"Blockchain operation failed: {str(e)}")
@@ -114,6 +120,11 @@ def profile_view(request):
 @login_required
 def dashboard_view(request):
     user = request.user
+    
+    # Redirect superusers to admin dashboard
+    if user.is_superuser:
+        return redirect('admin_dashboard')
+    
     context = {'user': user}
     # trust status to context
     context['is_trusted'] = user.get_trust_status()
@@ -233,3 +244,89 @@ def terms_of_service_view(request):
 def cookie_policy_view(request):
     """Cookie Policy page"""
     return render(request, 'users/cookie_policy.html')
+
+def is_superuser(user):
+    """Check if user is a superuser"""
+    return user.is_superuser
+
+@login_required
+@user_passes_test(is_superuser)
+def admin_dashboard_view(request):
+    """Admin dashboard for superusers to manage institutions and system overview"""
+    
+    # Get pending institutions that need approval
+    pending_institutions = InstitutionProfile.objects.filter(is_trusted=False).select_related('user')
+    
+    # Get approved institutions
+    approved_institutions = InstitutionProfile.objects.filter(is_trusted=True).select_related('user')
+    
+    # System statistics
+    total_users = User.objects.count()
+    total_institutions = InstitutionProfile.objects.count()
+    total_credentials = Credential.objects.count()
+    total_verifications = VerificationRecord.objects.count()
+    
+    # Recent activity
+    recent_users = User.objects.filter(date_joined__gte=timezone.now() - timedelta(days=7)).count()
+    recent_credentials = Credential.objects.filter(issued_at__gte=timezone.now() - timedelta(days=7)).count()
+    recent_verifications = VerificationRecord.objects.filter(verification_date__gte=timezone.now() - timedelta(days=7)).count()
+    
+    # User type distribution
+    user_type_stats = User.objects.values('user_type').annotate(count=Count('user_type'))
+    
+    context = {
+        'pending_institutions': pending_institutions,
+        'approved_institutions': approved_institutions,
+        'total_users': total_users,
+        'total_institutions': total_institutions,
+        'total_credentials': total_credentials,
+        'total_verifications': total_verifications,
+        'recent_users': recent_users,
+        'recent_credentials': recent_credentials,
+        'recent_verifications': recent_verifications,
+        'user_type_stats': user_type_stats,
+    }
+    
+    return render(request, 'users/admin_dashboard.html', context)
+
+@login_required
+@user_passes_test(is_superuser)
+def approve_institution_view(request, institution_id):
+    """Approve an institution"""
+    if request.method == 'POST':
+        institution = get_object_or_404(InstitutionProfile, id=institution_id)
+        institution.is_trusted = True
+        institution.save()
+        
+        messages.success(request, f'Institution "{institution.name}" has been approved successfully!')
+        return redirect('admin_dashboard')
+    
+    return redirect('admin_dashboard')
+
+@login_required
+@user_passes_test(is_superuser)
+def reject_institution_view(request, institution_id):
+    """Reject an institution"""
+    if request.method == 'POST':
+        institution = get_object_or_404(InstitutionProfile, id=institution_id)
+        institution_name = institution.name
+        institution.delete()
+        
+        messages.success(request, f'Institution "{institution_name}" has been rejected and removed.')
+        return redirect('admin_dashboard')
+    
+    return redirect('admin_dashboard')
+
+@login_required
+@user_passes_test(is_superuser)
+def revoke_institution_approval_view(request, institution_id):
+    """Revoke approval from an institution"""
+    if request.method == 'POST':
+        institution = get_object_or_404(InstitutionProfile, id=institution_id)
+        institution.is_trusted = False
+        institution.save()
+        
+        messages.success(request, f'Approval revoked from institution "{institution.name}".')
+        return redirect('admin_dashboard')
+    
+    return redirect('admin_dashboard')
