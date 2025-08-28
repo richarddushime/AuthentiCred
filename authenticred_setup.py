@@ -253,9 +253,9 @@ class AuthentiCredSetup:
         print("\n📋 Deploying smart contracts...")
         
         try:
-            # Run the complete deployment command
+            # Run the deployment command
             cmd = [
-                sys.executable, 'manage.py', 'deploy_contracts_complete',
+                sys.executable, 'manage.py', 'deploy_contracts',
                 '--ganache-port', str(self.ganache_port)
             ]
             

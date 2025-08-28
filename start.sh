@@ -14,8 +14,8 @@ echo -e "${BLUE}🚀 AuthentiCred Quick Start${NC}"
 echo "=========================="
 
 # Check if Python script exists
-if [ ! -f "start_authenticred.py" ]; then
-    echo -e "${RED}❌ Error: start_authenticred.py not found${NC}"
+if [ ! -f "authenticred_setup.py" ]; then
+    echo -e "${RED}❌ Error: authenticred_setup.py not found${NC}"
     echo "Please run this script from the AuthentiCred project directory"
     exit 1
 fi
@@ -52,7 +52,7 @@ echo -e "${BLUE}🔧 Starting AuthentiCred automation...${NC}"
 echo ""
 
 # Pass all arguments to the Python script
-python start_authenticred.py "$@"
+python authenticred_setup.py "$@"
 
 # Check exit status
 if [ $? -eq 0 ]; then
