@@ -20,6 +20,17 @@ def register_did_task(self, did, public_key):
     try:
         service = BlockchainService()
         tx_hash = service.register_did(did, public_key)
+        
+        # Update the DID registration record with the transaction
+        try:
+            registration = DIDRegistration.objects.get(did=did, transaction__isnull=True)
+            tx = OnChainTransaction.objects.get(tx_hash=tx_hash)
+            registration.transaction = tx
+            registration.save()
+            logger.info(f"DID registration transaction linked: {did} -> {tx_hash}")
+        except (DIDRegistration.DoesNotExist, OnChainTransaction.DoesNotExist) as e:
+            logger.warning(f"Could not link DID registration to transaction: {e}")
+        
         return tx_hash
     except Exception as e:
         logger.warning(f"Retrying DID registration for {did} (attempt {self.request.retries})")
@@ -27,11 +38,13 @@ def register_did_task(self, did, public_key):
             self.retry(exc=e)
         except MaxRetriesExceededError:
             logger.error(f"DID registration failed after retries: {did}")
-            # Update transaction status to failed
-            OnChainTransaction.objects.filter(
-                tx_hash=self.request.id, 
-                transaction_type='DID_REGISTRATION'
-            ).update(status='FAILED')
+            # Mark DID registration as failed
+            try:
+                registration = DIDRegistration.objects.get(did=did, transaction__isnull=True)
+                registration.trust_updated = False  # Mark as failed
+                registration.save()
+            except DIDRegistration.DoesNotExist:
+                pass
             raise
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
@@ -50,6 +63,20 @@ def anchor_credential_task(self, vc_hash):
                 tx_hash=self.request.id, 
                 transaction_type='CREDENTIAL_ANCHORING'
             ).update(status='FAILED')
+            raise
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+def revoke_credential_task(self, credential_id):
+    try:
+        service = BlockchainService()
+        tx_hash = service.revoke_credential(credential_id)
+        return tx_hash
+    except Exception as e:
+        logger.warning(f"Retrying credential revocation for {credential_id} (attempt {self.request.retries})")
+        try:
+            self.retry(exc=e)
+        except MaxRetriesExceededError:
+            logger.error(f"Credential revocation failed after retries: {credential_id}")
             raise
 
 @shared_task

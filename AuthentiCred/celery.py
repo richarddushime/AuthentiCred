@@ -8,8 +8,19 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AuthentiCred.settings')
 
 app = Celery('AuthentiCred')
 
-# Using a string here prevents serialization issues
-app.config_from_object('django.conf:settings', namespace='CELERY')
+# Explicitly set Redis as the broker and result backend BEFORE loading settings
+app.conf.update(
+    broker_url='redis://localhost:6379/0',
+    result_backend='redis://localhost:6379/0',
+    broker_transport='redis',
+    result_backend_transport='redis',
+    task_serializer='json',
+    result_serializer='json',
+    accept_content=['json'],
+    timezone='UTC',
+    enable_utc=True,
+    task_always_eager=False,
+)
 
 # Load task modules from all registered Django apps
 app.autodiscover_tasks()

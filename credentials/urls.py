@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.schema_list, name='credentials_home'),  # Root URL for credentials app
     path('schemas/', views.schema_list, name='schema_list'),
     path('schemas/create/', views.schema_create, name='schema_create'),
     path('issue/', views.issue_credential, name='issue_credential'),
