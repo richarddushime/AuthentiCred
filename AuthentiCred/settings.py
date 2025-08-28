@@ -30,7 +30,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', '.up.railway.app', '*']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '.railway.app', 
+    '.up.railway.app',
+    '.herokuapp.com',
+    'authenticred-8a4c46d20c03.herokuapp.com',
+    'authenticred.herokuapp.com',
+    '*'
+]
 
 # Application definition
 
@@ -220,8 +229,8 @@ BLOCKCHAIN_OPERATOR_KEY = os.environ.get('BLOCKCHAIN_OPERATOR_KEY', '')
 BLOCKCHAIN_OPERATOR_ADDRESS = os.environ.get('BLOCKCHAIN_OPERATOR_ADDRESS', '')
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -242,8 +251,13 @@ if os.environ.get('HEROKU') or os.environ.get('DYNO'):
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
     
+    # HTTPS settings for production
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
     # Field encryption key from environment
     FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', b'4p_Wu4EIAb0GpcHMZYmHfUXZ-EIUve1IBPYKUNH_i8w=')
     
     print(f"🚀 Heroku production settings loaded - DEBUG: {DEBUG}")
     print(f"📊 Database: {DATABASES['default']['ENGINE']}")
+    print(f"🌐 Allowed Hosts: {ALLOWED_HOSTS}")
