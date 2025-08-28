@@ -22,9 +22,15 @@
                     Contact
                 </a>
                 {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    <i class="bi bi-shield-lock mr-1"></i> Admin Dashboard
+                </a>
+                {% else %}
                 <a href="{% url 'dashboard' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                     Dashboard
                 </a>
+                {% endif %}
                 <a href="{% url 'profile' %}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                     Profile
                 </a>
@@ -89,9 +95,15 @@
                     Contact
                 </a>
                 {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                    <i class="bi bi-shield-lock mr-2"></i> Admin Dashboard
+                </a>
+                {% else %}
                 <a href="{% url 'dashboard' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
                     Dashboard
                 </a>
+                {% endif %}
                 <a href="{% url 'profile' %}" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
                     Profile
                 </a>

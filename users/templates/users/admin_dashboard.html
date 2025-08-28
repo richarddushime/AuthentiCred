@@ -1,0 +1,272 @@
+{% extends 'users/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+            <p class="text-gray-600">System administration and institution management</p>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-4 sm:mt-0">
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                <i class="bi bi-shield-lock mr-1"></i> Superuser
+            </span>
+        </div>
+    </div>
+
+    <!-- System Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <i class="bi bi-people text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="bi bi-building text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Institutions</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_institutions }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                    <i class="bi bi-file-earmark-text text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Credentials</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_credentials }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+                    <i class="bi bi-search text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Verifications</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_verifications }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity (7 days)</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">New Users</span>
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">{{ recent_users }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">New Credentials</span>
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">{{ recent_credentials }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Verifications</span>
+                    <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-medium">{{ recent_verifications }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
+            <div class="space-y-3">
+                {% for stat in user_type_stats %}
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">{{ stat.user_type|title }}s</span>
+                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium">{{ stat.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div class="space-y-3">
+                <a href="{% url 'admin:index' %}" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                    <i class="bi bi-gear mr-2"></i> Django Admin
+                </a>
+                <a href="{% url 'admin:users_institutionprofile_changelist' %}" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                    <i class="bi bi-building mr-2"></i> Manage Institutions
+                </a>
+                <a href="{% url 'admin:users_user_changelist' %}" class="block w-full bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                    <i class="bi bi-people mr-2"></i> Manage Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Institutions -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Pending Institution Approvals</h2>
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ pending_institutions.count }} Pending
+            </span>
+        </div>
+
+        {% if pending_institutions %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for institution in pending_institutions %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ institution.name }}</div>
+                                {% if institution.description %}
+                                <div class="text-sm text-gray-500">{{ institution.description|truncatechars:50 }}</div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ institution.user.email }}</div>
+                            <div class="text-sm text-gray-500">{{ institution.user.username }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if institution.website %}
+                            <a href="{{ institution.website }}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">
+                                {{ institution.website|truncatechars:30 }}
+                            </a>
+                            {% else %}
+                            <span class="text-gray-400 text-sm">Not provided</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ institution.created_at|date:"M d, Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <form method="post" action="{% url 'approve_institution' institution.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                        <i class="bi bi-check mr-1"></i> Approve
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'reject_institution' institution.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors" 
+                                            onclick="return confirm('Are you sure you want to reject this institution? This action cannot be undone.')">
+                                        <i class="bi bi-x mr-1"></i> Reject
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-check-circle text-green-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-500 mb-2">No pending institution approvals</p>
+            <p class="text-sm text-gray-400">All institutions have been reviewed</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Approved Institutions -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Approved Institutions</h2>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ approved_institutions.count }} Approved
+            </span>
+        </div>
+
+        {% if approved_institutions %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approved</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for institution in approved_institutions %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ institution.name }}</div>
+                                {% if institution.description %}
+                                <div class="text-sm text-gray-500">{{ institution.description|truncatechars:50 }}</div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ institution.user.email }}</div>
+                            <div class="text-sm text-gray-500">{{ institution.user.username }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if institution.website %}
+                            <a href="{{ institution.website }}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">
+                                {{ institution.website|truncatechars:30 }}
+                            </a>
+                            {% else %}
+                            <span class="text-gray-400 text-sm">Not provided</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ institution.created_at|date:"M d, Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <form method="post" action="{% url 'revoke_institution' institution.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors"
+                                        onclick="return confirm('Are you sure you want to revoke approval from this institution?')">
+                                    <i class="bi bi-shield-x mr-1"></i> Revoke
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-building text-gray-400 text-2xl"></i>
+            </div>
+            <p class="text-gray-500 mb-2">No approved institutions</p>
+            <p class="text-sm text-gray-400">Institutions will appear here once approved</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
