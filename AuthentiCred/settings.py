@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load .env file first
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -76,7 +82,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'AuthentiCred.wsgi.application'
 
-# Database configuration for Railway PostgreSQL
+# Database configuration
 import dj_database_url
 
 # Check for DATABASE_URL first (user-created variable)
@@ -115,11 +121,15 @@ elif os.environ.get('RAILWAY_ENVIRONMENT'):
             "Database variables not found. Please connect your PostgreSQL service to this app in Railway dashboard."
         )
 else:
-    # Fallback for local development
+    # Local development with PostgreSQL (when no DATABASE_URL is set)
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'authenticred_dev',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost',
+            'PORT': '5432',
         }
     }
 
@@ -193,15 +203,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Blockchain app network configuration
 
 # This section configures the blockchain network and RPC URLs for interactions
-# Load environment variables
-from pathlib import Path
-import os
-from dotenv import load_dotenv
-
-# Load .env file
-env_path = Path(__file__).parent.parent / '.env'
-if env_path.exists():
-    load_dotenv(env_path)
 
 # Blockchain Configuration
 BLOCKCHAIN_NETWORK = os.environ.get('BLOCKCHAIN_NETWORK', 'ganache')
@@ -219,8 +220,8 @@ BLOCKCHAIN_OPERATOR_KEY = os.environ.get('BLOCKCHAIN_OPERATOR_KEY', '')
 BLOCKCHAIN_OPERATOR_ADDRESS = os.environ.get('BLOCKCHAIN_OPERATOR_ADDRESS', '')
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']

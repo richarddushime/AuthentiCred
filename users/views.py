@@ -10,6 +10,8 @@ from .forms import CustomUserCreationForm, CustomAuthenticationForm, EditProfile
 from .models import User, InstitutionProfile
 from credentials.models import Credential, VerificationRecord
 from blockchain.models import DIDRegistration, OnChainTransaction
+from blockchain.tasks import register_did_task, process_did_registration_confirmation
+from blockchain.utils.task_runner import execute_task_with_fallback, get_task_status_message
 from django.utils import timezone
 from datetime import timedelta
 from blockchain.utils.crypto import generate_key_pair
@@ -40,31 +42,36 @@ def register_view(request):
             login(request, user)
 
             if user.user_type == 'INSTITUTION':
-                blockchain_service = BlockchainService()
                 try:
-                    # Register DID
-                    tx_hash = blockchain_service.register_did(user.did, user.public_key)
-                    messages.info(request, f"DID registration initiated. Transaction: {tx_hash[:10]}...")
-                    
-                    # Create institution profile
+                    # Create institution profile first
                     profile = InstitutionProfile.objects.create(user=user)
                     
+                    # Register DID using fallback mechanism (Celery first, then direct execution)
+                    task_result = execute_task_with_fallback(register_did_task, user.did, user.public_key)
+                    
                     # Create DID registration record
-                    tx = OnChainTransaction.objects.get(tx_hash=tx_hash)
                     DIDRegistration.objects.create(
                         did=user.did,
                         public_key=user.public_key,
                         institution=profile,
-                        transaction=tx
+                        transaction=None  # Will be updated when task completes
                     )
                     
-                    # Schedule background check
-                    # from blockchain.tasks import process_did_registration_confirmation
-                    # process_did_registration_confirmation.delay()
+                    # Show appropriate message based on execution method
+                    status_message = get_task_status_message(task_result)
+                    if task_result['success']:
+                        messages.info(request, status_message)
+                    else:
+                        messages.warning(request, status_message)
+                    
+                    # Schedule background trust status update (also with fallback)
+                    trust_result = execute_task_with_fallback(process_did_registration_confirmation)
+                    if not trust_result['success']:
+                        logger.warning("Trust status update scheduling failed")
                     
                 except Exception as e:
-                    logger.error(f"Blockchain operation failed: {str(e)}")
-                    messages.error(request, "DID registration started, but trust status will be updated later.")
+                    logger.error(f"DID registration setup failed: {str(e)}")
+                    messages.warning(request, "DID registration initiated, but there was an issue with processing.")
             
             return redirect('profile')
         else:

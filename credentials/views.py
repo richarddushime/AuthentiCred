@@ -10,6 +10,8 @@ from .models import Credential, CredentialSchema, VerificationRecord
 from .forms import CredentialSchemaForm, CredentialIssueForm, CredentialRevokeForm
 from users.models import User
 from blockchain.services import BlockchainService
+from blockchain.tasks import anchor_credential_task, revoke_credential_task
+from blockchain.utils.task_runner import execute_task_with_fallback, get_task_status_message
 from blockchain.utils.vc_proofs import sign_json_ld, verify_json_ld
 from wallets.models import WalletCredential
 from datetime import datetime, timedelta
@@ -364,13 +366,16 @@ def issue_credential(request, schema_id=None):
                         credential=credential
                     )
                     
-                    # Anchor to blockchain
+                    # Anchor to blockchain using fallback mechanism (Celery first, then direct execution)
                     try:
-                        blockchain_service = BlockchainService()
-                        tx_hash = blockchain_service.anchor_credential(credential.vc_hash)
-                        messages.info(request, f"Credential anchored to blockchain. Transaction: {tx_hash[:10]}...")
+                        task_result = execute_task_with_fallback(anchor_credential_task, credential.vc_hash)
+                        status_message = get_task_status_message(task_result)
+                        if task_result['success']:
+                            messages.info(request, status_message)
+                        else:
+                            messages.warning(request, status_message)
                     except Exception as e:
-                        messages.warning(request, f"Credential issued but blockchain anchoring failed: {str(e)}")
+                        messages.warning(request, f"Credential issued but anchoring failed: {str(e)}")
                     
                     messages.success(request, 'Credential issued successfully!')
                     return redirect('issued_credentials')
@@ -416,15 +421,16 @@ def revoke_credential(request, credential_id):
         if form.is_valid():
             reason = form.cleaned_data['reason']
             if credential.revoke(reason=reason):
-                # Revoke on blockchain
+                # Revoke on blockchain using fallback mechanism (Celery first, then direct execution)
                 try:
-                    blockchain_service = BlockchainService()
-                    # tx_hash = blockchain_service.revoke_credential(str(credential.id))
-                    tx_hash = blockchain_service.revoke_credential(credential.id)
-
-                    messages.info(request, f"Revocation recorded on blockchain. Transaction: {tx_hash[:10]}...")
+                    task_result = execute_task_with_fallback(revoke_credential_task, str(credential.id))
+                    status_message = get_task_status_message(task_result)
+                    if task_result['success']:
+                        messages.info(request, status_message)
+                    else:
+                        messages.warning(request, status_message)
                 except Exception as e:
-                    messages.warning(request, f"Credential revoked but blockchain update failed: {str(e)}")
+                    messages.warning(request, f"Credential revoked but revocation failed: {str(e)}")
                 
                 messages.success(request, 'Credential revoked successfully')
                 return redirect('issued_credentials')
@@ -606,13 +612,16 @@ def issue_draft_credential(request, credential_id):
                     credential=credential
                 )
                 
-                # Anchor to blockchain
+                # Anchor to blockchain using fallback mechanism (Celery first, then direct execution)
                 try:
-                    blockchain_service = BlockchainService()
-                    tx_hash = blockchain_service.anchor_credential(credential.vc_hash)
-                    messages.info(request, f"Credential anchored to blockchain. Transaction: {tx_hash[:10]}...")
+                    task_result = execute_task_with_fallback(anchor_credential_task, credential.vc_hash)
+                    status_message = get_task_status_message(task_result)
+                    if task_result['success']:
+                        messages.info(request, status_message)
+                    else:
+                        messages.warning(request, status_message)
                 except Exception as e:
-                    messages.warning(request, f"Credential issued but blockchain anchoring failed: {str(e)}")
+                    messages.warning(request, f"Credential issued but anchoring failed: {str(e)}")
                 
                 messages.success(request, 'Credential issued successfully!')
                 return redirect('issued_credentials')
