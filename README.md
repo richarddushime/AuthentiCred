@@ -58,7 +58,7 @@ celery -A AuthentiCred worker --loglevel=info
 python manage.py runserver
 ```
 
-For detailed setup instructions, see [AUTOMATION_README.md](AUTOMATION_README.md)
+For detailed setup instructions, see [AUTOMATION_README.md](docs/AUTOMATION_README.md)
 
 ## 📖 Getting Started
 
@@ -90,6 +90,6 @@ For detailed setup instructions, see [AUTOMATION_README.md](AUTOMATION_README.md
 - **Metamask**: Connect to `Localhost 8545`
 
 > **Ready to secure and simplify your credential journey?**  
-> Visit [authenticred.org]() or contact us 
+> Visit [AuthentiCred](https://authenticred-8a4c46d20c03.herokuapp.com/) or contact us 
 
 For more read the Documentation [here](docs/documentation.md)
