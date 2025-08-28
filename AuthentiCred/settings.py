@@ -193,20 +193,30 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Blockchain app network configuration
 
 # This section configures the blockchain network and RPC URLs for interactions
+# Load environment variables
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+env_path = Path(__file__).parent.parent / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
+
 # Blockchain Configuration
-BLOCKCHAIN_NETWORK = 'ganache'
-BLOCKCHAIN_RPC_URL = 'http://127.0.0.1:7545'
-GANACHE_CHAIN_ID = 1337
+BLOCKCHAIN_NETWORK = os.environ.get('BLOCKCHAIN_NETWORK', 'ganache')
+BLOCKCHAIN_RPC_URL = os.environ.get('BLOCKCHAIN_RPC_URL', 'http://127.0.0.1:8545')
+GANACHE_CHAIN_ID = int(os.environ.get('GANACHE_CHAIN_ID', '5777'))
 
-# Contract addresses
-DIDREGISTRY_ADDRESS = '0x4C668AEC7039C161131dC0e4336707Ef8f109aBA'
-TRUSTREGISTRY_ADDRESS = '0xD67E3B8453e975dDFa11B9D8E9e06E12E5511A0C'
-CREDENTIALANCHOR_ADDRESS = '0x0b4205d476e706A311d0CAF2CA22fB721f3Fb3C6'
-REVOCATIONREGISTRY_ADDRESS = '0xC11D1438b9D965b22B34b271f661D3772a23A4a8'
+# Contract addresses (from environment or defaults)
+DIDREGISTRY_ADDRESS = os.environ.get('DIDREGISTRY_ADDRESS', '')
+TRUSTREGISTRY_ADDRESS = os.environ.get('TRUSTREGISTRY_ADDRESS', '')
+CREDENTIALANCHOR_ADDRESS = os.environ.get('CREDENTIALANCHOR_ADDRESS', '')
+REVOCATIONREGISTRY_ADDRESS = os.environ.get('REVOCATIONREGISTRY_ADDRESS', '')
 
-# account from Ganache as operator
-BLOCKCHAIN_OPERATOR_KEY = '0x062f69a9da3236435b0f6c3bda1cc7f3a7d7c716f2bfd0283202cc6b258f8d38'  # Ganache  private key
-BLOCKCHAIN_OPERATOR_ADDRESS = '0x5794777802033929F19C1a901cc2D460480D76f6'  # Ganache  address
+# Blockchain operator account (from environment or defaults)
+BLOCKCHAIN_OPERATOR_KEY = os.environ.get('BLOCKCHAIN_OPERATOR_KEY', '')
+BLOCKCHAIN_OPERATOR_ADDRESS = os.environ.get('BLOCKCHAIN_OPERATOR_ADDRESS', '')
 
 # Celery configuration
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
