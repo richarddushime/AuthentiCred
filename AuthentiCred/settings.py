@@ -121,7 +121,7 @@ elif os.environ.get('RAILWAY_ENVIRONMENT'):
             "Database variables not found. Please connect your PostgreSQL service to this app in Railway dashboard."
         )
 else:
-    # Local development with PostgreSQL
+    # Local development with PostgreSQL (when no DATABASE_URL is set)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
