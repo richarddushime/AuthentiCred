@@ -301,6 +301,11 @@ class AuthentiCredSetup:
             print("  ❌ Contract compilation failed")
             return False
         
+        # Deploy contracts with Truffle
+        if not self.migrate_contracts():
+            print("  ❌ Contract migration failed")
+            return False
+        
         try:
             # Run the deployment command
             cmd = [
@@ -370,6 +375,43 @@ class AuthentiCredSetup:
             print(f"  ❌ Error compiling contracts: {e}")
             return False
     
+    def migrate_contracts(self) -> bool:
+        """Deploy contracts to blockchain using Truffle migrate"""
+        print("  🚀 Deploying contracts with Truffle migrate...")
+        
+        try:
+            truffle_dir = self.base_dir / 'blockchain' / 'Authenticred_contracts'
+            
+            if not truffle_dir.exists():
+                print(f"  ❌ Truffle project not found at: {truffle_dir}")
+                return False
+            
+            # Check if Ganache is running before migration
+            if not self.is_ganache_running():
+                print("  ❌ Ganache is not running. Please start Ganache first.")
+                return False
+            
+            # Run truffle migrate
+            result = subprocess.run(
+                ['truffle', 'migrate', '--reset', '--network', 'development'],
+                cwd=truffle_dir,
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                print("  ✅ Contracts deployed successfully with Truffle")
+                print("  📋 Migration output:")
+                print(result.stdout)
+                return True
+            else:
+                print(f"  ❌ Contract migration failed: {result.stderr}")
+                return False
+                
+        except Exception as e:
+            print(f"  ❌ Error migrating contracts: {e}")
+            return False
+    
     def start_redis(self) -> bool:
         """Start Redis server"""
         print("\n🔴 Starting Redis...")
@@ -382,6 +424,19 @@ class AuthentiCredSetup:
             
             # Try to start Redis server directly
             try:
+                # Try daemonized start first
+                cmd = ['redis-server', '--daemonize', 'yes']
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                
+                if result.returncode == 0:
+                    # Wait for Redis to start
+                    for i in range(10):  # Wait up to 10 seconds
+                        if self.check_redis_status():
+                            print("  ✅ Redis started successfully (daemonized)")
+                            return True
+                        time.sleep(1)
+                
+                # If daemonized start failed, try regular start
                 cmd = ['redis-server']
                 self.redis_process = subprocess.Popen(
                     cmd,
@@ -451,6 +506,11 @@ class AuthentiCredSetup:
         """Start Celery worker"""
         print("\n🐛 Starting Celery worker...")
         
+        # Ensure Redis is running before starting Celery
+        if not self.check_redis_status():
+            print("  ❌ Redis is not running. Cannot start Celery worker.")
+            return False
+        
         try:
             cmd = [
                 sys.executable, '-m', 'celery',
@@ -468,13 +528,17 @@ class AuthentiCredSetup:
             )
             
             # Wait a moment for worker to start
-            time.sleep(3)
+            time.sleep(5)
             
             if self.celery_worker_process.poll() is None:
                 print("  ✅ Celery worker started successfully")
                 return True
             else:
-                print("  ❌ Failed to start Celery worker")
+                # Get error output if worker failed
+                stdout, stderr = self.celery_worker_process.communicate()
+                print(f"  ❌ Failed to start Celery worker")
+                if stderr:
+                    print(f"  Error: {stderr}")
                 return False
                 
         except Exception as e:
