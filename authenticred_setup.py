@@ -16,7 +16,7 @@ Options:
     --skip-ganache    Skip starting Ganache (if already running)
     --skip-deploy     Skip contract deployment
     --skip-servers    Skip starting servers
-    --ganache-port    Ganache port (default: 8545)
+    --ganache-port    Ganache port (default: 7545)
     --django-port     Django port (default: 8000)
     --help           Show this help message
 """
@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 class AuthentiCredSetup:
-    def __init__(self, ganache_port: int = 8545, django_port: int = 8000):
+    def __init__(self, ganache_port: int = 7545, django_port: int = 8000):
         self.ganache_port = ganache_port
         self.django_port = django_port
         self.base_dir = Path(__file__).parent
@@ -70,6 +70,7 @@ class AuthentiCredSetup:
         optional_commands = [
             ('node', 'Node.js'),
             ('npm', 'npm'),
+            ('truffle', 'Truffle'),
         ]
         
         missing_required = []
@@ -121,6 +122,44 @@ class AuthentiCredSetup:
             print("Some features may not work without these dependencies.")
         
         return True
+    
+    def install_truffle_if_needed(self) -> bool:
+        """Install Truffle if not available"""
+        try:
+            # Check if Truffle is already installed
+            subprocess.run(['truffle', 'version'], capture_output=True, check=True)
+            print("  ✅ Truffle is already installed")
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("  ⚠️  Truffle not found, attempting to install...")
+            
+            try:
+                # Check if npm is available
+                subprocess.run(['npm', '--version'], capture_output=True, check=True)
+                
+                print("  📦 Installing Truffle globally...")
+                result = subprocess.run(
+                    ['npm', 'install', '-g', 'truffle'],
+                    capture_output=True,
+                    text=True
+                )
+                
+                if result.returncode == 0:
+                    print("  ✅ Truffle installed successfully")
+                    return True
+                else:
+                    print(f"  ❌ Failed to install Truffle: {result.stderr}")
+                    print("  📋 Please install Truffle manually:")
+                    print("    npm install -g truffle")
+                    return False
+                    
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                print("  ❌ npm not found, cannot install Truffle")
+                print("  📋 Please install Node.js and npm first:")
+                print("    - macOS: brew install node")
+                print("    - Ubuntu: sudo apt-get install nodejs npm")
+                print("    - Windows: Download from https://nodejs.org/")
+                return False
     
     def check_ganache_status(self) -> str:
         """Check Ganache status and availability"""
@@ -252,6 +291,16 @@ class AuthentiCredSetup:
         """Deploy smart contracts"""
         print("\n📋 Deploying smart contracts...")
         
+        # Check and install Truffle if needed
+        if not self.install_truffle_if_needed():
+            print("  ❌ Cannot deploy contracts without Truffle")
+            return False
+        
+        # Compile contracts with Truffle first
+        if not self.compile_contracts():
+            print("  ❌ Contract compilation failed")
+            return False
+        
         try:
             # Run the deployment command
             cmd = [
@@ -291,7 +340,35 @@ class AuthentiCredSetup:
             print(f"  ❌ Error deploying contracts: {e}")
             return False
     
-
+    def compile_contracts(self) -> bool:
+        """Compile smart contracts using Truffle"""
+        print("  🔨 Compiling contracts with Truffle...")
+        
+        try:
+            truffle_dir = self.base_dir / 'blockchain' / 'Authenticred_contracts'
+            
+            if not truffle_dir.exists():
+                print(f"  ❌ Truffle project not found at: {truffle_dir}")
+                return False
+            
+            # Run truffle compile
+            result = subprocess.run(
+                ['truffle', 'compile'],
+                cwd=truffle_dir,
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                print("  ✅ Contracts compiled successfully")
+                return True
+            else:
+                print(f"  ❌ Contract compilation failed: {result.stderr}")
+                return False
+                
+        except Exception as e:
+            print(f"  ❌ Error compiling contracts: {e}")
+            return False
     
     def start_redis(self) -> bool:
         """Start Redis server"""
@@ -526,7 +603,7 @@ def main():
     parser.add_argument('--skip-ganache', action='store_true', help='Skip starting Ganache')
     parser.add_argument('--skip-deploy', action='store_true', help='Skip contract deployment')
     parser.add_argument('--skip-servers', action='store_true', help='Skip starting servers')
-    parser.add_argument('--ganache-port', type=int, default=8545, help='Ganache port (default: 8545)')
+    parser.add_argument('--ganache-port', type=int, default=7545, help='Ganache port (default: 7545)')
     parser.add_argument('--django-port', type=int, default=8000, help='Django port (default: 8000)')
     
     args = parser.parse_args()

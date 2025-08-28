@@ -43,3 +43,11 @@ class BesuClient:
         contract = self._load_contract(contract_name)
         return contract.functions[function_name](*args).call()
     
+    def get_transaction_receipt(self, tx_hash):
+        """Get transaction receipt from blockchain"""
+        try:
+            receipt = self.w3.eth.get_transaction_receipt(tx_hash)
+            return receipt
+        except Exception as e:
+            raise BlockchainError(f"Failed to get transaction receipt: {str(e)}")
+    

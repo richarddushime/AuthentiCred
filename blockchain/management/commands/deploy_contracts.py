@@ -58,8 +58,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--ganache-port',
             type=int,
-            default=8545,
-            help='Ganache port (default: 8545)',
+            default=7545,
+            help='Ganache port (default: 7545)',
         )
         parser.add_argument(
             '--network',
@@ -115,13 +115,26 @@ class Command(BaseCommand):
         if not build_contracts_path.exists():
             self.stdout.write(self.style.WARNING('Truffle build directory not found. Running truffle compile...'))
             try:
+                # Check if Truffle is installed
+                subprocess.run(['truffle', 'version'], capture_output=True, check=True)
+                
                 # Run truffle compile
                 subprocess.run(['truffle', 'compile'], cwd=truffle_project_path, check=True, capture_output=True)
                 self.stdout.write(self.style.SUCCESS('Truffle compile completed successfully'))
             except subprocess.CalledProcessError as e:
                 raise CommandError(f'Truffle compile failed: {e}')
             except FileNotFoundError:
-                raise CommandError('Truffle not found. Please install Truffle globally: npm install -g truffle')
+                self.stdout.write(self.style.ERROR('Truffle not found. Attempting to install...'))
+                try:
+                    # Try to install Truffle
+                    subprocess.run(['npm', 'install', '-g', 'truffle'], check=True, capture_output=True)
+                    self.stdout.write(self.style.SUCCESS('Truffle installed successfully'))
+                    
+                    # Try compilation again
+                    subprocess.run(['truffle', 'compile'], cwd=truffle_project_path, check=True, capture_output=True)
+                    self.stdout.write(self.style.SUCCESS('Truffle compile completed successfully'))
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    raise CommandError('Failed to install Truffle. Please install manually: npm install -g truffle')
         
         # Create ABIs directory if it doesn't exist
         abis_path.mkdir(parents=True, exist_ok=True)
@@ -299,7 +312,7 @@ class Command(BaseCommand):
             'REVOCATIONREGISTRY_ADDRESS': addresses.get('RevocationRegistry', ''),
             'BLOCKCHAIN_OPERATOR_KEY': operator_account['private_key'],
             'BLOCKCHAIN_OPERATOR_ADDRESS': operator_account['address'],
-            'BLOCKCHAIN_RPC_URL': 'http://127.0.0.1:8545',
+            'BLOCKCHAIN_RPC_URL': 'http://127.0.0.1:7545',
             'GANACHE_CHAIN_ID': '5777',
             'BLOCKCHAIN_NETWORK': 'ganache',
         }

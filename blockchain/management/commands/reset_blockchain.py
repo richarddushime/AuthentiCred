@@ -33,8 +33,8 @@ class Command(BaseCommand):
         parser.add_argument(
             '--ganache-port',
             type=int,
-            default=8545,
-            help='Ganache port (default: 8545)',
+            default=7545,
+            help='Ganache port (default: 7545)',
         )
         parser.add_argument(
             '--clear-db',

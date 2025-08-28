@@ -62,7 +62,7 @@ class BlockchainService:
     
     def revoke_credential(self, credential_id):
         """Revoke a credential using its database ID"""
-        tx_hash = self.client.send_transaction(
+        tx_hash = self.client.execute_contract_function(
             'RevocationRegistry',
             'revokeCredential',
             str(credential_id)  # Convert to string as contract expects

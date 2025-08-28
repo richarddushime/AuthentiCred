@@ -29,7 +29,7 @@ class Command(BaseCommand):
                     '--skip-abi-update: Skip ABI update',
                     '--skip-env-update: Skip updating .env file',
                     '--use-truffle: Use Truffle for deployment (default: Web3)',
-                    '--ganache-port: Ganache port (default: 8545)',
+                    '--ganache-port: Ganache port (default: 7545)',
                     '--network: Network name (default: development)'
                 ]
             },
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 'usage': 'python manage.py check_blockchain_status [--detailed] [--ganache-port PORT]',
                 'options': [
                     '--detailed: Show detailed contract information',
-                    '--ganache-port: Ganache port (default: 8545)'
+                    '--ganache-port: Ganache port (default: 7545)'
                 ]
             },
             'reset_blockchain': {
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 'options': [
                     '--confirm: Confirm the reset operation',
                     '--clear-db: Also clear database records',
-                    '--ganache-port: Ganache port (default: 8545)'
+                    '--ganache-port: Ganache port (default: 7545)'
                 ]
             },
             'list_commands': {

@@ -205,7 +205,7 @@ if env_path.exists():
 
 # Blockchain Configuration
 BLOCKCHAIN_NETWORK = os.environ.get('BLOCKCHAIN_NETWORK', 'ganache')
-BLOCKCHAIN_RPC_URL = os.environ.get('BLOCKCHAIN_RPC_URL', 'http://127.0.0.1:8545')
+BLOCKCHAIN_RPC_URL = os.environ.get('BLOCKCHAIN_RPC_URL', 'http://127.0.0.1:7545')
 GANACHE_CHAIN_ID = int(os.environ.get('GANACHE_CHAIN_ID', '5777'))
 
 # Contract addresses (from environment or defaults)

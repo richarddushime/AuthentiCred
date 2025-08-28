@@ -113,3 +113,11 @@ class GanacheClient:
         except Exception as e:
             raise BlockchainError(f"Contract call failed for {contract_name}.{function_name}: {str(e)}")
     
+    def get_transaction_receipt(self, tx_hash):
+        """Get transaction receipt from blockchain"""
+        try:
+            receipt = self.w3.eth.get_transaction_receipt(tx_hash)
+            return receipt
+        except Exception as e:
+            raise BlockchainError(f"Failed to get transaction receipt: {str(e)}")
+    
