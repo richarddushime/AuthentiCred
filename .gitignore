@@ -119,3 +119,8 @@ media/
 # **/migrations/**
 # !**/migrations
 # !**/migrations/__init__.py
+
+# Redis database files
+dump.rdb
+celerybeat-schedule-shm
+celerybeat-schedule-wal
