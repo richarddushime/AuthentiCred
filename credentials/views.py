@@ -120,13 +120,17 @@ def show_verification_result(request, credential):
     # 6. Check issued status
     is_issued = credential.status == 'ISSUED'
     
+    # 7. Check document integrity
+    document_integrity_valid = credential.verify_document_integrity()
+    
     overall_valid = (
         signature_valid and 
         is_anchored and 
         (is_revoked is not True) and  # Not revoked or indeterminate
         issuer_trusted and 
         not is_expired and
-        is_issued
+        is_issued and
+        document_integrity_valid
     )
     
     # Create verification record if user is logged in
@@ -143,6 +147,7 @@ def show_verification_result(request, credential):
                 'issuer_trusted': issuer_trusted,
                 'is_expired': is_expired,
                 'is_issued': is_issued,
+                'document_integrity_valid': document_integrity_valid,
                 'overall_valid': overall_valid
             },
             source='INTERNAL'
@@ -156,6 +161,7 @@ def show_verification_result(request, credential):
         'issuer_trusted': issuer_trusted,
         'is_expired': is_expired,
         'is_issued': is_issued,
+        'document_integrity_valid': document_integrity_valid,
         'overall_valid': overall_valid,
         'source': 'internal'
     })
@@ -286,6 +292,16 @@ def issue_credential(request, schema_id=None):
                 "issuanceDate": datetime.utcnow().isoformat() + "Z",
                 "credentialSubject": subject_data,
             }
+            
+            # Add document hash to credential subject if document is uploaded
+            if form.cleaned_data.get('document'):
+                import hashlib
+                document = form.cleaned_data['document']
+                document.seek(0)  # Reset file pointer to beginning
+                document_hash = hashlib.sha256(document.read()).hexdigest()
+                vc['credentialSubject']['documentHash'] = document_hash
+                vc['credentialSubject']['documentFilename'] = document.name
+                document.seek(0)  # Reset file pointer for saving
             
             # Sign the credential
             try:
@@ -545,6 +561,15 @@ def edit_credential(request, credential_id):
             # Update document if a new one is uploaded
             if form.cleaned_data.get('document'):
                 credential.document = form.cleaned_data['document']
+                
+                # Update document hash in credential subject
+                import hashlib
+                document = form.cleaned_data['document']
+                document.seek(0)  # Reset file pointer to beginning
+                document_hash = hashlib.sha256(document.read()).hexdigest()
+                credential.vc_json['credentialSubject']['documentHash'] = document_hash
+                credential.vc_json['credentialSubject']['documentFilename'] = document.name
+                document.seek(0)  # Reset file pointer for saving
             
             # Update credential subject data if schema fields changed
             if credential.schema and credential.schema.fields:

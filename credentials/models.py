@@ -113,6 +113,33 @@ class Credential(models.Model):
             self.save()
             return True
         return False
+    
+    def verify_document_integrity(self):
+        """Verify that the document hash matches the stored document"""
+        if not self.document or 'documentHash' not in self.vc_json.get('credentialSubject', {}):
+            return True  # No document to verify
+        
+        try:
+            import hashlib
+            self.document.seek(0)
+            current_hash = hashlib.sha256(self.document.read()).hexdigest()
+            self.document.seek(0)
+            
+            stored_hash = self.vc_json['credentialSubject']['documentHash']
+            return current_hash == stored_hash
+        except Exception as e:
+            print(f"Error verifying document integrity: {e}")
+            return False
+    
+    @property
+    def document_hash(self):
+        """Get the document hash from the credential subject"""
+        return self.vc_json.get('credentialSubject', {}).get('documentHash')
+    
+    @property
+    def document_filename_from_vc(self):
+        """Get the document filename from the credential subject"""
+        return self.vc_json.get('credentialSubject', {}).get('documentFilename')
 
 class VerificationRecord(models.Model):
     """Model to track verification history"""
