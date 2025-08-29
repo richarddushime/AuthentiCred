@@ -18,160 +18,100 @@ from pathlib import Path
 from web3 import Web3
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from credentials.models import Credential
+from blockchain.services import BlockchainService
 
 class Command(BaseCommand):
-    help = 'Check blockchain status and contract connectivity'
+    help = 'Check blockchain status for all credentials'
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--detailed',
-            action='store_true',
-            help='Show detailed contract information',
-        )
-        parser.add_argument(
-            '--ganache-port',
-            type=int,
-            default=7545,
-            help='Ganache port (default: 7545)',
-        )
+        parser.add_argument('--fix', action='store_true', help='Attempt to fix missing blockchain entries')
 
     def handle(self, *args, **options):
-        detailed = options['detailed']
-        ganache_port = options['ganache_port']
+        fix = options['fix']
+        blockchain_service = BlockchainService()
         
-        self.stdout.write("🔍 AuthentiCred Blockchain Status Check")
-        self.stdout.write("=" * 50)
+        self.stdout.write("Checking blockchain status for all credentials...")
+        self.stdout.write("=" * 60)
         
-        # Check Ganache connection
-        self.check_ganache_connection(ganache_port)
+        credentials = Credential.objects.all()
+        total = credentials.count()
         
-        # Check contract addresses
-        self.check_contract_addresses()
-        
-        # Check contract connectivity
-        if detailed:
-            self.check_contract_connectivity(ganache_port)
-        
-        # Check ABI files
-        self.check_abi_files()
-        
-        self.stdout.write(self.style.SUCCESS("\n✅ Blockchain status check completed!"))
-
-    def check_ganache_connection(self, ganache_port):
-        """Check Ganache connection"""
-        self.stdout.write(f"\n🔗 Checking Ganache connection (port: {ganache_port})...")
-        
-        try:
-            w3 = Web3(Web3.HTTPProvider(f'http://127.0.0.1:{ganache_port}'))
-            
-            if w3.is_connected():
-                self.stdout.write("✅ Ganache is connected")
-                
-                # Get network info
-                chain_id = w3.eth.chain_id
-                block_number = w3.eth.block_number
-                accounts = w3.eth.accounts
-                
-                self.stdout.write(f"  📊 Chain ID: {chain_id}")
-                self.stdout.write(f"  📦 Block Number: {block_number}")
-                self.stdout.write(f"  👥 Accounts: {len(accounts)}")
-                
-                if accounts:
-                    self.stdout.write(f"  💰 First Account: {accounts[0]}")
-                    balance = w3.eth.get_balance(accounts[0])
-                    balance_eth = w3.from_wei(balance, 'ether')
-                    self.stdout.write(f"  💎 Balance: {balance_eth} ETH")
-            else:
-                self.stdout.write(self.style.ERROR("❌ Ganache is not connected"))
-                
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"❌ Failed to connect to Ganache: {e}"))
-
-    def check_contract_addresses(self):
-        """Check contract addresses in settings"""
-        self.stdout.write("\n📋 Checking contract addresses...")
-        
-        contracts = [
-            ('DID Registry', settings.DIDREGISTRY_ADDRESS),
-            ('Trust Registry', settings.TRUSTREGISTRY_ADDRESS),
-            ('Credential Anchor', settings.CREDENTIALANCHOR_ADDRESS),
-            ('Revocation Registry', settings.REVOCATIONREGISTRY_ADDRESS),
-        ]
-        
-        for name, address in contracts:
-            if address:
-                self.stdout.write(f"  ✅ {name}: {address}")
-            else:
-                self.stdout.write(self.style.WARNING(f"  ⚠️  {name}: Not set"))
-
-    def check_contract_connectivity(self, ganache_port):
-        """Check contract connectivity"""
-        self.stdout.write("\n🔗 Checking contract connectivity...")
-        
-        try:
-            w3 = Web3(Web3.HTTPProvider(f'http://127.0.0.1:{ganache_port}'))
-            
-            if not w3.is_connected():
-                self.stdout.write(self.style.ERROR("❌ Cannot check contracts - Ganache not connected"))
-                return
-            
-            contracts = [
-                ('DID Registry', settings.DIDREGISTRY_ADDRESS),
-                ('Trust Registry', settings.TRUSTREGISTRY_ADDRESS),
-                ('Credential Anchor', settings.CREDENTIALANCHOR_ADDRESS),
-                ('Revocation Registry', settings.REVOCATIONREGISTRY_ADDRESS),
-            ]
-            
-            for name, address in contracts:
-                if not address:
-                    self.stdout.write(f"  ⚠️  {name}: Address not set")
-                    continue
-                
-                try:
-                    # Check if contract exists at address
-                    code = w3.eth.get_code(address)
-                    if code and code != b'':
-                        self.stdout.write(f"  ✅ {name}: Contract deployed and accessible")
-                    else:
-                        self.stdout.write(self.style.ERROR(f"  ❌ {name}: No contract at address"))
-                except Exception as e:
-                    self.stdout.write(self.style.ERROR(f"  ❌ {name}: Error checking contract - {e}"))
-                    
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"❌ Failed to check contracts: {e}"))
-
-    def check_abi_files(self):
-        """Check ABI files"""
-        self.stdout.write("\n📄 Checking ABI files...")
-        
-        base_dir = Path(settings.BASE_DIR)
-        abis_path = base_dir / 'blockchain' / 'abis'
-        
-        if not abis_path.exists():
-            self.stdout.write(self.style.ERROR(f"❌ ABIs directory not found: {abis_path}"))
+        if total == 0:
+            self.stdout.write(self.style.WARNING("No credentials found in database"))
             return
         
-        contract_files = [
-            'DIDRegistry.json',
-            'TrustRegistry.json',
-            'CredentialAnchor.json',
-            'RevocationRegistry.json'
-        ]
+        anchored_count = 0
+        trusted_issuers = 0
+        revoked_count = 0
         
-        for contract_file in contract_files:
-            abi_path = abis_path / contract_file
-            if abi_path.exists():
-                try:
-                    with open(abi_path, 'r') as f:
-                        data = json.load(f)
-                    
-                    if 'abi' in data and 'bytecode' in data:
-                        self.stdout.write(f"  ✅ {contract_file}: Valid ABI and bytecode")
-                    else:
-                        self.stdout.write(self.style.WARNING(f"  ⚠️  {contract_file}: Missing ABI or bytecode"))
-                except json.JSONDecodeError:
-                    self.stdout.write(self.style.ERROR(f"  ❌ {contract_file}: Invalid JSON"))
-                except Exception as e:
-                    self.stdout.write(self.style.ERROR(f"  ❌ {contract_file}: Error reading file - {e}"))
-            else:
-                self.stdout.write(self.style.WARNING(f"  ⚠️  {contract_file}: Not found"))
+        for cred in credentials:
+            self.stdout.write(f"\nCredential: {cred.title} (ID: {cred.id})")
+            self.stdout.write(f"Issuer: {cred.issuer.username} (DID: {cred.issuer.did})")
+            
+            # Check anchoring
+            try:
+                is_anchored = blockchain_service.client.call_contract_function(
+                    'CredentialAnchor',
+                    'verifyProof',
+                    cred.vc_hash
+                )
+                if is_anchored:
+                    self.stdout.write(self.style.SUCCESS(f"✓ Anchored on blockchain"))
+                    anchored_count += 1
+                else:
+                    self.stdout.write(self.style.WARNING(f"✗ Not anchored on blockchain"))
+                    if fix:
+                        try:
+                            tx_hash = blockchain_service.anchor_credential(cred.vc_hash)
+                            self.stdout.write(self.style.SUCCESS(f"  → Anchored with transaction: {tx_hash}"))
+                            anchored_count += 1
+                        except Exception as e:
+                            self.stdout.write(self.style.ERROR(f"  → Failed to anchor: {str(e)}"))
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"✗ Error checking anchoring: {str(e)}"))
+            
+            # Check issuer trust
+            try:
+                is_trusted = blockchain_service.is_issuer_registered(cred.issuer.did)
+                if is_trusted:
+                    self.stdout.write(self.style.SUCCESS(f"✓ Issuer trusted on blockchain"))
+                    trusted_issuers += 1
+                else:
+                    self.stdout.write(self.style.WARNING(f"✗ Issuer not trusted on blockchain"))
+                    if fix:
+                        try:
+                            blockchain_service.update_issuer_trust_status(cred.issuer.did, True)
+                            self.stdout.write(self.style.SUCCESS(f"  → Issuer trust status updated"))
+                            trusted_issuers += 1
+                        except Exception as e:
+                            self.stdout.write(self.style.ERROR(f"  → Failed to update trust status: {str(e)}"))
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"✗ Error checking issuer trust: {str(e)}"))
+            
+            # Check revocation
+            try:
+                is_revoked = blockchain_service.is_credential_revoked(str(cred.id))
+                if is_revoked:
+                    self.stdout.write(self.style.ERROR(f"✗ Credential revoked on blockchain"))
+                    revoked_count += 1
+                else:
+                    self.stdout.write(self.style.SUCCESS(f"✓ Credential not revoked"))
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"✗ Error checking revocation: {str(e)}"))
+        
+        # Summary
+        self.stdout.write("\n" + "=" * 60)
+        self.stdout.write("SUMMARY:")
+        self.stdout.write(f"Total credentials: {total}")
+        self.stdout.write(f"Anchored on blockchain: {anchored_count}/{total}")
+        self.stdout.write(f"Trusted issuers: {trusted_issuers}/{total}")
+        self.stdout.write(f"Revoked credentials: {revoked_count}/{total}")
+        
+        if anchored_count == total and trusted_issuers == total and revoked_count == 0:
+            self.stdout.write(self.style.SUCCESS("\n✓ All credentials are properly configured on blockchain!"))
+        else:
+            self.stdout.write(self.style.WARNING(f"\n⚠ {total - anchored_count} credentials need anchoring"))
+            self.stdout.write(self.style.WARNING(f"⚠ {total - trusted_issuers} issuers need trust status update"))
+            if revoked_count > 0:
+                self.stdout.write(self.style.ERROR(f"⚠ {revoked_count} credentials are revoked"))

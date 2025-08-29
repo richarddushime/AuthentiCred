@@ -45,8 +45,8 @@
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 class="text-xl font-semibold text-gray-900">My Credentials</h2>
-            <a href="#" class="inline-flex items-center px-3 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
-                <i class="bi bi-plus-circle mr-1"></i> Add Credential
+            <a href="{% url 'request_credential' %}" class="inline-flex items-center px-3 py-2 border border-blue-300 rounded-md text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
+                <i class="bi bi-plus-circle mr-1"></i> Request Credential
             </a>
         </div>
         
@@ -57,7 +57,7 @@
                     <div class="border border-gray-200 rounded-lg">
                         <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-medium text-gray-900">{{ cred_type }}</h3>
+                                <h3 class="text-lg font-medium text-gray-900">{% if cred_type == "Custom Credential" %}<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">AuthentiCred</span>{% else %}{{ cred_type }}{% endif %}</h3>
                                 <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
                                     {{ credentials|length }}
                                 </span>
@@ -67,11 +67,17 @@
                             <div class="grid md:grid-cols-2 gap-4">
                                 {% for wc in credentials %}
                                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <h4 class="font-medium text-gray-900 mb-1">{{ wc.credential.title }}</h4>
+                                    <p class="text-sm text-gray-600 mb-3">
+                                        Issued by: {{ wc.credential.issuer.username }}
+                                    </p>
                                     <div class="flex justify-between items-start mb-3">
                                         <div class="flex flex-wrap gap-2">
+                                            {% if wc.credential.credential_type != "Custom Credential" %}
                                             <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
                                                 {{ wc.credential.credential_type }}
                                             </span>
+                                            {% endif %}
                                             {% if wc.credential.expiration_date %}
                                             <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
                                                 Expires: {{ wc.credential.expiration_date|date:"Y-m-d" }}
@@ -82,12 +88,8 @@
                                             <i class="bi bi-calendar mr-1"></i> {{ wc.added_at|date:"M Y" }}
                                         </span>
                                     </div>
-                                    <h4 class="font-medium text-gray-900 mb-2">{{ wc.credential.title }}</h4>
-                                    <p class="text-sm text-gray-600 mb-3">
-                                        Issued by: {{ wc.credential.issuer.username }}
-                                    </p>
                                     <div class="flex space-x-2">
-                                        <a href="{% url 'credential_detail' wc.credential.id %}" 
+                                        <a href="{% url 'credential_detail' wc.id %}" 
                                            class="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors">
                                             <i class="bi bi-eye mr-1"></i> View
                                         </a>
@@ -109,9 +111,9 @@
                         <i class="bi bi-wallet2 text-gray-400 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No credentials in your wallet</h3>
-                    <p class="text-gray-500 mb-6">Add credentials to your wallet to get started</p>
-                    <a href="#" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                        Add Credential
+                    <p class="text-gray-500 mb-6">Request credentials to your wallet to get started</p>
+                    <a href="{% url 'request_credential' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                        Request Credential
                     </a>
                 </div>
             {% endif %}

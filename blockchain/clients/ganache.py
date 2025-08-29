@@ -11,13 +11,18 @@ class GanacheClient:
         if not self.w3.is_connected():
             raise BlockchainError("Failed to connect to Ganache node")
         
-        self.chain_id = settings.GANACHE_CHAIN_ID
+        # Get the actual chain ID from the blockchain instead of using settings
+        self.chain_id = self.w3.eth.chain_id
         
-        # Handle private key format - remove 0x prefix if present
+        # Handle private key format - ensure it's in the correct format for Web3.py
         private_key = settings.BLOCKCHAIN_OPERATOR_KEY
         if private_key.startswith('0x'):
             private_key = private_key[2:]
-        self.private_key = private_key
+        # Ensure private key is exactly 64 characters (32 bytes)
+        if len(private_key) != 64:
+            raise BlockchainError(f"Invalid private key length: {len(private_key)} (expected 64)")
+        # Add 0x prefix back for Web3.py
+        self.private_key = f"0x{private_key}"
         
         self.sender_address = settings.BLOCKCHAIN_OPERATOR_ADDRESS
     

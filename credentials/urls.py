@@ -16,4 +16,6 @@ urlpatterns = [
     path('verify/', views.verify_credential, name='verify_credential'),
     path('request/', views.request_credential, name='request_credential'),
     path('verification-history/', views.verification_history, name='verification_history'),
+    path('verification-history/delete/<uuid:verification_id>/', views.delete_verification, name='delete_verification'),
+    path('shared-credentials/', views.shared_credentials, name='shared_credentials'),
 ]

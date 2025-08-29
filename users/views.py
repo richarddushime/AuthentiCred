@@ -145,18 +145,99 @@ def dashboard_view(request):
     
     elif user.is_holder():
         # Holder dashboard
-        context['my_credentials'] = user.credentials.all()[:5]
+        # Get WalletCredential objects instead of Credential objects
+        from wallets.models import WalletCredential
+        context['my_credentials'] = WalletCredential.objects.filter(
+            wallet__user=user,
+            is_archived=False
+        ).select_related('credential')[:5]
         context['pending_actions'] = [
-            {'title': 'Add New Credential', 'url': '#'},
-            {'title': 'Share Credentials', 'url': '#'},
+            {'title': 'Add New Credential', 'url': reverse('add_credential')},
+            {'title': 'Share Credentials', 'url': reverse('share_all_credentials')},
         ]
     
     elif user.is_verifier():
-        # Verifier dashboard
-        context['recent_verifications'] = []
-        context['pending_actions'] = [
-            {'title': 'Verify Credentials', 'url': reverse('verify_credential')},
-        ]
+        # Verifier dashboard with comprehensive statistics
+        from credentials.models import VerificationRecord
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        # Get verification statistics
+        verifications = VerificationRecord.objects.filter(verifier=user)
+        total_verifications = verifications.count()
+        valid_verifications = verifications.filter(is_valid=True).count()
+        invalid_verifications = verifications.filter(is_valid=False).count()
+        
+        # Calculate success rate
+        success_rate = (valid_verifications / total_verifications * 100) if total_verifications > 0 else 0
+        
+        # Get recent verifications (last 4)
+        recent_verifications = verifications.select_related('credential', 'credential__issuer', 'credential__holder')[:4]
+        
+        # Get verifications by source
+        internal_verifications = verifications.filter(source='INTERNAL').count()
+        external_verifications = verifications.filter(source='EXTERNAL').count()
+        
+        # Get verifications by time period
+        today = timezone.now().date()
+        week_ago = today - timedelta(days=7)
+        month_ago = today - timedelta(days=30)
+        
+        verifications_today = verifications.filter(verification_date__date=today).count()
+        verifications_this_week = verifications.filter(verification_date__date__gte=week_ago).count()
+        verifications_this_month = verifications.filter(verification_date__date__gte=month_ago).count()
+        
+        # Get verification details for failed verifications
+        failed_verifications = verifications.filter(is_valid=False)
+        common_issues = []
+        if failed_verifications.exists():
+            # Analyze verification details to find common issues
+            for verification in failed_verifications:
+                details = verification.verification_details
+                if details:
+                    if not details.get('signature_valid', True):
+                        common_issues.append('Invalid Signature')
+                    if not details.get('is_anchored', True):
+                        common_issues.append('Not Blockchain Anchored')
+                    if details.get('is_revoked', False):
+                        common_issues.append('Credential Revoked')
+                    if details.get('is_expired', False):
+                        common_issues.append('Credential Expired')
+                    if not details.get('issuer_trusted', True):
+                        common_issues.append('Untrusted Issuer')
+            
+            # Count most common issues
+            from collections import Counter
+            issue_counts = Counter(common_issues)
+            most_common_issues = issue_counts.most_common(3)
+        else:
+            most_common_issues = []
+    
+        # Get verification status breakdown
+        pending_verifications = verifications.filter(is_valid__isnull=True).count()
+        verified_verifications = verifications.filter(is_valid=True).count()
+        rejected_verifications = verifications.filter(is_valid=False).count()
+    
+        context.update({
+            'total_verifications': total_verifications,
+            'valid_verifications': valid_verifications,
+            'invalid_verifications': invalid_verifications,
+            'success_rate': round(success_rate, 1),
+            'recent_verifications': recent_verifications,
+            'internal_verifications': internal_verifications,
+            'external_verifications': external_verifications,
+            'verifications_today': verifications_today,
+            'verifications_this_week': verifications_this_week,
+            'verifications_this_month': verifications_this_month,
+            'most_common_issues': most_common_issues,
+            'pending_verifications': pending_verifications,
+            'verified_verifications': verified_verifications,
+            'rejected_verifications': rejected_verifications,
+            'pending_actions': [
+                {'title': 'Verify Credentials', 'url': reverse('verify_credential')},
+                {'title': 'Verification History', 'url': reverse('verification_history')},
+            ],
+        })
     
     return render(request, 'users/dashboard.html', context)
 
@@ -302,10 +383,26 @@ def approve_institution_view(request, institution_id):
     """Approve an institution"""
     if request.method == 'POST':
         institution = get_object_or_404(InstitutionProfile, id=institution_id)
-        institution.is_trusted = True
-        institution.save()
         
-        messages.success(request, f'Institution "{institution.name}" has been approved successfully!')
+        try:
+            # Update database
+            institution.is_trusted = True
+            institution.save()
+            
+            # Update blockchain TrustRegistry
+            from blockchain.services import BlockchainService
+            blockchain_service = BlockchainService()
+            
+            # Get the institution's DID
+            if institution.user.did:
+                blockchain_service.update_issuer_trust_status(institution.user.did, True)
+                messages.success(request, f'Institution "{institution.name}" has been approved successfully! Blockchain update initiated.')
+            else:
+                messages.warning(request, f'Institution "{institution.name}" approved in database, but no DID found for blockchain update.')
+                
+        except Exception as e:
+            messages.error(request, f'Error approving institution: {str(e)}')
+            
         return redirect('admin_dashboard')
     
     return redirect('admin_dashboard')
@@ -330,10 +427,26 @@ def revoke_institution_approval_view(request, institution_id):
     """Revoke approval from an institution"""
     if request.method == 'POST':
         institution = get_object_or_404(InstitutionProfile, id=institution_id)
-        institution.is_trusted = False
-        institution.save()
         
-        messages.success(request, f'Approval revoked from institution "{institution.name}".')
+        try:
+            # Update database
+            institution.is_trusted = False
+            institution.save()
+            
+            # Update blockchain TrustRegistry
+            from blockchain.services import BlockchainService
+            blockchain_service = BlockchainService()
+            
+            # Get the institution's DID
+            if institution.user.did:
+                blockchain_service.update_issuer_trust_status(institution.user.did, False)
+                messages.success(request, f'Approval revoked from institution "{institution.name}". Blockchain update initiated.')
+            else:
+                messages.warning(request, f'Institution "{institution.name}" revoked in database, but no DID found for blockchain update.')
+                
+        except Exception as e:
+            messages.error(request, f'Error revoking institution: {str(e)}')
+            
         return redirect('admin_dashboard')
     
     return redirect('admin_dashboard')
