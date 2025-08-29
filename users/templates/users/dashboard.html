@@ -158,6 +158,13 @@
                         <span class="text-sm text-gray-500">{{ wallet_cred.credential.issued_at|date:"M d, Y" }}</span>
                     </div>
                     <p class="text-sm text-gray-600 mb-3">Issued by: {{ wallet_cred.credential.issuer.username }}</p>
+                    {% if wallet_cred.credential.document %}
+                    <div class="mb-3">
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
+                            <i class="bi bi-file-earmark-text mr-1"></i> Document Attached
+                        </span>
+                    </div>
+                    {% endif %}
                     <div class="flex gap-2">
                         <a href="{% url 'credential_detail' wallet_cred.id %}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">
                             View

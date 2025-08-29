@@ -254,7 +254,7 @@ def issue_credential(request, schema_id=None):
         schema = get_object_or_404(CredentialSchema, id=schema_id, created_by=request.user)
     
     if request.method == 'POST':
-        form = CredentialIssueForm(request.POST, issuer=request.user, initial={'schema': schema})
+        form = CredentialIssueForm(request.POST, request.FILES, issuer=request.user, initial={'schema': schema})
         if form.is_valid():
             # Find holder by email
             holder_email = form.cleaned_data['holder_email']
@@ -352,6 +352,7 @@ def issue_credential(request, schema_id=None):
                 credential_type=schema.name if schema else "Credential",
                 expiration_date=form.cleaned_data['expiration_date'],
                 schema=schema,
+                document=form.cleaned_data.get('document'),
             )
             
             # Check if user wants to save as draft or issue immediately
