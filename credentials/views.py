@@ -526,21 +526,25 @@ def credential_detail(request, credential_id):
 
 @login_required
 def edit_credential(request, credential_id):
-    """Edit a credential - only allowed for draft credentials"""
+    """Edit a credential - allowed for draft and issued credentials"""
     credential = get_object_or_404(Credential, id=credential_id, issuer=request.user)
     
-    # Only allow editing of draft credentials
-    if credential.status != 'DRAFT':
-        messages.error(request, "Only draft credentials can be edited")
+    # Allow editing of draft and issued credentials
+    if credential.status not in ['DRAFT', 'ISSUED']:
+        messages.error(request, "Only draft and issued credentials can be edited")
         return redirect('credential_detail', credential_id=credential.id)
     
     if request.method == 'POST':
-        form = CredentialIssueForm(request.POST, issuer=request.user, instance=credential)
+        form = CredentialIssueForm(request.POST, request.FILES, issuer=request.user, instance=credential)
         if form.is_valid():
             # Update credential fields
             credential.title = form.cleaned_data['title']
             credential.description = form.cleaned_data['description']
             credential.expiration_date = form.cleaned_data['expiration_date']
+            
+            # Update document if a new one is uploaded
+            if form.cleaned_data.get('document'):
+                credential.document = form.cleaned_data['document']
             
             # Update credential subject data if schema fields changed
             if credential.schema and credential.schema.fields:
@@ -608,6 +612,7 @@ def edit_credential(request, credential_id):
             'description': credential.description,
             'expiration_date': credential.expiration_date,
             'holder_email': credential.holder.email,
+            'document': credential.document,
         }
         
         # Add schema field values

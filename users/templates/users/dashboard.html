@@ -154,7 +154,6 @@
                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="font-medium text-gray-900">{% if wallet_cred.credential.credential_type != "Custom Credential" %}{{ wallet_cred.credential.credential_type }}{% else %}{{ wallet_cred.credential.title }}{% endif %}</h3>
-                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium mt-1">Credential Title</span>
                         <span class="text-sm text-gray-500">{{ wallet_cred.credential.issued_at|date:"M d, Y" }}</span>
                     </div>
                     <p class="text-sm text-gray-600 mb-3">Issued by: {{ wallet_cred.credential.issuer.username }}</p>
