@@ -32,9 +32,8 @@ class User(AbstractUser):
     )
     
     def save(self, *args, **kwargs):
-        if not self.did and self.user_type == 'INSTITUTION':
-            # private_key, public_key = generate_key_pair()
-            # self.public_key = public_key.hex()
+        if not self.did:
+            # Generate DID for all users (institutions, students, employers)
             self.did = f"did:authenticred:{self.id}"
         super().save(*args, **kwargs)
         

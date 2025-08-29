@@ -56,6 +56,8 @@ def verify_credential(request):
                 return verify_external_credential(request, vc_hash)
             except Exception as e:
                 print(f"Error during credential lookup: {e}")
+                import traceback
+                traceback.print_exc()
                 # If there's an error, fall back to external verification
                 return verify_external_credential(request, vc_hash)
                 
@@ -78,11 +80,13 @@ def show_verification_result(request, credential):
         vc_json_str = json.dumps(vc_without_proof, separators=(',', ':'), sort_keys=True)
         vc_bytes = vc_json_str.encode('utf-8')
         
-        signature_valid = verify_json_ld(
+        # Use the verify_data function that matches the sign_data function used for signing
+        signature_valid = verify_data(
             vc_bytes,
             signature_hex,
-            credential.issuer.wallet.public_key
+            credential.issuer.public_key
         )
+        
     except Exception as e:
         signature_valid = False
         
@@ -111,7 +115,7 @@ def show_verification_result(request, credential):
         issuer_trusted = bool(credential.issuer.did)
     
     # 5. Check expiration
-    is_expired = credential.expiration_date < timezone.now() if credential.expiration_date else False
+    is_expired = credential.expiration_date < timezone.now().date() if credential.expiration_date else False
     
     # 6. Check issued status
     is_issued = credential.status == 'ISSUED'
@@ -345,7 +349,7 @@ def issue_credential(request, schema_id=None):
                 holder=holder,
                 title=form.cleaned_data['title'],
                 description=form.cleaned_data['description'],
-                credential_type=schema.name if schema else "Custom Credential",
+                credential_type=schema.name if schema else "Credential",
                 expiration_date=form.cleaned_data['expiration_date'],
                 schema=schema,
             )
@@ -446,7 +450,18 @@ def revoke_credential(request, credential_id):
 
 @login_required
 def credential_detail(request, credential_id):
-    credential = get_object_or_404(Credential, id=credential_id)
+    # Try to find Credential by ID first
+    credential = Credential.objects.filter(id=credential_id).first()
+    
+    # If not found, try to find by WalletCredential ID
+    if not credential:
+        from wallets.models import WalletCredential
+        try:
+            wallet_cred = WalletCredential.objects.get(id=credential_id, wallet__user=request.user)
+            credential = wallet_cred.credential
+        except WalletCredential.DoesNotExist:
+            from django.http import Http404
+            raise Http404("No Credential matches the given query.")
     
     # Check if user has permission
     if not (request.user == credential.issuer or request.user == credential.holder):
@@ -470,20 +485,36 @@ def credential_detail(request, credential_id):
             vc_hash = None
         
         if vc_hash:
-            is_anchored = blockchain_service.client.call_contract_function(
-                'CredentialAnchor',
-                'verifyProof',
-                vc_hash
-            )
+            try:
+                is_anchored = blockchain_service.client.call_contract_function(
+                    'CredentialAnchor',
+                    'verifyProof',
+                    vc_hash
+                )
+            except Exception as e:
+                messages.warning(request, f"Failed to check credential anchoring: {str(e)}")
+                is_anchored = False
         
         # Check issuer trust status
-        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        try:
+            issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        except Exception as e:
+            messages.warning(request, f"Failed to check issuer trust status: {str(e)}")
+            issuer_trusted = False
         
         # Check revocation status
-        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        try:
+            is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        except Exception as e:
+            messages.warning(request, f"Failed to check revocation status: {str(e)}")
+            is_revoked = False
         
     except Exception as e:
         messages.warning(request, f"Blockchain verification failed: {str(e)}")
+        # Set default values if blockchain service is unavailable
+        is_anchored = False
+        issuer_trusted = False
+        is_revoked = False
     
     return render(request, 'credentials/credential_detail.html', {
         'credential': credential,
@@ -671,7 +702,13 @@ def verification_history(request):
         return redirect('dashboard')
     
     # Get verification records for the current user
-    verifications = VerificationRecord.objects.filter(verifier=request.user).select_related('credential').order_by('-verification_date')
+    verifications = VerificationRecord.objects.filter(verifier=request.user).select_related('credential', 'credential__issuer', 'credential__holder').order_by('-verification_date')
+    
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(verifications, 10)  # Show 10 verifications per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Get statistics
     total_verifications = verifications.count()
@@ -680,9 +717,57 @@ def verification_history(request):
     success_rate = (valid_verifications / total_verifications * 100) if total_verifications > 0 else 0
     
     return render(request, 'credentials/verification_history.html', {
-        'verifications': verifications,
+        'page_obj': page_obj,
+        'verifications': page_obj,
         'total_verifications': total_verifications,
         'valid_verifications': valid_verifications,
         'invalid_verifications': invalid_verifications,
         'success_rate': round(success_rate, 1)
+    })
+
+@login_required
+def delete_verification(request, verification_id):
+    """Delete a verification record"""
+    if not request.user.is_verifier():
+        messages.error(request, "Only verifiers can delete verification records")
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        try:
+            verification = VerificationRecord.objects.get(
+                id=verification_id, 
+                verifier=request.user
+            )
+            verification.delete()
+            messages.success(request, 'Verification record deleted successfully!')
+        except VerificationRecord.DoesNotExist:
+            messages.error(request, 'Verification record not found or you do not have permission to delete it.')
+        except Exception as e:
+            messages.error(request, f'Error deleting verification record: {str(e)}')
+    
+    return redirect('verification_history')
+
+@login_required
+def shared_credentials(request):
+    """View shared credentials for verifiers"""
+    if not request.user.is_verifier():
+        messages.error(request, "Only verifiers can access shared credentials")
+        return redirect('dashboard')
+    
+    # Get shared credentials (WalletCredentials that are shared)
+    from wallets.models import WalletCredential
+    shared_credentials = WalletCredential.objects.filter(
+        is_archived=False
+    ).select_related('credential', 'credential__issuer', 'credential__holder').order_by('-added_at')
+    
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(shared_credentials, 10)  # Show 10 shared credentials per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'credentials/shared_credentials.html', {
+        'page_obj': page_obj,
+        'shared_credentials': page_obj,
+        'total_shared': shared_credentials.count(),
     })

@@ -9,13 +9,13 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
             <p class="text-gray-600">Welcome back, {{ user.username }}!</p>
         </div>
-        <div class="flex flex-wrap gap-2 mt-4 sm:mt-0">
+        <div class="flex flex-col sm:flex-row flex-wrap gap-2 mt-4 sm:mt-0">
             <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                 {{ user.get_user_type_display }}
             </span>
             {% if user.did %}
-            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium did-badge">
-                <i class="bi bi-shield-lock mr-1"></i> DID: {{ user.did|truncatechars:10 }}
+            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium did-badge break-all text-center">
+                <i class="bi bi-shield-lock mr-1"></i> DID: {{ user.did }}
             </span>
             {% endif %}
         </div>
@@ -36,7 +36,7 @@
     {% endif %}
     
     <!-- Dashboard Content -->
-    <div class="grid lg:grid-cols-2 gap-8">
+    <div class="grid lg:grid-cols-{% if user.is_verifier %}3{% else %}2{% endif %} gap-8">
         {% if user.is_issuer %}
         <!-- Issuer Dashboard -->
         <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 card-hover">
@@ -52,7 +52,8 @@
                 {% for cred in issued_credentials %}
                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-medium text-gray-900">{{ cred.credential_type }}</h3>
+                        <h3 class="font-medium text-gray-900">{% if cred.credential_type != "Custom Credential" %}{{ cred.credential_type }}{% else %}{{ cred.title }}{% endif %}</h3>
+                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium mt-1">Credential Title</span>
                         <span class="text-sm text-gray-500">{{ cred.issued_at|date:"M d" }}</span>
                     </div>
                     <p class="text-sm text-gray-600">To: {{ cred.holder.username }}</p>
@@ -149,18 +150,19 @@
             
             {% if my_credentials %}
             <div class="space-y-4">
-                {% for cred in my_credentials %}
+                {% for wallet_cred in my_credentials %}
                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-medium text-gray-900">{{ cred.credential_type }}</h3>
-                        <span class="text-sm text-gray-500">{{ cred.issued_at|date:"M d, Y" }}</span>
+                        <h3 class="font-medium text-gray-900">{% if wallet_cred.credential.credential_type != "Custom Credential" %}{{ wallet_cred.credential.credential_type }}{% else %}{{ wallet_cred.credential.title }}{% endif %}</h3>
+                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium mt-1">Credential Title</span>
+                        <span class="text-sm text-gray-500">{{ wallet_cred.credential.issued_at|date:"M d, Y" }}</span>
                     </div>
-                    <p class="text-sm text-gray-600 mb-3">Issued by: {{ cred.issuer.username }}</p>
+                    <p class="text-sm text-gray-600 mb-3">Issued by: {{ wallet_cred.credential.issuer.username }}</p>
                     <div class="flex gap-2">
-                        <a href="{% url 'credential_detail' cred.id %}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">
+                        <a href="{% url 'credential_detail' wallet_cred.id %}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors">
                             View
                         </a>
-                        <a href="{% url 'share_credential' cred.id %}" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
+                        <a href="{% url 'share_credential' wallet_cred.id %}" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1 rounded text-sm font-medium transition-colors">
                             Share
                         </a>
                     </div>
@@ -223,9 +225,14 @@
         <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 card-hover">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-semibold text-gray-900">Recent Verifications</h2>
-                <a href="{% url 'verification_history' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                    View History
-                </a>
+                <div class="flex items-center space-x-3">
+                    {% if total_verifications > 4 %}
+                    <span class="text-sm text-gray-500">{{ total_verifications }} total</span>
+                    {% endif %}
+                    <a href="{% url 'verification_history' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        View All
+                    </a>
+                </div>
             </div>
             
             {% if recent_verifications %}
@@ -233,17 +240,33 @@
                 {% for verification in recent_verifications %}
                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-medium text-gray-900">Credential Verification</h3>
-                        <span class="text-sm text-gray-500">{{ verification.date|date:"M d" }}</span>
+                        <h3 class="font-medium text-gray-900">
+                            {% if verification.credential %}
+                                {{ verification.credential.title|default:"Credential Verification" }}
+                            {% else %}
+                                External Credential
+                            {% endif %}
+                        </h3>
+                        <span class="text-sm text-gray-500">{{ verification.verification_date|date:"M d, H:i" }}</span>
                     </div>
-                    <p class="text-sm text-gray-600 mb-2">Holder: {{ verification.holder }}</p>
-                    <div class="flex items-center">
-                        <span class="text-sm text-gray-600 mr-2">Status:</span>
-                        {% if verification.valid %}
-                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Verified</span>
+                    <p class="text-sm text-gray-600 mb-2">
+                        {% if verification.credential %}
+                            Issuer: {{ verification.credential.issuer.username }} | 
+                            Holder: {{ verification.credential.holder.username }}
                         {% else %}
-                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Invalid</span>
+                            Hash: {{ verification.credential_hash|slice:":16" }}...
                         {% endif %}
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-600 mr-2">Status:</span>
+                            {% if verification.is_valid %}
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Valid</span>
+                            {% else %}
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Invalid</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-gray-500">{{ verification.source }}</span>
                     </div>
                 </div>
                 {% endfor %}
@@ -262,35 +285,127 @@
         </div>
         
         <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 card-hover">
-            <h2 class="text-xl font-semibold text-gray-900 mb-6">Verification Tools</h2>
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Verification Statistics</h2>
             
-            <div class="space-y-3 mb-6">
-                <a href="{% url 'verify_credential' %}" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
-                    <i class="bi bi-qr-code-scan mr-2"></i> Verify Credential
-                </a>
-                <a href="{% url 'request_credential' %}" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
-                    <i class="bi bi-file-earmark-text mr-2"></i> Request Credentials
-                </a>
-                <a href="{% url 'verification_history' %}" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
-                    <i class="bi bi-clock-history mr-2"></i> Verification History
-                </a>
+            <!-- Overall Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ total_verifications }}</div>
+                    <div class="text-sm text-blue-700">Total Verifications</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600">{{ success_rate }}%</div>
+                    <div class="text-sm text-green-700">Success Rate</div>
+                </div>
             </div>
             
-            <div class="border-t border-gray-200 pt-6">
-                <h3 class="font-medium text-gray-900 mb-3">Verification Stats</h3>
+            <!-- Detailed Stats -->
+            <div class="space-y-3 mb-6">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Valid Credentials:</span>
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">{{ valid_verifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Invalid Credentials:</span>
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">{{ invalid_verifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Internal Verifications:</span>
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">{{ internal_verifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">External Verifications:</span>
+                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">{{ external_verifications }}</span>
+                </div>
+            </div>
+            
+            <!-- Time-based Stats -->
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="font-medium text-gray-900 mb-3">Recent Activity</h3>
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Total Verified:</span>
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">0</span>
+                        <span class="text-sm text-gray-600">Today:</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">{{ verifications_today }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Invalid Credentials:</span>
-                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">0</span>
+                        <span class="text-sm text-gray-600">This Week:</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">{{ verifications_this_week }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Success Rate:</span>
-                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">100%</span>
+                        <span class="text-sm text-gray-600">This Month:</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">{{ verifications_this_month }}</span>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Common Issues -->
+            {% if most_common_issues %}
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="font-medium text-gray-900 mb-3">Common Issues</h3>
+                <div class="space-y-2">
+                    {% for issue, count in most_common_issues %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">{{ issue }}:</span>
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Combined Verification Status and Tools -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 card-hover">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Verification Status & Tools</h2>
+            
+            <!-- Status Cards -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-yellow-600">{{ pending_verifications }}</div>
+                    <div class="text-sm text-yellow-700">Pending</div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600">{{ verified_verifications }}</div>
+                    <div class="text-sm text-green-700">Verified</div>
+                </div>
+                <div class="bg-red-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-red-600">{{ rejected_verifications }}</div>
+                    <div class="text-sm text-red-700">Rejected</div>
+                </div>
+            </div>
+            
+            <!-- Detailed Status -->
+            <div class="space-y-3 mb-6">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Pending Verifications:</span>
+                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">{{ pending_verifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Successfully Verified:</span>
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">{{ verified_verifications }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Rejected/Invalid:</span>
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">{{ rejected_verifications }}</span>
+                </div>
+            </div>
+            
+            <!-- Tools Section -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="font-medium text-gray-900 mb-4">Verification Tools</h3>
+                <div class="space-y-3">
+                    <a href="{% url 'verify_credential' %}" class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                        <i class="bi bi-qr-code-scan mr-2"></i> Verify Credential
+                    </a>
+                    <a href="{% url 'request_credential' %}" class="block w-full bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                        <i class="bi bi-file-earmark-text mr-2"></i> Request Credentials
+                    </a>
+                    <a href="{% url 'verification_history' %}" class="block w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                        <i class="bi bi-clock-history mr-2"></i> Verification History
+                    </a>
+                    <a href="{% url 'shared_credentials' %}" class="block w-full bg-purple-50 hover:bg-purple-100 text-purple-700 px-4 py-3 rounded-lg font-medium transition-colors text-center">
+                        <i class="bi bi-share mr-2"></i> View Shared Credentials
+                    </a>
                 </div>
             </div>
         </div>

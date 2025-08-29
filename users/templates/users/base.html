@@ -51,6 +51,19 @@
         }
         .did-badge {
             font-family: 'Courier New', monospace;
+            word-break: break-all;
+            white-space: normal;
+            max-width: none;
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+        
+        /* Responsive DID badge */
+        @media (max-width: 640px) {
+            .did-badge {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
         }
         .blockchain-status {
             display: inline-block;

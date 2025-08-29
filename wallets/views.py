@@ -119,12 +119,30 @@ def credential_detail(request, credential_id):
 
 @login_required
 def share_credential(request, credential_id):
-    wallet_cred = get_object_or_404(
-        WalletCredential, 
+    # Try to find WalletCredential by ID first
+    wallet_cred = WalletCredential.objects.filter(
         id=credential_id, 
         wallet__user=request.user,
         is_archived=False
-    )
+    ).first()
+    
+    # If not found, try to find by Credential ID
+    if not wallet_cred:
+        from credentials.models import Credential
+        try:
+            credential = Credential.objects.get(id=credential_id, holder=request.user)
+            wallet_cred = WalletCredential.objects.filter(
+                credential=credential,
+                wallet__user=request.user,
+                is_archived=False
+            ).first()
+        except Credential.DoesNotExist:
+            pass
+    
+    # If still not found, return 404
+    if not wallet_cred:
+        from django.http import Http404
+        raise Http404("No WalletCredential matches the given query.")
     
     # Handle form submissions
     if request.method == 'POST':
