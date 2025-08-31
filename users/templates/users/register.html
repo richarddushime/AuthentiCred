@@ -112,35 +112,70 @@
                     <label class="block text-sm font-medium text-gray-700 mb-3">
                         I am a:
                     </label>
-                    <div class="grid grid-cols-1 gap-3">
+                    <div class="grid grid-cols-1 gap-4">
                         {% for radio in form.user_type %}
                         <div class="relative">
-                            {{ radio }}
-                            <label for="{{ radio.id_for_label }}" class="flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                                <div class="flex items-center h-5">
-                                    <input type="radio" name="user_type" value="{{ radio.data.value }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" {% if radio.data.checked %}checked{% endif %}>
+                            <input type="radio" name="user_type" value="{{ radio.data.value }}" 
+                                   id="{{ radio.id_for_label }}" 
+                                   class="sr-only" 
+                                   {% if radio.data.checked %}checked{% endif %}>
+                            <label for="{{ radio.id_for_label }}" 
+                                   class="radio-option flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all duration-200">
+                                <div class="flex items-center justify-center w-5 h-5 mr-4">
+                                    <div class="radio-dot w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="radio-inner w-2 h-2 bg-white rounded-full opacity-0 transition-opacity"></div>
+                                    </div>
                                 </div>
-                                <div class="ml-3">
-                                    <span class="block text-sm font-medium text-gray-900">
-                                        {{ radio.data.label }}
-                                    </span>
+                                <div class="flex items-center flex-1">
+                                    <div class="flex-shrink-0 mr-3">
+                                        {% if radio.data.value == 'STUDENT' %}
+                                            <i class="bi bi-person-badge text-2xl text-blue-600"></i>
+                                        {% elif radio.data.value == 'INSTITUTION' %}
+                                            <i class="bi bi-building text-2xl text-green-600"></i>
+                                        {% elif radio.data.value == 'EMPLOYER' %}
+                                            <i class="bi bi-search text-2xl text-purple-600"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="block text-sm font-semibold text-gray-900 mb-1">
+                                            {{ radio.data.label }}
+                                        </span>
+                                        <span class="block text-xs text-gray-600">
+                                            {% if radio.data.value == 'STUDENT' %}
+                                                Receive and manage your academic credentials securely
+                                            {% elif radio.data.value == 'INSTITUTION' %}
+                                                Issue and manage academic credentials for students
+                                            {% elif radio.data.value == 'EMPLOYER' %}
+                                                Verify and validate academic credentials from candidates
+                                            {% endif %}
+                                        </span>
+                                    </div>
                                 </div>
                             </label>
                         </div>
                         {% endfor %}
                     </div>
                     {% if form.user_type.errors %}
-                        <div class="mt-1 text-sm text-red-600">
+                        <div class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="bi bi-exclamation-circle mr-1"></i>
                             {{ form.user_type.errors.0 }}
                         </div>
                     {% endif %}
+                    <p class="mt-2 text-xs text-gray-500">
+                        Select the role that best describes how you'll use AuthentiCred
+                    </p>
                 </div>
                 
                 <!-- Institution-specific fields -->
-                <div id="institution-fields" class="space-y-6 border-t border-gray-200 pt-6" style="display: none;">
+                <div id="institution-fields" class="space-y-6 border-t border-gray-200 pt-6 bg-gray-50 rounded-xl p-4" style="display: none;">
+                    <div class="flex items-center mb-4">
+                        <i class="bi bi-building text-green-600 text-xl mr-2"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Institution Information</h3>
+                    </div>
+                    
                     <div>
                         <label for="id_institution_name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Institution Name
+                            Institution Name <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -154,7 +189,8 @@
                                 }
                             </style>
                             {% if form.institution_name.errors %}
-                                <div class="mt-1 text-sm text-red-600">
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
                                     {{ form.institution_name.errors.0 }}
                                 </div>
                             {% endif %}
@@ -176,7 +212,16 @@
                                     border-radius: 0.75rem !important;
                                 }
                             </style>
+                            {% if form.institution_website.errors %}
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ form.institution_website.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            Optional: Your institution's official website URL
+                        </p>
                     </div>
                     
                     <div>
@@ -195,13 +240,14 @@
                                 }
                             </style>
                             {% if form.accreditation_proof.errors %}
-                                <div class="mt-1 text-sm text-red-600">
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
                                     {{ form.accreditation_proof.errors.0 }}
                                 </div>
                             {% endif %}
                         </div>
                         <p class="mt-1 text-xs text-gray-500">
-                            Upload a document proving your institution's accreditation status
+                            Upload a document proving your institution's accreditation status (PDF, DOC, or image files)
                         </p>
                     </div>
                 </div>

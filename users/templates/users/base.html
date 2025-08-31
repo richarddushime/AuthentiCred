@@ -213,6 +213,97 @@
                 white-space: nowrap !important;
             }
         }
+        
+        /* Animation classes */
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Form field focus states */
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        /* Error state styling */
+        .border-red-500 {
+            border-color: #ef4444 !important;
+        }
+        
+        .ring-red-200 {
+            box-shadow: 0 0 0 3px rgba(254, 202, 202, 0.5) !important;
+        }
+        
+        /* Success state styling */
+        .border-green-500 {
+            border-color: #10b981 !important;
+        }
+        
+        .ring-green-200 {
+            box-shadow: 0 0 0 3px rgba(187, 247, 208, 0.5) !important;
+        }
+        
+        /* Custom radio button styling */
+        input[type="radio"]:checked + label {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        input[type="radio"]:checked + label .radio-dot {
+            border-color: #3b82f6 !important;
+            background-color: #3b82f6 !important;
+        }
+        
+        input[type="radio"]:checked + label .radio-inner {
+            opacity: 1 !important;
+        }
+        
+        /* Hover effects for radio buttons */
+        input[type="radio"] + label:hover {
+            background-color: #f9fafb !important;
+            border-color: #d1d5db !important;
+        }
+        
+        /* Ensure peer classes work properly */
+        .peer:checked ~ .peer-checked\:border-blue-500 {
+            border-color: #3b82f6 !important;
+        }
+        
+        .peer:checked ~ .peer-checked\:bg-blue-50 {
+            background-color: #eff6ff !important;
+        }
+        
+        .peer:checked ~ .peer-checked\:ring-blue-200 {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        /* Additional styling for radio button states */
+        input[type="radio"]:checked + label {
+            border-color: #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+        
+        input[type="radio"]:checked + label .w-4.h-4 {
+            border-color: #3b82f6 !important;
+            background-color: #3b82f6 !important;
+        }
+        
+        input[type="radio"]:checked + label .w-2.h-2 {
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -236,22 +327,148 @@
 
         // Conditional field display for registration form
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up radio button functionality...');
+            
             const userTypeRadios = document.querySelectorAll('input[name="user_type"]');
             const institutionFields = document.getElementById('institution-fields');
             
+            console.log('Found radio buttons:', userTypeRadios.length);
+            console.log('Institution fields element:', institutionFields);
+            
             function toggleInstitutionFields() {
                 const selectedType = document.querySelector('input[name="user_type"]:checked');
+                console.log('Selected type:', selectedType ? selectedType.value : 'none');
+                
                 if (selectedType && institutionFields) {
-                    institutionFields.style.display = selectedType.value === 'INSTITUTION' ? 'block' : 'none';
+                    if (selectedType.value === 'INSTITUTION') {
+                        institutionFields.style.display = 'block';
+                        institutionFields.classList.add('animate-fade-in');
+                        console.log('Showing institution fields');
+                        // Add required attribute to institution name field
+                        const institutionNameField = document.getElementById('id_institution_name');
+                        if (institutionNameField) {
+                            institutionNameField.setAttribute('required', 'required');
+                        }
+                    } else {
+                        institutionFields.style.display = 'none';
+                        institutionFields.classList.remove('animate-fade-in');
+                        console.log('Hiding institution fields');
+                        // Remove required attribute from institution name field
+                        const institutionNameField = document.getElementById('id_institution_name');
+                        if (institutionNameField) {
+                            institutionNameField.removeAttribute('required');
+                        }
+                    }
                 }
             }
             
             if (userTypeRadios.length) {
-                userTypeRadios.forEach(radio => {
-                    radio.addEventListener('change', toggleInstitutionFields);
+                userTypeRadios.forEach((radio, index) => {
+                    console.log(`Setting up radio ${index}:`, radio.value, radio.checked);
+                    
+                    // Add click event listener as well
+                    radio.addEventListener('click', function(e) {
+                        console.log('Radio button clicked:', e.target.value, e.target.checked);
+                    });
+                    
+                    radio.addEventListener('change', function(e) {
+                        console.log('Radio button changed:', e.target.value, e.target.checked);
+                        
+                        // Update visual states
+                        updateRadioButtonStates();
+                        
+                        toggleInstitutionFields();
+                    });
+                    
+                    // Also add event listener to the label
+                    const label = document.querySelector(`label[for="${radio.id}"]`);
+                    if (label) {
+                        label.addEventListener('click', function(e) {
+                            console.log('Label clicked for radio:', radio.value);
+                            // Manually check the radio button
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('change'));
+                        });
+                    }
                 });
-                toggleInstitutionFields(); // Initial state
+                
+                // Function to update radio button visual states
+                function updateRadioButtonStates() {
+                    userTypeRadios.forEach(radio => {
+                        const label = document.querySelector(`label[for="${radio.id}"]`);
+                        if (label) {
+                            if (radio.checked) {
+                                label.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                                const dot = label.querySelector('.radio-dot');
+                                const inner = label.querySelector('.radio-inner');
+                                if (dot) dot.classList.add('border-blue-500', 'bg-blue-500');
+                                if (inner) inner.classList.add('opacity-100');
+                            } else {
+                                label.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                                const dot = label.querySelector('.radio-dot');
+                                const inner = label.querySelector('.radio-inner');
+                                if (dot) dot.classList.remove('border-blue-500', 'bg-blue-500');
+                                if (inner) inner.classList.remove('opacity-100');
+                            }
+                        }
+                    });
+                }
+                
+                // Initial state update
+                updateRadioButtonStates();
+                toggleInstitutionFields();
+            } else {
+                console.warn('No radio buttons found!');
             }
+            
+            // Add visual feedback for form validation
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let hasErrors = false;
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.classList.add('border-red-500', 'ring-red-200');
+                            hasErrors = true;
+                        } else {
+                            field.classList.remove('border-red-500', 'ring-red-200');
+                        }
+                    });
+                    
+                    if (hasErrors) {
+                        e.preventDefault();
+                        // Show error message
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm';
+                        errorMsg.innerHTML = '<i class="bi bi-exclamation-circle mr-2"></i>Please fill in all required fields.';
+                        
+                        const existingError = form.querySelector('.bg-red-50');
+                        if (existingError) {
+                            existingError.remove();
+                        }
+                        
+                        form.appendChild(errorMsg);
+                        
+                        // Scroll to first error
+                        const firstError = form.querySelector('.border-red-500');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+                
+                // Remove error styling on input
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.remove('border-red-500', 'ring-red-200');
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>
