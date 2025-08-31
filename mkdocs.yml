@@ -26,6 +26,7 @@ nav:
   - Automation Guide: AUTOMATION_README.md
   - Contributing: contributing.md
   - Tailwind Setup: tailwind-setup.md
+  - API Reference: api/index.md
 
 # Markdown extensions
 markdown_extensions:

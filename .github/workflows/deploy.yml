@@ -1,4 +1,4 @@
-# name: Deploy to Railway
+# name: Deploy to Heroku
 
 # on:
 #   push:
@@ -15,10 +15,12 @@
 #     - name: Set up Python
 #       uses: actions/setup-python@v4
 #       with:
-#         python-version: '3.11'
+#         python-version: '3.13'
     
-#     - name: Install Railway CLI
-#       run: npm install -g @railway/cli
+#     - name: Install Heroku CLI
+#       run: |
+#         curl https://cli-assets.heroku.com/install.sh | sh
+#         heroku --version
     
 #     - name: Install Python dependencies
 #       run: |
@@ -29,12 +31,20 @@
 #       env:
 #         SECRET_KEY: ${{ secrets.SECRET_KEY }}
 #         DEBUG: False
-#         RAILWAY: true
+#         HEROKU: true
+#         DJANGO_SETTINGS_MODULE: AuthentiCred.settings
 #       run: |
 #         python manage.py check --deploy
     
-#     - name: Deploy to Railway
+#     - name: Deploy to Heroku
 #       env:
-#         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+#         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#         AUTHENTICRED: ${{ secrets.AuthentiCred }}
 #       run: |
-#         railway up --detach
+#         echo "Deploying to Heroku app: $AUTHENTICRED"
+#         heroku container:login
+#         heroku container:push web --app $AUTHENTICRED
+#         heroku container:release web --app $AUTHENTICRED
+        
+#         echo "Deployment completed successfully!"
+#         echo "Your app is available at: https://$AUTHENTICRED.herokuapp.com/"

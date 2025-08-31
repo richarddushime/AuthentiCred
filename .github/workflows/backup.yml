@@ -19,7 +19,7 @@
 #     - name: Set up Python
 #       uses: actions/setup-python@v4
 #       with:
-#         python-version: '3.11'
+#         python-version: '3.13'
     
 #     - name: Install dependencies
 #       run: |
@@ -32,6 +32,7 @@
 #         BACKUP_BUCKET: ${{ secrets.BACKUP_BUCKET }}
 #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         DJANGO_SETTINGS_MODULE: AuthentiCred.settings
 #       run: |
 #         # Create backup directory
 #         mkdir -p backups
