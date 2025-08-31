@@ -132,15 +132,15 @@ Verifiable Credentials are **cryptographically secure, privacy-respecting digita
 ```json
 {
   "@context": [
-    "https://www.w3.org/2018/credentials/v1",
-    "https://www.w3.org/2018/credentials/examples/v1"
+    "https://www.w3.org/ns/credentials/v2",
+"https://www.w3.org/ns/credentials/examples/v2"
   ],
-  "id": "http://example.edu/credentials/3732",
+  "id": "http://example.edu/credentials/3732" [Example URL],
   "type": ["VerifiableCredential", "UniversityDegreeCredential"],
-  "issuer": "https://example.edu/issuers/14",
+  "issuer": "https://example.edu/issuers/14" [Example URL],
   "issuanceDate": "2010-01-01T19:23:24Z",
   "credentialSubject": {
-    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21" [Example DID],
     "degree": {
       "type": "BachelorDegree",
       "name": "Bachelor of Science and Arts"
@@ -150,7 +150,7 @@ Verifiable Credentials are **cryptographically secure, privacy-respecting digita
     "type": "RsaSignature2018",
     "created": "2017-06-18T21:19:10Z",
     "proofPurpose": "assertionMethod",
-    "verificationMethod": "https://example.edu/issuers/14#keys-1",
+    "verificationMethod": "https://example.edu/issuers/14#keys-1" [Example URL],
     "jws": "eyJhbGciOiJSUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..."
   }
 }
@@ -177,7 +177,7 @@ DIDs are **globally unique identifiers** that enable verifiable, decentralized d
 #### 3.5 DID Format in AuthentiCred
 
 ```
-Example DID: did:ethr:0x1234567890abcdef1234567890abcdef12345678
+Example DID: did:ethr:0x1234567890abcdef1234567890abcdef12345678 [Example Address]
 
 Components:
 - did:ethr: → DID method (Ethereum-based)
@@ -205,26 +205,26 @@ Ganache is a **personal blockchain for Ethereum development** that allows develo
 #### 4.1 Accounts Tab
 ```
 Account #0: 0x627306090abaB3A6e1400e9345bC60c78a8Ef57 (100 ETH)
-Account #1: 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (100 ETH)
-Account #2: 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (100 ETH)
+Account #1: 0xf17f52151EbEF6C7334FAD080c5704D77216b732 (100 ETH - [Example])
+Account #2: 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (100 ETH - [Example])
 ...
 ```
 
 #### 4.2 Blocks Tab
 ```
-Block #0: 0x4d5e3c... (Timestamp: 2024-12-XX XX:XX:XX)
-Block #1: 0x7f8a9b... (Timestamp: 2024-12-XX XX:XX:XX)
-Block #2: 0x1c2d3e... (Timestamp: 2024-12-XX XX:XX:XX)
+Block #0: 0x4d5e3c... (Timestamp: [Current Block Time])
+Block #1: 0x7f8a9b... (Timestamp: [Previous Block Time])
+Block #2: 0x1c2d3e... (Timestamp: [Older Block Time])
 ...
 ```
 
 #### 4.3 Transactions Tab
 ```
-Tx Hash: 0xabc123...
-From: 0x627306090abaB3A6e1400e9345bC60c78a8Ef57
-To: 0xContractAddress...
-Gas Used: 21,000
-Block: #5
+Tx Hash: 0xabc123... [Example Transaction Hash]
+From: 0x627306090abaB3A6e1400e9345bC60c78a8Ef57 [Example Sender]
+To: 0xContractAddress... [Example Contract Address]
+Gas Used: 21,000 [Example Gas Usage]
+Block: #5 [Example Block Number]
 ```
 
 ### How Ganache Works in AuthentiCred
@@ -547,7 +547,7 @@ except:
 **How it Works**:
 ```
 Input: "Hello, AuthentiCred!"
-Output: 0x8f7d3b2a1e9c6f5d4a3b2c1d9e8f7a6b5c4d3e2f1a9b8c7d6e5f4a3b2c1d9e8f7
+Output: 0x8f7d3b2a1e9c6f5d4a3b2c1d9e8f7a6b5c4d3e2f1a9b8c7d6e5f4a3b2c1d9e8f7 [Example Hash]
 ```
 
 **Properties**:
@@ -568,10 +568,10 @@ print(f"SHA256 Hash: {hash_hex}")
 
 # Hash credential data
 credential_data = {
-    "issuer": "University of Example",
+    "issuer": "University of AuthentiCred",
     "student": "John Doe",
     "degree": "Bachelor of Science",
-    "date": "2024-12-01"
+    "date": "[Current Date]"
 }
 
 # Convert to JSON string and hash
@@ -861,9 +861,9 @@ This technical foundation enables AuthentiCred to provide **instant, tamper-proo
 
 ---
 
-**Technical Documentation**: December 2024  
+**Technical Documentation**: June 2025
 **Architecture Version**: 1.0  
-**Next Update**: Q1 2025
+**Next Update**: Q3 2025
 
 ---
 
