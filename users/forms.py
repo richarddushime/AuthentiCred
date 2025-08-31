@@ -3,29 +3,44 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import InstitutionProfile
 from .constants import USER_TYPE_CHOICES
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 User = get_user_model()  
 
 class CustomUserCreationForm(UserCreationForm):
     user_type = forms.ChoiceField(
         choices=USER_TYPE_CHOICES,
-        widget=forms.RadioSelect,
-        label="I am a"
+        widget=forms.RadioSelect(attrs={'class': 'hidden'}),  # Hide the default radio buttons but keep them functional
+        label="I am a:",
+        help_text="Select your role in the credential ecosystem"
     )
     institution_name = forms.CharField(
         max_length=255, 
         required=False,
         label="Institution Name",
-        help_text="Required if you're an institution"
+        help_text="Required if you're an institution",
+        widget=forms.TextInput(attrs={
+            'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter your institution name'
+        })
     )
     institution_website = forms.URLField(
         required=False,
-        label="Institution Website"
+        label="Institution Website",
+        help_text="Optional: Your institution's website URL",
+        widget=forms.URLInput(attrs={
+            'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'https://your-institution.com'
+        })
     )
     accreditation_proof = forms.FileField(
         required=False,
         label="Accreditation Proof",
-        help_text="Upload documentation proving your accreditation status"
+        help_text="Upload documentation proving your accreditation status",
+        widget=forms.FileInput(attrs={
+            'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png'
+        })
     )
 
     class Meta:
@@ -37,15 +52,40 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+        
+        # Add custom styling to form fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['user_type', 'institution_name', 'institution_website', 'accreditation_proof']:
+                field.widget.attrs.update({
+                    'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                })
 
     def clean(self):
         cleaned_data = super().clean()
         user_type = cleaned_data.get('user_type')
         
         if user_type == 'INSTITUTION':
-            if not cleaned_data.get('institution_name'):
-                self.add_error('institution_name', 'This field is required for institutions')
+            institution_name = cleaned_data.get('institution_name')
+            if not institution_name or institution_name.strip() == '':
+                self.add_error('institution_name', 'Institution name is required for credential issuers')
+            
+            # Validate institution name length
+            if institution_name and len(institution_name.strip()) < 3:
+                self.add_error('institution_name', 'Institution name must be at least 3 characters long')
+            
+            # Validate website if provided
+            website = cleaned_data.get('institution_website')
+            if website and not website.startswith(('http://', 'https://')):
+                cleaned_data['institution_website'] = 'https://' + website
                 
+        elif user_type == 'STUDENT':
+            # Additional validation for students if needed
+            pass
+            
+        elif user_type == 'EMPLOYER':
+            # Additional validation for employers if needed
+            pass
+            
         return cleaned_data
 
     def save(self, commit=True):
@@ -58,22 +98,79 @@ class CustomUserCreationForm(UserCreationForm):
             if user_type == 'INSTITUTION':
                 InstitutionProfile.objects.create(
                     user=user,
-                    name=self.cleaned_data['institution_name'],
+                    name=self.cleaned_data['institution_name'].strip(),
                     website=self.cleaned_data['institution_website'],
                     accreditation_proof=self.cleaned_data['accreditation_proof']
                 )
                 
         return user
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            if len(username) < 3:
+                raise ValidationError('Username must be at least 3 characters long.')
+            if not username.replace('_', '').replace('-', '').isalnum():
+                raise ValidationError('Username can only contain letters, numbers, underscores, and hyphens.')
+        return username
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            # Check if email is already registered
+            if User.objects.filter(email=email).exists():
+                raise ValidationError('This email address is already registered. Please use a different email or try logging in.')
+        return email
+    
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        if password1:
+            if len(password1) < 8:
+                raise ValidationError('Password must be at least 8 characters long.')
+            if password1.isdigit():
+                raise ValidationError('Password cannot be entirely numeric.')
+            if password1.lower() == password1:
+                raise ValidationError('Password must contain at least one uppercase letter.')
+        return password1
+
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         label='Username or Email',
-        widget=forms.TextInput(attrs={'autofocus': True})
+        widget=forms.TextInput(attrs={
+            'autofocus': True,
+            'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter your username or email'
+        })
     )
     password = forms.CharField(
         label='Password',
-        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'})
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'current-password',
+            'class': 'block w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter your password'
+        })
     )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
+        
+        if username and password:
+            try:
+                user = User.objects.get(username=username)
+                if not user.is_active:
+                    raise ValidationError('This account has been deactivated. Please contact support.')
+            except User.DoesNotExist:
+                try:
+                    user = User.objects.get(email=username)
+                    if not user.is_active:
+                        raise ValidationError('This account has been deactivated. Please contact support.')
+                except User.DoesNotExist:
+                    # Don't reveal if username/email exists or not for security
+                    pass
+                    
+        return cleaned_data
 
 class EditProfileForm(forms.ModelForm):
     class Meta:

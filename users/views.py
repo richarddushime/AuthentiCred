@@ -29,53 +29,88 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
-            # Create wallet with private key
-            private_key, public_key = generate_key_pair()
-            # Assuming Wallet model exists and is imported
-            # from wallets.models import Wallet
-            # Wallet.objects.create(user=user, private_key=private_key)
-            
-            # Store public key on user
-            user.public_key = public_key
-            user.save()
-            login(request, user)
+            try:
+                user = form.save()
+                # Create wallet with private key
+                private_key, public_key = generate_key_pair()
+                # Assuming Wallet model exists and is imported
+                # from wallets.models import Wallet
+                # Wallet.objects.create(user=user, private_key=private_key)
+                
+                # Store public key on user
+                user.public_key = public_key
+                user.save()
+                login(request, user)
 
-            if user.user_type == 'INSTITUTION':
-                try:
-                    # Create institution profile first
-                    profile = InstitutionProfile.objects.create(user=user)
-                    
-                    # Register DID using fallback mechanism (Celery first, then direct execution)
-                    task_result = execute_task_with_fallback(register_did_task, user.did, user.public_key)
-                    
-                    # Create DID registration record
-                    DIDRegistration.objects.create(
-                        did=user.did,
-                        public_key=user.public_key,
-                        institution=profile,
-                        transaction=None  # Will be updated when task completes
-                    )
-                    
-                    # Show appropriate message based on execution method
-                    status_message = get_task_status_message(task_result)
-                    if task_result['success']:
-                        messages.info(request, status_message)
-                    else:
-                        messages.warning(request, status_message)
-                    
-                    # Schedule background trust status update (also with fallback)
-                    trust_result = execute_task_with_fallback(process_did_registration_confirmation)
-                    if not trust_result['success']:
-                        logger.warning("Trust status update scheduling failed")
-                    
-                except Exception as e:
-                    logger.error(f"DID registration setup failed: {str(e)}")
-                    messages.warning(request, "DID registration initiated, but there was an issue with processing.")
-            
-            return redirect('profile')
+                if user.user_type == 'INSTITUTION':
+                    try:
+                        # Create institution profile first
+                        profile = InstitutionProfile.objects.create(user=user)
+                        
+                        # Register DID using fallback mechanism (Celery first, then direct execution)
+                        task_result = execute_task_with_fallback(register_did_task, user.did, user.public_key)
+                        
+                        # Create DID registration record
+                        DIDRegistration.objects.create(
+                            did=user.did,
+                            public_key=user.public_key,
+                            institution=profile,
+                            transaction=None  # Will be updated when task completes
+                        )
+                        
+                        # Show appropriate message based on execution method
+                        status_message = get_task_status_message(task_result)
+                        if task_result['success']:
+                            messages.success(request, f"Welcome to AuthentiCred! Your account has been created successfully. {status_message}")
+                        else:
+                            messages.warning(request, f"Account created successfully! {status_message}")
+                        
+                        # Schedule background trust status update (also with fallback)
+                        trust_result = execute_task_with_fallback(process_did_registration_confirmation)
+                        if not trust_result['success']:
+                            logger.warning("Trust status update scheduling failed")
+                        
+                    except Exception as e:
+                        logger.error(f"DID registration setup failed: {str(e)}")
+                        messages.warning(request, "Account created successfully! DID registration initiated, but there was an issue with processing.")
+                else:
+                    # For non-institution users
+                    user_type_display = dict(USER_TYPE_CHOICES).get(user.user_type, user.user_type)
+                    messages.success(request, f"Welcome to AuthentiCred! Your {user_type_display.lower()} account has been created successfully.")
+                
+                return redirect('profile')
+                
+            except Exception as e:
+                logger.error(f"User registration failed: {str(e)}")
+                messages.error(request, "Registration failed due to an unexpected error. Please try again or contact support.")
+                # Delete the user if it was created but something else failed
+                if 'user' in locals():
+                    user.delete()
         else:
+            # Enhanced error logging and user feedback
             logger.warning(f"Registration form errors: {form.errors}")
+            
+            # Provide specific error messages for common issues
+            if 'username' in form.errors:
+                if 'unique' in str(form.errors['username']):
+                    messages.error(request, "This username is already taken. Please choose a different one.")
+                else:
+                    messages.error(request, "Please enter a valid username.")
+                    
+            if 'email' in form.errors:
+                if 'unique' in str(form.errors['email']):
+                    messages.error(request, "This email address is already registered. Please use a different email or try logging in.")
+                else:
+                    messages.error(request, "Please enter a valid email address.")
+                    
+            if 'password2' in form.errors:
+                messages.error(request, "Passwords do not match. Please ensure both password fields are identical.")
+                
+            if 'user_type' in form.errors:
+                messages.error(request, "Please select your role in the credential ecosystem.")
+                
+            if 'institution_name' in form.errors:
+                messages.error(request, "Institution name is required for credential issuers.")
     else:
         form = CustomUserCreationForm()
     
@@ -85,10 +120,60 @@ def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, f'Welcome back, {user.username}!')
-            return redirect('profile')
+            try:
+                user = form.get_user()
+                if user.is_active:
+                    login(request, user)
+                    user_type_display = dict(USER_TYPE_CHOICES).get(user.user_type, user.user_type)
+                    messages.success(request, f'Welcome back, {user.username}! You are logged in as a {user_type_display.lower()}.')
+                    
+                    # Redirect based on user type for better UX
+                    if user.user_type == 'INSTITUTION':
+                        return redirect('dashboard')
+                    elif user.user_type == 'STUDENT':
+                        return redirect('dashboard')
+                    elif user.user_type == 'EMPLOYER':
+                        return redirect('dashboard')
+                    else:
+                        return redirect('profile')
+                else:
+                    messages.error(request, "This account has been deactivated. Please contact support.")
+            except Exception as e:
+                logger.error(f"Login failed: {str(e)}")
+                messages.error(request, "Login failed due to an unexpected error. Please try again.")
+        else:
+            # Enhanced error handling for login failures
+            username = form.data.get('username', '')
+            password = form.data.get('password', '')
+            
+            if not username and not password:
+                messages.error(request, "Please enter both username/email and password.")
+            elif not username:
+                messages.error(request, "Please enter your username or email address.")
+            elif not password:
+                messages.error(request, "Please enter your password.")
+            else:
+                # Check if user exists but password is wrong
+                try:
+                    user = User.objects.get(username=username)
+                    if not user.check_password(password):
+                        messages.error(request, "Invalid password. Please check your password and try again.")
+                    elif not user.is_active:
+                        messages.error(request, "This account has been deactivated. Please contact support.")
+                    else:
+                        messages.error(request, "Invalid credentials. Please check your username/email and password.")
+                except User.DoesNotExist:
+                    try:
+                        user = User.objects.get(email=username)
+                        if not user.check_password(password):
+                            messages.error(request, "Invalid password. Please check your password and try again.")
+                        elif not user.is_active:
+                            messages.error(request, "This account has been deactivated. Please contact support.")
+                        else:
+                            messages.error(request, "Invalid credentials. Please check your username/email and password.")
+                    except User.DoesNotExist:
+                        # Don't reveal if user exists for security
+                        messages.error(request, "Invalid credentials. Please check your username/email and password.")
     else:
         form = CustomAuthenticationForm()
     

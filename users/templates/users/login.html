@@ -32,7 +32,8 @@
                             }
                         </style>
                         {% if form.username.errors %}
-                            <div class="mt-1 text-sm text-red-600">
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="bi bi-exclamation-circle mr-1"></i>
                                 {{ form.username.errors.0 }}
                             </div>
                         {% endif %}
@@ -55,7 +56,8 @@
                             }
                         </style>
                         {% if form.password.errors %}
-                            <div class="mt-1 text-sm text-red-600">
+                            <div class="mt-2 text-sm text-red-600 flex items-center">
+                                <i class="bi bi-exclamation-circle mr-1"></i>
                                 {{ form.password.errors.0 }}
                             </div>
                         {% endif %}
