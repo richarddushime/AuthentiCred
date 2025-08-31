@@ -22,6 +22,24 @@ pkill -f "celery beat" 2>/dev/null || echo "  Celery beat not running"
 echo "🔗 Stopping Ganache..."
 pkill -f "ganache" 2>/dev/null || echo "  Ganache not running"
 
+# Stop MkDocs documentation server
+echo "📚 Stopping MkDocs documentation server..."
+if [ -f ".mkdocs.pid" ]; then
+    MKDOCS_PID=$(cat .mkdocs.pid)
+    if kill -0 $MKDOCS_PID 2>/dev/null; then
+        kill $MKDOCS_PID
+        echo "  MkDocs stopped (PID: $MKDOCS_PID)"
+    else
+        echo "  MkDocs PID file exists but process not running"
+    fi
+    rm -f .mkdocs.pid
+else
+    echo "  MkDocs PID file not found"
+fi
+
+# Also try to stop any remaining MkDocs processes
+pkill -f "mkdocs serve" 2>/dev/null || echo "  No MkDocs processes found"
+
 # Stop Redis container
 echo "🔴 Stopping Redis..."
 docker stop authenticred-redis 2>/dev/null || echo "  Redis container not running"

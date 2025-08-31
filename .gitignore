@@ -75,6 +75,14 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# MkDocs documentation
+site/
+docs/site/
+docs/.cache/
+.mkdocs_cache/
+.mkdocs/
+.mkdocs.pid
+
 # PyBuilder
 target/
 
@@ -295,3 +303,28 @@ secrets.json
 config_local.py
 settings_local.py
 local_config.py
+
+# Documentation build artifacts
+docs/site/
+docs/.cache/
+.mkdocs_cache/
+.mkdocs/
+
+# Generated API documentation
+docs/api/
+docs/API_REFERENCE_README.md
+
+# Documentation images (if auto-generated)
+docs/images/auto_*
+
+# CI/CD artifacts
+.github/workflows/*.log
+.github/workflows/*.tmp
+
+# Heroku
+.heroku/
+*.heroku
+
+# Railway
+.railway/
+*.railway

@@ -57,6 +57,54 @@ python authenticred_setup.py "$@"
 # Check exit status
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ AuthentiCred started successfully!${NC}"
+    
+    # Start MkDocs documentation server
+    echo -e "${BLUE}📚 Starting MkDocs documentation server...${NC}"
+    
+    # Check if MkDocs is installed
+    if ! command -v mkdocs &> /dev/null; then
+        echo -e "${YELLOW}⚠️  MkDocs not found, installing...${NC}"
+        pip install mkdocs mkdocs-material
+    fi
+    
+    # Check if mkdocs.yml exists
+    if [ -f "mkdocs.yml" ]; then
+        echo -e "${GREEN}📖 Found mkdocs.yml configuration${NC}"
+        
+        # Generate API references first
+        echo -e "${BLUE}🔧 Generating API references...${NC}"
+        cd docs
+        python generate_api_refs.py
+        cd ..
+        
+        # Start MkDocs server in background
+        echo -e "${GREEN}🚀 Starting MkDocs server on http://localhost:8080${NC}"
+        echo -e "${BLUE}📖 Documentation will be available at: http://localhost:8080${NC}"
+        echo -e "${YELLOW}💡 Press Ctrl+C to stop all services${NC}"
+        
+        # Start MkDocs in background and capture PID
+        mkdocs serve -a 0.0.0.0:8080 &
+        MKDOCS_PID=$!
+        
+        # Save PID to file for easy stopping
+        echo $MKDOCS_PID > .mkdocs.pid
+        
+        echo -e "${GREEN}✅ MkDocs started with PID: $MKDOCS_PID${NC}"
+        echo -e "${BLUE}📚 Documentation server is running in background${NC}"
+        
+    else
+        echo -e "${YELLOW}⚠️  mkdocs.yml not found, skipping documentation server${NC}"
+    fi
+    
+    echo ""
+    echo -e "${GREEN}🎉 All services are now running!${NC}"
+    echo -e "${BLUE}🌐 Django App: http://localhost:8000${NC}"
+    echo -e "${BLUE}📚 Documentation: http://localhost:8080${NC}"
+    echo -e "${BLUE}🔗 Ganache: http://localhost:8545${NC}"
+    echo ""
+    echo -e "${YELLOW}💡 To stop all services, press Ctrl+C${NC}"
+    echo -e "${YELLOW}💡 To stop only MkDocs: kill \$(cat .mkdocs.pid)${NC}"
+    
 else
     echo -e "${RED}❌ AuthentiCred failed to start${NC}"
     exit 1

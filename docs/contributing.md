@@ -17,7 +17,7 @@ Thank you for your interest in contributing to AuthentiCred! This guide will hel
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/AuthentiCred.git
+   git clone https://github.com/<your-username>/AuthentiCred.git
    cd AuthentiCred
    ```
 
