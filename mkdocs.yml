@@ -1,0 +1,56 @@
+# Simple MkDocs Configuration for AuthentiCred
+site_name: AuthentiCred Documentation
+site_description: Blockchain-based credential verification platform
+site_author: richarddushime
+
+# Theme
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+
+# Navigation
+nav:
+  - Home: index.md
+  - Project Overview: project_report.md
+  - Technical Architecture: techstacks.md
+  - Technical Documentation: documentation.md
+  - Management Commands: management_commands.md
+  - Automation Guide: AUTOMATION_README.md
+  - Contributing: contributing.md
+  - Tailwind Setup: tailwind-setup.md
+
+# Markdown extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - codehilite
+  - def_list
+  - footnotes
+
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist
+  - pymdownx.tilde
+
+# Plugins
+plugins:
+  - search

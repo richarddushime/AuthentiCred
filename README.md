@@ -14,14 +14,14 @@ Today, proving your hard-earned school or job qualifications is a frustrating an
 Adding to the chaos, every college and training center operates on different, incompatible systems. This forces students to juggle multiple transcripts and spend valuable time and money repeatedly just to apply for jobs or further education. Even worse, your most sensitive personal qualification data is frequently stored by third parties, leaving it vulnerable and completely out of your control.AuthentiCred revolutionizes this broken system. We empower educational institutions to issue tamper-proof digital certificates on a secure, decentralized network. Students gain a single, intuitive digital wallet to securely store all their academic and professional records. With AuthentiCred, anyone can verify credentials in seconds, without the need to share sensitive personal details.
 
 
-## 🎓 Who Can Use It?
+## Who Can Use It?
 
 - **Issuers**: Schools, universities, training providers  
 - **Holders**: Students, alumni, professionals  
 - **Verifiers**: Employers, scholarship & grant programs, licensing boards, immigration services  
 
 
-## 🚀 Quick Start (Developers)
+##  Quick Start (Developers)
 
 ### **Automated Setup (Recommended)**
 ```bash
@@ -58,9 +58,9 @@ celery -A AuthentiCred worker --loglevel=info
 python manage.py runserver
 ```
 
-For detailed setup instructions, see [AUTOMATION_README.md](docs/AUTOMATION_README.md)
+For detailed setup instructions, see [AUTOMATION_README.md](https://richarddushime.github.io/AuthentiCred/AUTOMATION_README/)
 
-## 📖 Getting Started
+##  Getting Started
 
 1. **For Institutions**  
    - Register as an issuer  
@@ -77,7 +77,7 @@ For detailed setup instructions, see [AUTOMATION_README.md](docs/AUTOMATION_READ
    - Scan or paste the VC link  
    - Instantly confirm authenticity  
 
-## 🛠️ Development
+##  Development
 
 ### **Available Scripts**
 - `./start.sh` - Start all services (automated)
@@ -92,4 +92,4 @@ For detailed setup instructions, see [AUTOMATION_README.md](docs/AUTOMATION_READ
 > **Ready to secure and simplify your credential journey?**  
 > Visit [AuthentiCred](https://authenticred-8a4c46d20c03.herokuapp.com/) or contact us 
 
-For more read the Documentation [here](docs/documentation.md)
+For more read the Documentation [here](https://richarddushime.github.io/AuthentiCred/documentation/)

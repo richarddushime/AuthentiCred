@@ -1,12 +1,12 @@
-# 🚀 AuthentiCred Complete Automation
+# AuthentiCred Complete Automation
 
 This document explains how to use the comprehensive automation script that handles the entire AuthentiCred setup and startup process.
 
-## 📋 What the Script Does
+## What the Script Does
 
 The `start_authenticred.py` script automates the complete AuthentiCred development environment setup:
 
-### 🔧 **Setup Process**
+### **Setup Process**
 1. **Dependency Check** - Verifies all required tools are installed
 2. **Ganache Startup** - Starts local blockchain on port 8545
 3. **Contract Deployment** - Deploys all smart contracts automatically
@@ -18,13 +18,13 @@ The `start_authenticred.py` script automates the complete AuthentiCred developme
    - Celery Beat Scheduler
    - Django Development Server
 
-### 🌐 **Network Configuration**
+### **Network Configuration**
 - **Ganache**: `http://127.0.0.1:8545` (Localhost 8545)
 - **Django**: `http://127.0.0.1:8000`
 - **Redis**: `localhost:6379`
 - **Metamask**: Configure to connect to `Localhost 8545`
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 Before running the automation script, ensure you have the following installed:
 
@@ -55,7 +55,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 🚀 Usage
+## Usage
 
 ### **Basic Usage (Complete Setup)**
 ```bash
@@ -92,14 +92,14 @@ python start_authenticred.py --skip-ganache --skip-deploy
 
 ## 📊 What Gets Started
 
-### **🔗 Blockchain Services**
+### **Blockchain Services**
 - **Ganache**: Local Ethereum blockchain
   - Port: 8545
   - Network ID: 5777
   - Accounts: 10 (1000 ETH each)
   - Deterministic: Yes (same addresses every time)
 
-### **🌐 Web Services**
+### **Web Services**
 - **Django**: Main web application
   - URL: http://127.0.0.1:8000
   - Debug mode: Enabled
@@ -115,14 +115,14 @@ python start_authenticred.py --skip-ganache --skip-deploy
 - **Celery Beat**: Task scheduler
   - Log level: Info
 
-### **📋 Smart Contracts**
+### **Smart Contracts**
 The script deploys and configures these contracts:
 - **DIDRegistry**: Decentralized Identifier registry
 - **TrustRegistry**: Trust management for issuers
 - **CredentialAnchor**: Credential anchoring service
 - **RevocationRegistry**: Credential revocation service
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 The script automatically updates your `.env` file with:
 
@@ -144,7 +144,7 @@ SECRET_KEY=your-secret-key-here-change-in-production
 FIELD_ENCRYPTION_KEY=your-encryption-key-here-change-in-production
 ```
 
-## 🔧 Metamask Configuration
+## Metamask Configuration
 
 To connect Metamask to your local Ganache:
 
@@ -189,7 +189,7 @@ pkill -f "celery beat"
 pkill -f "ganache"
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 
@@ -250,7 +250,7 @@ tail -f logs/celery.log
 # (logs are displayed in the script output)
 ```
 
-## 📝 Manual Commands (Reference)
+## Manual Commands (Reference)
 
 If you prefer to run things manually, here are the equivalent commands:
 
@@ -289,7 +289,7 @@ python -m celery -A AuthentiCred beat --loglevel=info
 python manage.py runserver 127.0.0.1:8000
 ```
 
-## 🎯 Quick Start Guide
+## Quick Start Guide
 
 1. **Install Dependencies**:
    ```bash
@@ -311,4 +311,4 @@ python manage.py runserver 127.0.0.1:8000
    - Connect wallet
    - Issue credentials
 
-That's it! The automation script handles everything else automatically. 🎉
+That's it! The automation script handles everything else automatically.

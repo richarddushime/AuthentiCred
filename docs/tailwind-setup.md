@@ -5,10 +5,10 @@ This guide explains how Tailwind CSS is set up in the AuthentiCred Django projec
 ## Current Implementation
 
 The project currently uses **Tailwind CSS CDN** for immediate development and styling. This approach provides:
-- ✅ Instant styling without build process
-- ✅ All Tailwind utilities available
-- ✅ Easy development and iteration
-- ✅ No build configuration issues
+- Instant styling without build process
+- All Tailwind utilities available
+- Easy development and iteration
+- No build configuration issues
 
 
 ## Local Build Setup (Optional)
