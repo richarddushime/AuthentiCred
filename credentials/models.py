@@ -49,9 +49,36 @@ class Credential(models.Model):
     expiration_date = models.DateField(null=True, blank=True)
     revocation_reason = models.TextField(blank=True, null=True)
     vc_hash = models.CharField(max_length=64, unique=True, null=True, blank=True, help_text="SHA256 hash of the credential JSON")
+    document = models.FileField(upload_to='credentials/', null=True, blank=True, help_text="Upload PDF, JPG, PNG, or other document formats")
     
     def __str__(self):
         return f"{self.credential_type} - {self.title}"
+    
+    @property
+    def document_filename(self):
+        """Get just the filename without the path"""
+        if self.document:
+            return self.document.name.split('/')[-1]
+        return None
+    
+    @property
+    def document_extension(self):
+        """Get the file extension"""
+        if self.document:
+            filename = self.document.name
+            return filename.split('.')[-1].lower() if '.' in filename else ''
+        return ''
+    
+    @property
+    def is_image(self):
+        """Check if the document is an image"""
+        image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
+        return self.document_extension in image_extensions
+    
+    @property
+    def is_pdf(self):
+        """Check if the document is a PDF"""
+        return self.document_extension == 'pdf'
     
     def save(self, *args, **kwargs):
         # Compute and store the hash before saving
@@ -86,6 +113,33 @@ class Credential(models.Model):
             self.save()
             return True
         return False
+    
+    def verify_document_integrity(self):
+        """Verify that the document hash matches the stored document"""
+        if not self.document or 'documentHash' not in self.vc_json.get('credentialSubject', {}):
+            return True  # No document to verify
+        
+        try:
+            import hashlib
+            self.document.seek(0)
+            current_hash = hashlib.sha256(self.document.read()).hexdigest()
+            self.document.seek(0)
+            
+            stored_hash = self.vc_json['credentialSubject']['documentHash']
+            return current_hash == stored_hash
+        except Exception as e:
+            print(f"Error verifying document integrity: {e}")
+            return False
+    
+    @property
+    def document_hash(self):
+        """Get the document hash from the credential subject"""
+        return self.vc_json.get('credentialSubject', {}).get('documentHash')
+    
+    @property
+    def document_filename_from_vc(self):
+        """Get the document filename from the credential subject"""
+        return self.vc_json.get('credentialSubject', {}).get('documentFilename')
 
 class VerificationRecord(models.Model):
     """Model to track verification history"""

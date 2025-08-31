@@ -120,13 +120,17 @@ def show_verification_result(request, credential):
     # 6. Check issued status
     is_issued = credential.status == 'ISSUED'
     
+    # 7. Check document integrity
+    document_integrity_valid = credential.verify_document_integrity()
+    
     overall_valid = (
         signature_valid and 
         is_anchored and 
         (is_revoked is not True) and  # Not revoked or indeterminate
         issuer_trusted and 
         not is_expired and
-        is_issued
+        is_issued and
+        document_integrity_valid
     )
     
     # Create verification record if user is logged in
@@ -143,6 +147,7 @@ def show_verification_result(request, credential):
                 'issuer_trusted': issuer_trusted,
                 'is_expired': is_expired,
                 'is_issued': is_issued,
+                'document_integrity_valid': document_integrity_valid,
                 'overall_valid': overall_valid
             },
             source='INTERNAL'
@@ -156,6 +161,7 @@ def show_verification_result(request, credential):
         'issuer_trusted': issuer_trusted,
         'is_expired': is_expired,
         'is_issued': is_issued,
+        'document_integrity_valid': document_integrity_valid,
         'overall_valid': overall_valid,
         'source': 'internal'
     })
@@ -254,7 +260,7 @@ def issue_credential(request, schema_id=None):
         schema = get_object_or_404(CredentialSchema, id=schema_id, created_by=request.user)
     
     if request.method == 'POST':
-        form = CredentialIssueForm(request.POST, issuer=request.user, initial={'schema': schema})
+        form = CredentialIssueForm(request.POST, request.FILES, issuer=request.user, initial={'schema': schema})
         if form.is_valid():
             # Find holder by email
             holder_email = form.cleaned_data['holder_email']
@@ -286,6 +292,16 @@ def issue_credential(request, schema_id=None):
                 "issuanceDate": datetime.utcnow().isoformat() + "Z",
                 "credentialSubject": subject_data,
             }
+            
+            # Add document hash to credential subject if document is uploaded
+            if form.cleaned_data.get('document'):
+                import hashlib
+                document = form.cleaned_data['document']
+                document.seek(0)  # Reset file pointer to beginning
+                document_hash = hashlib.sha256(document.read()).hexdigest()
+                vc['credentialSubject']['documentHash'] = document_hash
+                vc['credentialSubject']['documentFilename'] = document.name
+                document.seek(0)  # Reset file pointer for saving
             
             # Sign the credential
             try:
@@ -352,6 +368,7 @@ def issue_credential(request, schema_id=None):
                 credential_type=schema.name if schema else "Credential",
                 expiration_date=form.cleaned_data['expiration_date'],
                 schema=schema,
+                document=form.cleaned_data.get('document'),
             )
             
             # Check if user wants to save as draft or issue immediately
@@ -525,21 +542,34 @@ def credential_detail(request, credential_id):
 
 @login_required
 def edit_credential(request, credential_id):
-    """Edit a credential - only allowed for draft credentials"""
+    """Edit a credential - allowed for draft and issued credentials"""
     credential = get_object_or_404(Credential, id=credential_id, issuer=request.user)
     
-    # Only allow editing of draft credentials
-    if credential.status != 'DRAFT':
-        messages.error(request, "Only draft credentials can be edited")
+    # Allow editing of draft and issued credentials
+    if credential.status not in ['DRAFT', 'ISSUED']:
+        messages.error(request, "Only draft and issued credentials can be edited")
         return redirect('credential_detail', credential_id=credential.id)
     
     if request.method == 'POST':
-        form = CredentialIssueForm(request.POST, issuer=request.user, instance=credential)
+        form = CredentialIssueForm(request.POST, request.FILES, issuer=request.user, instance=credential)
         if form.is_valid():
             # Update credential fields
             credential.title = form.cleaned_data['title']
             credential.description = form.cleaned_data['description']
             credential.expiration_date = form.cleaned_data['expiration_date']
+            
+            # Update document if a new one is uploaded
+            if form.cleaned_data.get('document'):
+                credential.document = form.cleaned_data['document']
+                
+                # Update document hash in credential subject
+                import hashlib
+                document = form.cleaned_data['document']
+                document.seek(0)  # Reset file pointer to beginning
+                document_hash = hashlib.sha256(document.read()).hexdigest()
+                credential.vc_json['credentialSubject']['documentHash'] = document_hash
+                credential.vc_json['credentialSubject']['documentFilename'] = document.name
+                document.seek(0)  # Reset file pointer for saving
             
             # Update credential subject data if schema fields changed
             if credential.schema and credential.schema.fields:
@@ -607,6 +637,7 @@ def edit_credential(request, credential_id):
             'description': credential.description,
             'expiration_date': credential.expiration_date,
             'holder_email': credential.holder.email,
+            'document': credential.document,
         }
         
         # Add schema field values
