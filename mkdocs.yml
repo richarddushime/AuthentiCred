@@ -3,6 +3,11 @@ site_name: AuthentiCred Documentation
 site_description: Blockchain-based credential verification platform
 site_author: richarddushime
 
+# GitHub Pages configuration
+site_url: https://richarddushime.github.io/AuthentiCred/
+repo_url: https://github.com/richarddushime/AuthentiCred
+edit_uri: edit/main/docs/
+
 # Theme
 theme:
   name: material
