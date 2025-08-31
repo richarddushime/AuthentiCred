@@ -81,6 +81,7 @@ docs/site/
 docs/.cache/
 .mkdocs_cache/
 .mkdocs/
+.mkdocs.pid
 
 # PyBuilder
 target/
