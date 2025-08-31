@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to AuthentiCred! This guide will help you get started with the project.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -58,7 +58,7 @@ Thank you for your interest in contributing to AuthentiCred! This guide will hel
    python manage.py runserver
    ```
 
-## 🛠️ Development Workflow
+## Development Workflow
 
 ### 1. Create a Feature Branch
 ```bash
@@ -111,7 +111,7 @@ AuthentiCred/
 └── docs/                  # Documentation
 ```
 
-## 📝 Code Style
+## Code Style
 
 ### Python
 - Follow PEP 8
@@ -132,7 +132,7 @@ Use conventional commit format:
 - `test:` Adding tests
 - `chore:` Maintenance tasks
 
-## 🐛 Reporting Issues
+## Reporting Issues
 
 When reporting issues, please include:
 - Clear description of the problem
@@ -141,7 +141,7 @@ When reporting issues, please include:
 - Environment details (OS, Python version, etc.)
 - Screenshots if applicable
 
-## 💡 Feature Requests
+## Feature Requests
 
 For feature requests:
 - Describe the use case
@@ -158,7 +158,7 @@ For feature requests:
 
 ## 📄 License
 
-By contributing to AuthentiCred, you agree that your contributions will be licensed under the [license](../README.md).
+By contributing to AuthentiCred, you agree that your contributions will be licensed under the [MIT License](https://github.com/richarddushime/AuthentiCred/blob/main/LICENSE).
 
 ## 🙏 Thank You
 

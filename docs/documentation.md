@@ -73,7 +73,7 @@ The system supports three distinct user types:
 - **Production:** Supports Polygon, Besu(ongoing)
 - **Chain ID:** 1337 (Ganache default)
 
-## **🔐 CRYPTOGRAPHIC SECURITY**
+## **CRYPTOGRAPHIC SECURITY**
 
 ### **Key Management:**
 - **SECP256k1** elliptic curve cryptography
@@ -87,7 +87,7 @@ The system supports three distinct user types:
 - **JWS (JSON Web Signatures)** format for proofs
 - **Verifiable Credential** standard compliance
 
-## **🗄️ DATA MODELS**
+## **DATA MODELS**
 
 ### **User Management:**
 ```python
@@ -141,7 +141,7 @@ DIDRegistration
 └── transaction (OnChainTransaction)
 ```
 
-## **⚙️ TECHNICAL STACK**
+## **TECHNICAL STACK**
 
 ### **Backend:**
 - **Django** - Web framework
@@ -168,7 +168,7 @@ DIDRegistration
 - **Session management** - Secure user sessions
 - **Field-level encryption** - Private key protection
 
-## **🔄 WORKFLOWS**
+## **WORKFLOWS**
 
 ### **1. Institution Registration:**
 1. Institution registers with platform
@@ -202,7 +202,7 @@ DIDRegistration
 4. Real-time verification performed
 5. No sensitive data stored on verifier's system
 
-## **🚀 DEPLOYMENT & OPERATIONS**
+## **DEPLOYMENT & OPERATIONS**
 
 ### **Background Tasks (Celery):**
 - **Transaction monitoring** - Every 10 seconds
@@ -220,7 +220,7 @@ DIDRegistration
 - **Network configuration** - RPC URLs and chain IDs
 - **Encryption keys** - Fernet key for field encryption
 
-## **🔍 VERIFICATION PROCESS**
+## **VERIFICATION PROCESS**
 
 The system performs comprehensive credential verification:
 
@@ -242,7 +242,7 @@ The system performs comprehensive credential verification:
    - Confirms issuer is in trusted registry
    - Validates institution accreditation
 
-## **💡 KEY INNOVATIONS**
+## **KEY INNOVATIONS**
 
 1. **Self-Sovereign Identity** - Users control their credentials
 2. **Instant Verification** - No manual institution contact needed
@@ -251,7 +251,7 @@ The system performs comprehensive credential verification:
 5. **Privacy-Preserving** - Selective disclosure of credential data
 6. **Lifelong Credential Storage** - Single wallet for all credentials
 
-## **🎯 USE CASES**
+## **USE CASES**
 
 - **Academic Institutions** - Issue degrees, certificates, transcripts
 - **Professional Training** - Certify skills and competencies
