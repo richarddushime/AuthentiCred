@@ -214,30 +214,54 @@ def view_shared_credential(request, credential_id):
     wallet_cred = get_object_or_404(WalletCredential, id=credential_id)
     credential = wallet_cred.credential
     
-    # Check blockchain status
-    blockchain_service = BlockchainService()
+    # Initialize blockchain status variables
     is_anchored = False
     issuer_trusted = False
     is_revoked = False
     
     try:
+        # Check blockchain status
+        blockchain_service = BlockchainService()
+        
         # Get VC hash with error handling
-        vc_hash = credential.vc_hash
-        is_anchored = blockchain_service.client.call_contract_function(
-            'CredentialAnchor',
-            'verifyProof',
-            vc_hash
-        )
+        try:
+            vc_hash = credential.vc_hash
+        except (ValueError, AttributeError) as e:
+            messages.warning(request, f"Error computing credential hash: {str(e)}")
+            vc_hash = None
+        
+        if vc_hash:
+            try:
+                is_anchored = blockchain_service.client.call_contract_function(
+                    'CredentialAnchor',
+                    'verifyProof',
+                    vc_hash
+                )
+            except Exception as e:
+                messages.warning(request, f"Failed to check credential anchoring: {str(e)}")
+                is_anchored = False
         
         # Check issuer trust status
-        issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        try:
+            issuer_trusted = blockchain_service.is_issuer_registered(credential.issuer.did)
+        except Exception as e:
+            messages.warning(request, f"Failed to check issuer trust status: {str(e)}")
+            issuer_trusted = False
         
         # Check revocation status
-        is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        try:
+            is_revoked = blockchain_service.is_credential_revoked(str(credential.id))
+        except Exception as e:
+            messages.warning(request, f"Failed to check revocation status: {str(e)}")
+            is_revoked = False
         
     except Exception as e:
         # If blockchain verification fails, continue without it
-        messages.warning(request, 'Blockchain verification temporarily unavailable')
+        messages.warning(request, f'Blockchain verification temporarily unavailable: {str(e)}')
+        # Set default values if blockchain service is unavailable
+        is_anchored = False
+        issuer_trusted = False
+        is_revoked = False
     
     return render(request, 'wallets/view_shared_credential.html', {
         'credential': credential,

@@ -87,6 +87,19 @@ class BlockchainService:
             logger.error(f"Issuer check failed: {str(e)}")
             raise BlockchainError(f"Issuer check failed: {str(e)}") from e
     
+    def is_did_registered(self, did):
+        """Check if a DID is registered in the DIDRegistry"""
+        try:
+            public_key = self.client.call_contract_function(
+                'DIDRegistry',
+                'resolveDID',
+                did
+            )
+            # If the DID is not registered, resolveDID will return an empty string
+            return public_key != ""
+        except Exception as e:
+            logger.error(f"DID registration check failed: {str(e)}")
+            raise BlockchainError(f"DID registration check failed: {str(e)}") from e
 
     def _create_transaction_record(self, tx_hash, tx_type, **kwargs):
         OnChainTransaction.objects.create(

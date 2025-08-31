@@ -415,13 +415,23 @@ def issue_credential(request, schema_id=None):
 
 def verify_data(data: bytes, signature_hex: str, public_key_hex: str) -> bool:
     """Verify ECDSA signature"""
-    vk = ecdsa.VerifyingKey.from_string(
-        bytes.fromhex(public_key_hex),
-        curve=ecdsa.SECP256k1
-    )
     try:
+        # Handle compressed public key format
+        if len(public_key_hex) == 66:  # Compressed format (33 bytes)
+            vk = ecdsa.VerifyingKey.from_string(
+                bytes.fromhex(public_key_hex),
+                curve=ecdsa.SECP256k1,
+                validate_point=True
+            )
+        else:  # Uncompressed format (65 bytes)
+            vk = ecdsa.VerifyingKey.from_string(
+                bytes.fromhex(public_key_hex),
+                curve=ecdsa.SECP256k1
+            )
+        
         return vk.verify(bytes.fromhex(signature_hex), data, hashfunc=hashlib.sha256)
-    except ecdsa.BadSignatureError:
+    except (ecdsa.BadSignatureError, ValueError, Exception) as e:
+        print(f"Signature verification error: {e}")
         return False
 
 @login_required

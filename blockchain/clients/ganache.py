@@ -74,27 +74,34 @@ class GanacheClient:
                 'from': self.sender_address,
             })
             
-            # Sign and send
-            signed_tx = self.w3.eth.account.sign_transaction(tx, self.private_key)
-            
-            # Get the raw transaction bytes
-            try:
-                # Try the standard attribute first
-                raw_tx = signed_tx.rawTransaction
-            except AttributeError:
+            # For Ganache, if we're using a different account than the configured one,
+            # we can use send_transaction directly since accounts are unlocked
+            if self.sender_address != settings.BLOCKCHAIN_OPERATOR_ADDRESS:
+                # Use the unlocked account directly
+                tx_hash = self.w3.eth.send_transaction(tx)
+            else:
+                # Use the configured private key
+                signed_tx = self.w3.eth.account.sign_transaction(tx, self.private_key)
+                
+                # Get the raw transaction bytes
                 try:
-                    # Try alternative attribute name
-                    raw_tx = signed_tx.raw_transaction
+                    # Try the standard attribute first
+                    raw_tx = signed_tx.rawTransaction
                 except AttributeError:
-                    # For newer Web3.py versions, try to serialize the transaction
-                    if hasattr(signed_tx, 'rawTransaction'):
-                        raw_tx = signed_tx.rawTransaction
-                    elif hasattr(signed_tx, 'raw_transaction'):
+                    try:
+                        # Try alternative attribute name
                         raw_tx = signed_tx.raw_transaction
-                    else:
-                        raise BlockchainError(f"Could not access raw transaction from signed transaction. Available attributes: {dir(signed_tx)}")
+                    except AttributeError:
+                        # For newer Web3.py versions, try to serialize the transaction
+                        if hasattr(signed_tx, 'rawTransaction'):
+                            raw_tx = signed_tx.rawTransaction
+                        elif hasattr(signed_tx, 'raw_transaction'):
+                            raw_tx = signed_tx.raw_transaction
+                        else:
+                            raise BlockchainError(f"Could not access raw transaction from signed transaction. Available attributes: {dir(signed_tx)}")
+                
+                tx_hash = self.w3.eth.send_raw_transaction(raw_tx)
             
-            tx_hash = self.w3.eth.send_raw_transaction(raw_tx)
             return tx_hash.hex()
             
         except Exception as e:

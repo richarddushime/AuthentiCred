@@ -614,6 +614,41 @@ class AuthentiCredSetup:
             print(f"  ❌ Error starting Django server: {e}")
             return False
     
+    def restore_blockchain_state(self) -> bool:
+        """Restore blockchain state after Ganache restart"""
+        print("\n🔧 Restoring blockchain state...")
+        
+        try:
+            # Wait a moment for Django to be fully ready
+            time.sleep(3)
+            
+            # Run the blockchain state restoration command
+            cmd = [
+                sys.executable, 'manage.py', 'quick_fix_blockchain'
+            ]
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=self.base_dir,
+                timeout=60  # 60 second timeout
+            )
+            
+            if result.returncode == 0:
+                print("  ✅ Blockchain state restored successfully")
+                return True
+            else:
+                print(f"  ⚠️  Blockchain state restoration had issues: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            print("  ⚠️  Blockchain state restoration timed out")
+            return False
+        except Exception as e:
+            print(f"  ⚠️  Error restoring blockchain state: {e}")
+            return False
+    
     def print_summary(self):
         """Print summary of what was started"""
         print("\n" + "=" * 60)
@@ -625,6 +660,7 @@ class AuthentiCredSetup:
         print("  🔴 Redis: localhost:6379")
         print("  🐛 Celery Worker: Running")
         print("  ⏰ Celery Beat: Running")
+        print("  🔧 Blockchain State: Restored")
         print("\n📋 Contract Addresses:")
         for name, addr in self.contract_addresses.items():
             print(f"  {name}: {addr}")
@@ -721,6 +757,9 @@ def main():
             # Start Django server
             if not setup.start_django_server():
                 sys.exit(1)
+            
+            # Restore blockchain state
+            setup.restore_blockchain_state()
         
         # Print summary
         setup.print_summary()
