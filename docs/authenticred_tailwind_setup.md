@@ -33,7 +33,7 @@ Replace the CDN link in `users/templates/users/base.html`:
 <script src="https://cdn.tailwindcss.com"></script>
 
 <!-- With this: -->
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" href="/static/css/styles.css">
 ```
 
 ### 4. Django Settings

@@ -24,13 +24,12 @@ theme:
 # Navigation
 nav:
   - Home: index.md
-  - Project Overview: project_report.md
-  - Technical Architecture: techstacks.md
-  - Technical Documentation: documentation.md
-  - Management Commands: management_commands.md
-  - Automation Guide: AUTOMATION_README.md
-  - Contributing: contributing.md
-  - Tailwind Setup: tailwind-setup.md
+  - Technical Documentation: authenticred_technical_documentation.md
+  - Technology Stack: authenticred_technology_stack.md
+  - Management Commands: authenticred_management_commands.md
+  - Contributing Guide: authenticred_contributing_guide.md
+  - Automation Setup: authenticred_automation_setup.md
+  - Tailwind Setup: authenticred_tailwind_setup.md
   - API Reference: api/index.md
 
 # Markdown extensions

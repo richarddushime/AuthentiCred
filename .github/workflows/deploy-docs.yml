@@ -31,6 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install mkdocs mkdocs-material
           
       - name: Setup Django environment
         run: |
@@ -60,6 +61,11 @@ jobs:
             echo "❌ Build verification failed"
             exit 1
           fi
+          
+      - name: Create .nojekyll file
+        run: |
+          touch site/.nojekyll
+          echo "✅ .nojekyll file created to disable Jekyll processing"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
