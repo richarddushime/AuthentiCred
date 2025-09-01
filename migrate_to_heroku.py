@@ -270,24 +270,18 @@ class HerokuMigrationManager:
             subprocess.run(['heroku', 'run', 'mkdir', 'fixtures', 
                           '--app', self.app_name], check=True)
             
-            # Upload each fixture file using a more reliable approach
+            # Upload each fixture file using a simpler approach
             for fixture_file in self.fixtures_dir.glob("*.json"):
                 print(f"📤 Uploading {fixture_file.name}...")
-                # Create a temporary script file
-                temp_script = self.temp_dir / f"upload_{fixture_file.name}.sh"
-                with open(temp_script, 'w') as f:
-                    f.write(f"cat > fixtures/{fixture_file.name} << 'EOF'\n")
-                    f.write(fixture_file.read_text())
-                    f.write("\nEOF\n")
+                # Use a simple approach - create the file directly with content
+                file_content = fixture_file.read_text()
+                # Escape single quotes and newlines for shell compatibility
+                escaped_content = file_content.replace("'", "'\"'\"'").replace('\n', '\\n')
                 
-                # Upload the script and execute it
+                # Create the file using echo
+                upload_cmd = f"echo '{escaped_content}' > fixtures/{fixture_file.name}"
                 subprocess.run(['heroku', 'run', '--app', self.app_name, 
-                              'bash', '-c', f"cat > upload.sh"], 
-                              input=temp_script.read_bytes(), check=True)
-                subprocess.run(['heroku', 'run', '--app', self.app_name, 
-                              'bash', 'upload.sh'], check=True)
-                subprocess.run(['heroku', 'run', '--app', self.app_name, 
-                              'rm', 'upload.sh'], check=True)
+                              'bash', '-c', upload_cmd], check=True)
             
             # Import data
             print("📥 Loading data...")
