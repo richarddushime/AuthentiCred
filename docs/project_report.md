@@ -102,6 +102,16 @@ AuthentiCred is a **revolutionary blockchain-based platform** that transforms ho
 4. **Trust registry** confirms issuer authenticity
 5. **Result** delivered in under 2 seconds
 
+### System Architecture Flow
+
+For a detailed visual representation of how the system works, see the [AuthentiCred Sequence Diagram](authenticred_sequence_diagram.md) which shows:
+
+- **Credential Verification Flow**: Complete user interaction sequence
+- **Smart Contract Interaction**: Blockchain contract deployment and management
+- **System Architecture**: Full platform data flow and components
+- **Performance Metrics**: Real-time operation timings
+- **Security Features**: Cryptographic and blockchain security measures
+
 ### Key Innovation Points
 - **Instant Verification**: No more waiting weeks for credential checks
 - **Tamper-Proof**: Blockchain ensures credentials can't be altered
