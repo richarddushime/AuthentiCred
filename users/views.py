@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.db.models import Count, Q
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, EditProfileForm, ChangePasswordForm, DeleteAccountForm, InstitutionSettingsForm, ContactForm
 from .models import User, InstitutionProfile
+from .constants import USER_TYPE_CHOICES
 from credentials.models import Credential, VerificationRecord
 from blockchain.models import DIDRegistration, OnChainTransaction
 from blockchain.tasks import register_did_task, process_did_registration_confirmation
