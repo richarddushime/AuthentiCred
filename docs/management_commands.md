@@ -12,6 +12,12 @@ Deploys all smart contracts to the blockchain.
 python manage.py deploy_contracts
 ```
 
+ ![Smart Contract Management](images/contracts-ganache.png)
+*Smart contract deployment and management interface in Ganache*
+
+![Blockchain Transactions](images/transactions-ganache.png)
+*Blockchain transaction monitoring for credential operations*
+
 #### `quick_fix_blockchain` ⭐ **RECOMMENDED**
 Automatically restores blockchain state after Ganache restart:
 - Registers issuers as trusted

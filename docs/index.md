@@ -43,6 +43,9 @@
 
 **AuthentiCred** is a revolutionary blockchain-based platform that transforms how educational credentials are issued, verified, and shared. Built on cutting-edge blockchain technology and W3C standards, it provides instant, tamper-proof verification of academic achievements.
 
+![AuthentiCred Platform](images/Home.png)
+*The main platform interface showcasing professional design and key features*
+
 ### Key Features
 
 - **Cryptographically Secure** - ECDSA signatures and SHA256 hashing
@@ -91,6 +94,17 @@
 - Ganache (for local blockchain)
 - Git
 
+### Platform Overview
+
+![User Authentication](images/loginpage.png)
+*Secure login interface with modern authentication*
+
+![Dashboard Interface](images/issuer-dashboard.png)
+*Professional dashboard for managing credentials and users*
+
+![Credential Management](images/credentialinformations.png)
+*Comprehensive credential management and verification system*
+
 ### Installation
 
 ```bash
@@ -120,6 +134,14 @@ npm install
 3. **Django server** starts on localhost:8000
 4. **Celery workers** begin processing tasks
 5. **Blockchain state** restores automatically
+
+### Blockchain Development Environment
+
+![Ganache Interface](images/ganache-tx-creation.png)
+*Local blockchain development environment with Ganache*
+
+![Smart Contract Management](images/contracts-ganache.png)
+*Smart contract deployment and interaction interface*
 
 ---
 

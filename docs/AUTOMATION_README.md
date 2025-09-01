@@ -99,6 +99,12 @@ python start_authenticred.py --skip-ganache --skip-deploy
   - Accounts: 10 (1000 ETH each)
   - Deterministic: Yes (same addresses every time)
 
+![Ganache Blockchain](images/ganache-tx-creation.png)
+*Local blockchain development environment with Ganache*
+
+![Blockchain Accounts](images/accounts-ganache.png)
+*Pre-funded accounts for development and testing*
+
 ### **Web Services**
 - **Django**: Main web application
   - URL: http://127.0.0.1:8000

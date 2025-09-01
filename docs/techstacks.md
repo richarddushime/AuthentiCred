@@ -38,6 +38,14 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### Platform Implementation
+
+![Frontend Implementation](images/homeview.png)
+*Modern frontend implementation using Tailwind CSS and responsive design*
+
+![User Interface](images/issuer-dashboard.png)
+*Professional user interface showcasing the technology stack in action*
+
 ### Core Technologies Explained
 
 #### Frontend Technologies
@@ -210,6 +218,15 @@ Account #2: 0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef (100 ETH - [Example])
 ...
 ```
 
+![Ganache Accounts](images/accounts-ganache.png)
+*Ganache accounts management showing pre-funded development accounts*
+
+![Ganache Blocks](images/blocks-ganache.png)
+*Blockchain blocks view showing transaction history and block mining*
+
+![Ganache Events](images/events-ganache.png)
+*Smart contract events monitoring and blockchain activity tracking*
+
 #### 4.2 Blocks Tab
 ```
 Block #0: 0x4d5e3c... (Timestamp: [Current Block Time])
@@ -217,6 +234,12 @@ Block #1: 0x7f8a9b... (Timestamp: [Previous Block Time])
 Block #2: 0x1c2d3e... (Timestamp: [Older Block Time])
 ...
 ```
+
+![Ganache Transactions](images/transactions-ganache.png)
+*Real-time blockchain transactions showing credential anchoring and verification*
+
+![Transaction Details](images/tx-call-ganache.png)
+*Detailed transaction view showing smart contract function calls*
 
 #### 4.3 Transactions Tab
 ```

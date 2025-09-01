@@ -2,11 +2,49 @@
 
 > **A Simple, Secure, and Global Way to Verify Academic Credentials & Recommendations**
 
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/richarddushime/AuthentiCred)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
+[![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white)](https://ethereum.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+
+## Technology Stacks
+
+### Frontend
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Django Templates](https://img.shields.io/badge/Django_Templates-092E20?style=for-the-badge&logo=django&logoColor=white)](https://docs.djangoproject.com/en/stable/topics/templates/)
+
+### Backend
+[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://celeryproject.org)
+
+### Blockchain
+[![Web3.py](https://img.shields.io/badge/Web3.py-F16822?style=for-the-badge&logo=web3&logoColor=white)](https://web3py.readthedocs.io/)
+[![Solidity](https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org)
+[![Ganache](https://img.shields.io/badge/Ganache-5E464D?style=for-the-badge&logo=ganache&logoColor=white)](https://trufflesuite.com/ganache/)
+[![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white)](https://ethereum.org)
+
+### Security
+
+[![ECDSA](https://img.shields.io/badge/ECDSA-000000?style=for-the-badge&logo=bitcoin&logoColor=white)](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)
+[![SHA256](https://img.shields.io/badge/SHA256-000000?style=for-the-badge&logo=bitcoin&logoColor=white)](https://en.wikipedia.org/wiki/SHA-2)
+[![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io)
+[![PKI](https://img.shields.io/badge/PKI-000000?style=for-the-badge&logo=key&logoColor=white)](https://en.wikipedia.org/wiki/Public_key_infrastructure)
+
+
 ---
 
 ##  What Is AuthentiCred?
 
 AuthentiCred is an open source platform that makes it **easy**, **fast**, and **secure** to issue, store, and verify academic documents degrees, certificates, training records, and letters of recommendation. Built on **blockchain** technology and W3C **Verifiable Credentials (VCs)**, 
+
+![AuthentiCred Homepage](docs/images/Home.png)
+*The main homepage showcasing the platform's professional interface*
 
 ## Statement Problem
 
@@ -88,6 +126,13 @@ For detailed setup instructions, see [AUTOMATION_README.md](https://richarddushi
 - **Ganache**: `http://127.0.0.1:8545`
 - **Django**: `http://127.0.0.1:8000`
 - **Metamask**: Connect to `Localhost 8545`
+
+### Blockchain Development Environment
+![Ganache Interface](docs/images/ganache-tx-creation.png)
+*Ganache blockchain interface for local development and testing*
+
+![Blockchain Transactions](docs/images/transactions-ganache.png)
+*Real-time blockchain transaction monitoring and management*
 
 > **Ready to secure and simplify your credential journey?**  
 > Visit [AuthentiCred](https://authenticred-8a4c46d20c03.herokuapp.com/) or contact us 
