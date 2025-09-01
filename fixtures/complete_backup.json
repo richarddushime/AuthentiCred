@@ -1,0 +1,2042 @@
+[
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 1,
+  "fields": {
+    "tx_hash": "ff9c2030697c5247edbe5961d59a662465830348b5be8bc31a1e7a2d94e112b8",
+    "status": "CONFIRMED",
+    "transaction_type": "DID_REGISTRATION",
+    "metadata": {
+      "did": "did:authenticred:test123"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T14:35:44.577Z",
+    "updated_at": "2025-08-29T14:35:48.266Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 2,
+  "fields": {
+    "tx_hash": "d4b4b8b8de49ba658dc6c958579a1f1ed5c56f3135aa0ae9e1b9b12ccf8067f7",
+    "status": "CONFIRMED",
+    "transaction_type": "CREDENTIAL_ANCHORING",
+    "metadata": {
+      "vc_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T14:46:25.247Z",
+    "updated_at": "2025-08-29T14:46:38.265Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 3,
+  "fields": {
+    "tx_hash": "d02cae41c00607e3ffdbea8eb797324fea52cbd5dbf716208c599d490dab332d",
+    "status": "CONFIRMED",
+    "transaction_type": "TRUST_UPDATE",
+    "metadata": {
+      "did": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090",
+      "trusted": true
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T15:12:33.414Z",
+    "updated_at": "2025-08-29T15:12:35.001Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 4,
+  "fields": {
+    "tx_hash": "2452c474a6cfec30ca75e74389054190cc010e2c848bca5a495b7ea893a279d9",
+    "status": "CONFIRMED",
+    "transaction_type": "CREDENTIAL_ANCHORING",
+    "metadata": {
+      "vc_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T15:13:38.342Z",
+    "updated_at": "2025-08-29T15:13:40.049Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 5,
+  "fields": {
+    "tx_hash": "11daded1a99d5492a7f05467dafeb5eb56020145037ba3da4d59023538f92d43",
+    "status": "CONFIRMED",
+    "transaction_type": "DID_REGISTRATION",
+    "metadata": {
+      "did": "did:authenticred:89f64e5c-5308-4921-82de-7cb3dc883900"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T15:20:37.439Z",
+    "updated_at": "2025-08-29T15:20:40.046Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 6,
+  "fields": {
+    "tx_hash": "a631836784f7c8cabb386773401920da6d15304d27455e4427db1b1aaf361ae6",
+    "status": "CONFIRMED",
+    "transaction_type": "DID_REGISTRATION",
+    "metadata": {
+      "did": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T15:20:49.109Z",
+    "updated_at": "2025-08-29T15:20:50.050Z"
+  }
+},
+{
+  "model": "blockchain.onchaintransaction",
+  "pk": 7,
+  "fields": {
+    "tx_hash": "937815d79696d0cb88ed190eda15541cb1668d64eba82325b64d254070579322",
+    "status": "CONFIRMED",
+    "transaction_type": "DID_REGISTRATION",
+    "metadata": {
+      "did": "did:authenticred:dcb85a2a-26ca-4314-afe7-1896f63b16f2"
+    },
+    "block_number": null,
+    "created_at": "2025-08-29T15:20:58.370Z",
+    "updated_at": "2025-08-29T15:21:00.046Z"
+  }
+},
+{
+  "model": "wallets.walletcredential",
+  "pk": "1cf8ef35-49e6-4e52-bf36-5745351768e7",
+  "fields": {
+    "wallet": "9665dda7-1629-41d5-ba2b-9b1067b38ea7",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "added_at": "2025-08-29T14:42:03.534Z",
+    "is_archived": false
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "blockchain",
+    "model": "didregistration"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "blockchain",
+    "model": "onchaintransaction"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "users",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "users",
+    "model": "institutionprofile"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "credentials",
+    "model": "credential"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "credentials",
+    "model": "credentialschema"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "credentials",
+    "model": "verificationrecord"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "wallets",
+    "model": "wallet"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "wallets",
+    "model": "walletcredential"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_results",
+    "model": "taskresult"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_results",
+    "model": "chordcounter"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_results",
+    "model": "groupresult"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "crontabschedule"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "intervalschedule"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "periodictask"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "periodictasks"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "solarschedule"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "django_celery_beat",
+    "model": "clockedschedule"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add did registration",
+    "content_type": [
+      "blockchain",
+      "didregistration"
+    ],
+    "codename": "add_didregistration"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change did registration",
+    "content_type": [
+      "blockchain",
+      "didregistration"
+    ],
+    "codename": "change_didregistration"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete did registration",
+    "content_type": [
+      "blockchain",
+      "didregistration"
+    ],
+    "codename": "delete_didregistration"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view did registration",
+    "content_type": [
+      "blockchain",
+      "didregistration"
+    ],
+    "codename": "view_didregistration"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add on chain transaction",
+    "content_type": [
+      "blockchain",
+      "onchaintransaction"
+    ],
+    "codename": "add_onchaintransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change on chain transaction",
+    "content_type": [
+      "blockchain",
+      "onchaintransaction"
+    ],
+    "codename": "change_onchaintransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete on chain transaction",
+    "content_type": [
+      "blockchain",
+      "onchaintransaction"
+    ],
+    "codename": "delete_onchaintransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view on chain transaction",
+    "content_type": [
+      "blockchain",
+      "onchaintransaction"
+    ],
+    "codename": "view_onchaintransaction"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "users",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "users",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "users",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "users",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add institution profile",
+    "content_type": [
+      "users",
+      "institutionprofile"
+    ],
+    "codename": "add_institutionprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change institution profile",
+    "content_type": [
+      "users",
+      "institutionprofile"
+    ],
+    "codename": "change_institutionprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete institution profile",
+    "content_type": [
+      "users",
+      "institutionprofile"
+    ],
+    "codename": "delete_institutionprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view institution profile",
+    "content_type": [
+      "users",
+      "institutionprofile"
+    ],
+    "codename": "view_institutionprofile"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add credential",
+    "content_type": [
+      "credentials",
+      "credential"
+    ],
+    "codename": "add_credential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change credential",
+    "content_type": [
+      "credentials",
+      "credential"
+    ],
+    "codename": "change_credential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete credential",
+    "content_type": [
+      "credentials",
+      "credential"
+    ],
+    "codename": "delete_credential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view credential",
+    "content_type": [
+      "credentials",
+      "credential"
+    ],
+    "codename": "view_credential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add credential schema",
+    "content_type": [
+      "credentials",
+      "credentialschema"
+    ],
+    "codename": "add_credentialschema"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change credential schema",
+    "content_type": [
+      "credentials",
+      "credentialschema"
+    ],
+    "codename": "change_credentialschema"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete credential schema",
+    "content_type": [
+      "credentials",
+      "credentialschema"
+    ],
+    "codename": "delete_credentialschema"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view credential schema",
+    "content_type": [
+      "credentials",
+      "credentialschema"
+    ],
+    "codename": "view_credentialschema"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add verification record",
+    "content_type": [
+      "credentials",
+      "verificationrecord"
+    ],
+    "codename": "add_verificationrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change verification record",
+    "content_type": [
+      "credentials",
+      "verificationrecord"
+    ],
+    "codename": "change_verificationrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete verification record",
+    "content_type": [
+      "credentials",
+      "verificationrecord"
+    ],
+    "codename": "delete_verificationrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view verification record",
+    "content_type": [
+      "credentials",
+      "verificationrecord"
+    ],
+    "codename": "view_verificationrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add wallet",
+    "content_type": [
+      "wallets",
+      "wallet"
+    ],
+    "codename": "add_wallet"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change wallet",
+    "content_type": [
+      "wallets",
+      "wallet"
+    ],
+    "codename": "change_wallet"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete wallet",
+    "content_type": [
+      "wallets",
+      "wallet"
+    ],
+    "codename": "delete_wallet"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view wallet",
+    "content_type": [
+      "wallets",
+      "wallet"
+    ],
+    "codename": "view_wallet"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add wallet credential",
+    "content_type": [
+      "wallets",
+      "walletcredential"
+    ],
+    "codename": "add_walletcredential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change wallet credential",
+    "content_type": [
+      "wallets",
+      "walletcredential"
+    ],
+    "codename": "change_walletcredential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete wallet credential",
+    "content_type": [
+      "wallets",
+      "walletcredential"
+    ],
+    "codename": "delete_walletcredential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view wallet credential",
+    "content_type": [
+      "wallets",
+      "walletcredential"
+    ],
+    "codename": "view_walletcredential"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add task result",
+    "content_type": [
+      "django_celery_results",
+      "taskresult"
+    ],
+    "codename": "add_taskresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change task result",
+    "content_type": [
+      "django_celery_results",
+      "taskresult"
+    ],
+    "codename": "change_taskresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete task result",
+    "content_type": [
+      "django_celery_results",
+      "taskresult"
+    ],
+    "codename": "delete_taskresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view task result",
+    "content_type": [
+      "django_celery_results",
+      "taskresult"
+    ],
+    "codename": "view_taskresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add chord counter",
+    "content_type": [
+      "django_celery_results",
+      "chordcounter"
+    ],
+    "codename": "add_chordcounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change chord counter",
+    "content_type": [
+      "django_celery_results",
+      "chordcounter"
+    ],
+    "codename": "change_chordcounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete chord counter",
+    "content_type": [
+      "django_celery_results",
+      "chordcounter"
+    ],
+    "codename": "delete_chordcounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view chord counter",
+    "content_type": [
+      "django_celery_results",
+      "chordcounter"
+    ],
+    "codename": "view_chordcounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group result",
+    "content_type": [
+      "django_celery_results",
+      "groupresult"
+    ],
+    "codename": "add_groupresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group result",
+    "content_type": [
+      "django_celery_results",
+      "groupresult"
+    ],
+    "codename": "change_groupresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group result",
+    "content_type": [
+      "django_celery_results",
+      "groupresult"
+    ],
+    "codename": "delete_groupresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group result",
+    "content_type": [
+      "django_celery_results",
+      "groupresult"
+    ],
+    "codename": "view_groupresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add crontab",
+    "content_type": [
+      "django_celery_beat",
+      "crontabschedule"
+    ],
+    "codename": "add_crontabschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change crontab",
+    "content_type": [
+      "django_celery_beat",
+      "crontabschedule"
+    ],
+    "codename": "change_crontabschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete crontab",
+    "content_type": [
+      "django_celery_beat",
+      "crontabschedule"
+    ],
+    "codename": "delete_crontabschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view crontab",
+    "content_type": [
+      "django_celery_beat",
+      "crontabschedule"
+    ],
+    "codename": "view_crontabschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add interval",
+    "content_type": [
+      "django_celery_beat",
+      "intervalschedule"
+    ],
+    "codename": "add_intervalschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change interval",
+    "content_type": [
+      "django_celery_beat",
+      "intervalschedule"
+    ],
+    "codename": "change_intervalschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete interval",
+    "content_type": [
+      "django_celery_beat",
+      "intervalschedule"
+    ],
+    "codename": "delete_intervalschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view interval",
+    "content_type": [
+      "django_celery_beat",
+      "intervalschedule"
+    ],
+    "codename": "view_intervalschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add periodic task",
+    "content_type": [
+      "django_celery_beat",
+      "periodictask"
+    ],
+    "codename": "add_periodictask"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change periodic task",
+    "content_type": [
+      "django_celery_beat",
+      "periodictask"
+    ],
+    "codename": "change_periodictask"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete periodic task",
+    "content_type": [
+      "django_celery_beat",
+      "periodictask"
+    ],
+    "codename": "delete_periodictask"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view periodic task",
+    "content_type": [
+      "django_celery_beat",
+      "periodictask"
+    ],
+    "codename": "view_periodictask"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add periodic task track",
+    "content_type": [
+      "django_celery_beat",
+      "periodictasks"
+    ],
+    "codename": "add_periodictasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change periodic task track",
+    "content_type": [
+      "django_celery_beat",
+      "periodictasks"
+    ],
+    "codename": "change_periodictasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete periodic task track",
+    "content_type": [
+      "django_celery_beat",
+      "periodictasks"
+    ],
+    "codename": "delete_periodictasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view periodic task track",
+    "content_type": [
+      "django_celery_beat",
+      "periodictasks"
+    ],
+    "codename": "view_periodictasks"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add solar event",
+    "content_type": [
+      "django_celery_beat",
+      "solarschedule"
+    ],
+    "codename": "add_solarschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change solar event",
+    "content_type": [
+      "django_celery_beat",
+      "solarschedule"
+    ],
+    "codename": "change_solarschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete solar event",
+    "content_type": [
+      "django_celery_beat",
+      "solarschedule"
+    ],
+    "codename": "delete_solarschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view solar event",
+    "content_type": [
+      "django_celery_beat",
+      "solarschedule"
+    ],
+    "codename": "view_solarschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add clocked",
+    "content_type": [
+      "django_celery_beat",
+      "clockedschedule"
+    ],
+    "codename": "add_clockedschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change clocked",
+    "content_type": [
+      "django_celery_beat",
+      "clockedschedule"
+    ],
+    "codename": "change_clockedschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete clocked",
+    "content_type": [
+      "django_celery_beat",
+      "clockedschedule"
+    ],
+    "codename": "delete_clockedschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view clocked",
+    "content_type": [
+      "django_celery_beat",
+      "clockedschedule"
+    ],
+    "codename": "view_clockedschedule"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$dllQTaJtjX2CI9DZRu5Fec$qiBSn2pMkQ7ZNS2bPLh+v95pigGfH1qQi96J41PD4Co=",
+    "last_login": "2025-09-01T13:01:51.265Z",
+    "is_superuser": false,
+    "username": "PATRICK",
+    "first_name": "",
+    "last_name": "",
+    "email": "patrickbahati87@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:01:28.410Z",
+    "user_type": "STUDENT",
+    "did": "did:authenticred:39b96226-eea3-4705-9582-0b09c3a6b6a0",
+    "public_key": "02f6ddb494e0f348c4e2f1718d9b25d82ab7864595400486d98b78f4e56674b0e7",
+    "created_at": "2025-09-01T13:01:28.410Z",
+    "updated_at": "2025-09-01T13:01:28.638Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$P16Co3IepeyOieDPcDUcue$lWjJfx93/FVD7QCE+be5VVhWs2u27zxF/nqkFLOmWGY=",
+    "last_login": "2025-09-01T13:08:01.301Z",
+    "is_superuser": true,
+    "username": "RDM",
+    "first_name": "",
+    "last_name": "",
+    "email": "mudaherarich@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-28T16:53:23.836Z",
+    "user_type": "",
+    "did": "did:authenticred:3f4287b9-c866-4273-a978-f8d3bbadf703",
+    "public_key": "027e583306adce798369b219ff0b96224935ca414b46bf3c5b640eedc6ef14e568",
+    "created_at": "2025-08-28T16:53:23.836Z",
+    "updated_at": "2025-08-29T15:20:14.583Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$yKCZchVLfLsaFy29OliKI2$EpBc2D+YEg3F2U3Fo7pegR3ZJd7ootsz6GEZxSfLqek=",
+    "last_login": "2025-08-31T18:53:07.277Z",
+    "is_superuser": false,
+    "username": "test",
+    "first_name": "",
+    "last_name": "",
+    "email": "test@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:15:39.871Z",
+    "user_type": "STUDENT",
+    "did": "did:authenticred:89f64e5c-5308-4921-82de-7cb3dc883900",
+    "public_key": "02feabc95ac22d0452f05d69dd55ea12f814f8d9fd539223e027ba51a8426747b7",
+    "created_at": "2025-08-29T14:15:39.871Z",
+    "updated_at": "2025-08-29T15:20:14.585Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$PmrkmubW11VS5w1gYWqFEb$NM6WkEy8EKFje2f+Z44MWufpnrwZ4zZTC37b0iTDrac=",
+    "last_login": "2025-09-01T13:07:51.817Z",
+    "is_superuser": false,
+    "username": "UNIPA",
+    "first_name": "",
+    "last_name": "",
+    "email": "info@unipa.it",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:07:09.819Z",
+    "user_type": "INSTITUTION",
+    "did": "did:authenticred:ad719836-72ed-4ad8-8080-9a04b8788870",
+    "public_key": "0335268358df24e291b0ef273aabb99b0913539e7d12510495e3e291e1395b839d",
+    "created_at": "2025-09-01T13:07:09.820Z",
+    "updated_at": "2025-09-01T13:07:10.040Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$TZLcmZjn6F2bKZi6MpjuyD$gF4lmz2CjJrcDWobPXOxOWC0uh6JvrjQYyJSc/Q9ui0=",
+    "last_login": "2025-09-01T13:02:36.460Z",
+    "is_superuser": false,
+    "username": "TINO",
+    "first_name": "",
+    "last_name": "",
+    "email": "gupuret@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:02:20.343Z",
+    "user_type": "EMPLOYER",
+    "did": "did:authenticred:c4bdfb80-50ea-4ded-a728-27c773809e1e",
+    "public_key": "024be4fe5a3ac90ee2f2c81018db4815818eb0cd86665a0b7ddcc1ee616d50e10c",
+    "created_at": "2025-09-01T13:02:20.343Z",
+    "updated_at": "2025-09-01T13:02:20.552Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ZG4MGtXRboaPLylDYCHPXW$2Py1JLbyEjO3GRGM18fXIf+aX1gszr8LPPYk3qRn8v0=",
+    "last_login": "2025-08-31T18:48:28.161Z",
+    "is_superuser": false,
+    "username": "issuer",
+    "first_name": "",
+    "last_name": "",
+    "email": "issuer@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:23:57.009Z",
+    "user_type": "INSTITUTION",
+    "did": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090",
+    "public_key": "0211e16c073a727803938c9186a1048b9d489907a0f14d031b760d4b9c6529076c",
+    "created_at": "2025-08-29T14:23:57.009Z",
+    "updated_at": "2025-08-29T14:23:57.228Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$YPL5VX5YBSHEKfHT8I6vd4$yOd8BmTBgrzt0gmnW/4eHoCxNjZ5QdaOMQxaMtKUoMY=",
+    "last_login": "2025-09-01T12:59:14.144Z",
+    "is_superuser": false,
+    "username": "verifier",
+    "first_name": "",
+    "last_name": "",
+    "email": "verifier@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:38:33.071Z",
+    "user_type": "EMPLOYER",
+    "did": "did:authenticred:dcb85a2a-26ca-4314-afe7-1896f63b16f2",
+    "public_key": "03ff815612733c41b955d2d7e6fdff12380ccbd430b7cbf06db3166d84d1a51ea8",
+    "created_at": "2025-08-29T14:38:33.071Z",
+    "updated_at": "2025-08-29T15:20:14.586Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.institutionprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "issuer"
+    ],
+    "name": "UNIME",
+    "description": null,
+    "website": "https://www.unime.it/",
+    "accreditation_proof": "accreditations/II_YEAR_1_SEMESTER_ORARIO_n9irOtQ.pdf",
+    "is_trusted": true,
+    "created_at": "2025-08-29T14:23:57.207Z"
+  }
+},
+{
+  "model": "users.institutionprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "UNIPA"
+    ],
+    "name": "UNIPA",
+    "description": null,
+    "website": "https://www.unipa.it",
+    "accreditation_proof": "accreditations/Receivutto.pdf",
+    "is_trusted": true,
+    "created_at": "2025-09-01T13:07:10.018Z"
+  }
+},
+{
+  "model": "credentials.credentialschema",
+  "pk": "55cd03d9-8254-4734-a4a0-1f521a8d7146",
+  "fields": {
+    "name": "Bachelor's Degree",
+    "version": "1.0",
+    "type": "DEGREE",
+    "fields": {
+      "gpa": "float",
+      "major": "str",
+      "minor": "str",
+      "honors": "bool",
+      "graduation_date": "date"
+    },
+    "created_by": [
+      "issuer"
+    ],
+    "created_at": "2025-08-29T14:40:50.972Z",
+    "updated_at": "2025-08-29T14:40:50.973Z"
+  }
+},
+{
+  "model": "credentials.credential",
+  "pk": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+  "fields": {
+    "vc_json": {
+      "type": [
+        "VerifiableCredential",
+        "CustomCredential"
+      ],
+      "proof": {
+        "jws": "v=1a3bd509751bd9bca394f8355ac9409dcb7f1c6e71c7149d2839faf901676afcc79f81ede850fa86e17996d44ff75634ef71675819fe0ea83f13e3e94996457f",
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2025-08-31T18:56:46.912707Z",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090#keys-1"
+      },
+      "issuer": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090",
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1"
+      ],
+      "issuanceDate": "2025-08-29T14:42:03.526274Z",
+      "credentialSubject": {
+        "id": "did:authenticred:89f64e5c-5308-4921-82de-7cb3dc883900",
+        "documentHash": "10ebbe068e788e98d5140dbfafa76a37f96b103cfa970f2196de48a5a9f69834",
+        "documentFilename": "CV - Richard Dushime.pdf"
+      }
+    },
+    "issuer": [
+      "issuer"
+    ],
+    "holder": [
+      "test"
+    ],
+    "schema": null,
+    "title": "Final Transcripts",
+    "description": "Bachelors degree transcripts",
+    "credential_type": "Custom Credential",
+    "status": "ISSUED",
+    "created_at": "2025-08-29T14:42:03.528Z",
+    "issued_at": "2025-08-29T14:42:03.532Z",
+    "expiration_date": "2026-10-30",
+    "revocation_reason": null,
+    "vc_hash": "15f560ccf466769a3e3bc30da47498fcf36b507a1db0aa9511f4e6b48036bcd7",
+    "document": "credentials/CV_-_Richard_Dushime.pdf"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "04b7231c-0a10-4fdc-ab63-114592a35b67",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:23:33.316Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": false,
+      "overall_valid": false,
+      "issuer_trusted": false,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "086409c9-e0e6-43ed-be34-d2be340e1367",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:37:47.418Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": false,
+      "issuer_trusted": true,
+      "signature_valid": false
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "15bec55b-abfb-4bfa-b780-8b1d0cce56d7",
+  "fields": {
+    "verifier": [
+      "test"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:30:10.928Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": false,
+      "overall_valid": false,
+      "issuer_trusted": false,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "2922a7ed-c530-4840-b6c9-e4d125d83041",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:51:49.525Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": false,
+      "issuer_trusted": true,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "2c058861-631c-4a1a-b021-617c0eaaf066",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": null,
+    "verification_date": "2025-08-29T15:30:09.320Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": null,
+      "is_revoked": null,
+      "is_anchored": true,
+      "overall_valid": true
+    },
+    "source": "EXTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "3fbd4367-36eb-4766-911a-fe54559e5d75",
+  "fields": {
+    "verifier": [
+      "test"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:54:00.908Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": false,
+      "issuer_trusted": true,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "48bf5a29-d978-494d-adc8-43ad3d751b70",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:35:16.549Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": false,
+      "issuer_trusted": true,
+      "signature_valid": false
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "6693ae14-8c41-4c94-9273-b5de9179d43a",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:39:46.632Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": true,
+      "issuer_trusted": true,
+      "signature_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "78d411ac-27a7-4cc8-bf09-35b4a3095a18",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": null,
+    "verification_date": "2025-08-31T18:49:35.611Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": null,
+      "is_revoked": null,
+      "is_anchored": false,
+      "overall_valid": false
+    },
+    "source": "EXTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "891ac984-5f82-4847-a9b9-773ed4e7e00f",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:49:43.712Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": false,
+      "issuer_trusted": true,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "8939103b-81f5-48ae-ba6d-452b7693aac2",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:43:23.501Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": true,
+      "issuer_trusted": true,
+      "signature_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "958f443b-c7e3-4172-8c38-4bcecfd03175",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": null,
+    "verification_date": "2025-08-31T18:58:47.128Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": null,
+      "is_revoked": null,
+      "is_anchored": true,
+      "overall_valid": true
+    },
+    "source": "EXTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "9a84d006-e38a-4a3b-b7cf-a60fe881224a",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:41:37.385Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": true,
+      "issuer_trusted": true,
+      "signature_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "bf96688c-2a02-4997-a349-41f8b342f9be",
+  "fields": {
+    "verifier": [
+      "test"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": null,
+    "verification_date": "2025-08-29T15:29:33.779Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": null,
+      "is_revoked": null,
+      "is_anchored": true,
+      "overall_valid": true
+    },
+    "source": "EXTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "c47d8fc2-1f91-4173-bde5-5d0a627f6110",
+  "fields": {
+    "verifier": [
+      "test"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:22:33.495Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": false,
+      "overall_valid": false,
+      "issuer_trusted": false,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "d260dee8-77b9-424a-b5e6-29c5af45bea7",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T15:40:25.134Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": true,
+      "issuer_trusted": true,
+      "signature_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "e1e8fd9e-603d-48c9-9d85-31e9c8b2059e",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "e24f6bf1de20bd1b1774506c5279a08616906815c88c25efca54b219eab461f9",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-31T18:25:28.630Z",
+    "is_valid": false,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": false,
+      "overall_valid": false,
+      "issuer_trusted": false,
+      "signature_valid": false,
+      "document_integrity_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "credentials.verificationrecord",
+  "pk": "fafc479e-22d1-49c6-8c00-4c311cf17af3",
+  "fields": {
+    "verifier": [
+      "verifier"
+    ],
+    "credential_hash": "bf9dfc17ed7302c39b0555e93e5185c47c52e24d9920c220be0c15ba50064cf2",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "verification_date": "2025-08-29T16:14:12.614Z",
+    "is_valid": true,
+    "verification_details": {
+      "is_issued": true,
+      "is_expired": false,
+      "is_revoked": false,
+      "is_anchored": true,
+      "overall_valid": true,
+      "issuer_trusted": true,
+      "signature_valid": true
+    },
+    "source": "INTERNAL"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "05fd1d4d-9bcd-4cd0-b642-fdbc26ca36a0",
+  "fields": {
+    "user": [
+      "TINO"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "70dbae2bc294ff0c59e992e9e0dd979dfbd0e40559f1f08086ed49a676de27dd",
+    "created_at": "2025-09-01T13:02:20.551Z",
+    "updated_at": "2025-09-01T13:02:20.551Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "427257d1-747f-44b2-a5f2-0132fb069aee",
+  "fields": {
+    "user": [
+      "PATRICK"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "6624d8a73e597f0b68ad4ee1e9c47ecf45ef0a548793793b4e8a79772617f387",
+    "created_at": "2025-09-01T13:01:28.638Z",
+    "updated_at": "2025-09-01T13:01:28.638Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "5666fc74-8e22-4997-84a8-8c8f3c04dcf1",
+  "fields": {
+    "user": [
+      "verifier"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "6485ea831728e2373ba3e11b7bd421b8c5cf002468548579999eed77b76f6f48",
+    "created_at": "2025-08-29T14:38:33.293Z",
+    "updated_at": "2025-08-29T14:38:33.293Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "591c765e-61af-49ff-83b9-bef1a4477e1b",
+  "fields": {
+    "user": [
+      "UNIPA"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "18f943e803cdd6e538591d44e2c2586cd62772fbc4d10d2c9ec00ea664d71db0",
+    "created_at": "2025-09-01T13:07:10.039Z",
+    "updated_at": "2025-09-01T13:07:10.039Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "7332e656-8581-4081-9f7e-2cf13ae99cb0",
+  "fields": {
+    "user": [
+      "RDM"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "0b422207bcb37ee0521e5563f22014adb6bae631d6d2e2822c0e7edcbc0cbc69",
+    "created_at": "2025-08-28T16:53:31.923Z",
+    "updated_at": "2025-08-28T16:53:31.923Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "766b363c-9df4-42f4-974a-13dccdea73ff",
+  "fields": {
+    "user": [
+      "issuer"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "a90b084242578af14009c2a453fc02a2ac905ae3418d1fc614029fd4f89badd5",
+    "created_at": "2025-08-29T14:23:57.227Z",
+    "updated_at": "2025-08-29T14:23:57.227Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "9665dda7-1629-41d5-ba2b-9b1067b38ea7",
+  "fields": {
+    "user": [
+      "test"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "c2ee8064c0458a038441b11cdaa8fc380455e6a7c935a916115f34861c20505a",
+    "created_at": "2025-08-29T14:15:40.076Z",
+    "updated_at": "2025-08-29T14:15:40.076Z"
+  }
+}
+]

@@ -1,0 +1,103 @@
+[
+{
+  "model": "wallets.wallet",
+  "pk": "05fd1d4d-9bcd-4cd0-b642-fdbc26ca36a0",
+  "fields": {
+    "user": [
+      "TINO"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "70dbae2bc294ff0c59e992e9e0dd979dfbd0e40559f1f08086ed49a676de27dd",
+    "created_at": "2025-09-01T13:02:20.551Z",
+    "updated_at": "2025-09-01T13:02:20.551Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "427257d1-747f-44b2-a5f2-0132fb069aee",
+  "fields": {
+    "user": [
+      "PATRICK"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "6624d8a73e597f0b68ad4ee1e9c47ecf45ef0a548793793b4e8a79772617f387",
+    "created_at": "2025-09-01T13:01:28.638Z",
+    "updated_at": "2025-09-01T13:01:28.638Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "5666fc74-8e22-4997-84a8-8c8f3c04dcf1",
+  "fields": {
+    "user": [
+      "verifier"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "6485ea831728e2373ba3e11b7bd421b8c5cf002468548579999eed77b76f6f48",
+    "created_at": "2025-08-29T14:38:33.293Z",
+    "updated_at": "2025-08-29T14:38:33.293Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "591c765e-61af-49ff-83b9-bef1a4477e1b",
+  "fields": {
+    "user": [
+      "UNIPA"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "18f943e803cdd6e538591d44e2c2586cd62772fbc4d10d2c9ec00ea664d71db0",
+    "created_at": "2025-09-01T13:07:10.039Z",
+    "updated_at": "2025-09-01T13:07:10.039Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "7332e656-8581-4081-9f7e-2cf13ae99cb0",
+  "fields": {
+    "user": [
+      "RDM"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "0b422207bcb37ee0521e5563f22014adb6bae631d6d2e2822c0e7edcbc0cbc69",
+    "created_at": "2025-08-28T16:53:31.923Z",
+    "updated_at": "2025-08-28T16:53:31.923Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "766b363c-9df4-42f4-974a-13dccdea73ff",
+  "fields": {
+    "user": [
+      "issuer"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "a90b084242578af14009c2a453fc02a2ac905ae3418d1fc614029fd4f89badd5",
+    "created_at": "2025-08-29T14:23:57.227Z",
+    "updated_at": "2025-08-29T14:23:57.227Z"
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "9665dda7-1629-41d5-ba2b-9b1067b38ea7",
+  "fields": {
+    "user": [
+      "test"
+    ],
+    "name": "My AuthentiCred Wallet",
+    "private_key": "c2ee8064c0458a038441b11cdaa8fc380455e6a7c935a916115f34861c20505a",
+    "created_at": "2025-08-29T14:15:40.076Z",
+    "updated_at": "2025-08-29T14:15:40.076Z"
+  }
+},
+{
+  "model": "wallets.walletcredential",
+  "pk": "1cf8ef35-49e6-4e52-bf36-5745351768e7",
+  "fields": {
+    "wallet": "9665dda7-1629-41d5-ba2b-9b1067b38ea7",
+    "credential": "ed228b7d-4bfe-441f-87cc-9f7678ece297",
+    "added_at": "2025-08-29T14:42:03.534Z",
+    "is_archived": false
+  }
+}
+]

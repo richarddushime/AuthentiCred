@@ -1,0 +1,186 @@
+[
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$dllQTaJtjX2CI9DZRu5Fec$qiBSn2pMkQ7ZNS2bPLh+v95pigGfH1qQi96J41PD4Co=",
+    "last_login": "2025-09-01T13:01:51.265Z",
+    "is_superuser": false,
+    "username": "PATRICK",
+    "first_name": "",
+    "last_name": "",
+    "email": "patrickbahati87@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:01:28.410Z",
+    "user_type": "STUDENT",
+    "did": "did:authenticred:39b96226-eea3-4705-9582-0b09c3a6b6a0",
+    "public_key": "02f6ddb494e0f348c4e2f1718d9b25d82ab7864595400486d98b78f4e56674b0e7",
+    "created_at": "2025-09-01T13:01:28.410Z",
+    "updated_at": "2025-09-01T13:01:28.638Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$P16Co3IepeyOieDPcDUcue$lWjJfx93/FVD7QCE+be5VVhWs2u27zxF/nqkFLOmWGY=",
+    "last_login": "2025-09-01T13:08:01.301Z",
+    "is_superuser": true,
+    "username": "RDM",
+    "first_name": "",
+    "last_name": "",
+    "email": "mudaherarich@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-28T16:53:23.836Z",
+    "user_type": "",
+    "did": "did:authenticred:3f4287b9-c866-4273-a978-f8d3bbadf703",
+    "public_key": "027e583306adce798369b219ff0b96224935ca414b46bf3c5b640eedc6ef14e568",
+    "created_at": "2025-08-28T16:53:23.836Z",
+    "updated_at": "2025-08-29T15:20:14.583Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$yKCZchVLfLsaFy29OliKI2$EpBc2D+YEg3F2U3Fo7pegR3ZJd7ootsz6GEZxSfLqek=",
+    "last_login": "2025-08-31T18:53:07.277Z",
+    "is_superuser": false,
+    "username": "test",
+    "first_name": "",
+    "last_name": "",
+    "email": "test@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:15:39.871Z",
+    "user_type": "STUDENT",
+    "did": "did:authenticred:89f64e5c-5308-4921-82de-7cb3dc883900",
+    "public_key": "02feabc95ac22d0452f05d69dd55ea12f814f8d9fd539223e027ba51a8426747b7",
+    "created_at": "2025-08-29T14:15:39.871Z",
+    "updated_at": "2025-08-29T15:20:14.585Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$PmrkmubW11VS5w1gYWqFEb$NM6WkEy8EKFje2f+Z44MWufpnrwZ4zZTC37b0iTDrac=",
+    "last_login": "2025-09-01T13:07:51.817Z",
+    "is_superuser": false,
+    "username": "UNIPA",
+    "first_name": "",
+    "last_name": "",
+    "email": "info@unipa.it",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:07:09.819Z",
+    "user_type": "INSTITUTION",
+    "did": "did:authenticred:ad719836-72ed-4ad8-8080-9a04b8788870",
+    "public_key": "0335268358df24e291b0ef273aabb99b0913539e7d12510495e3e291e1395b839d",
+    "created_at": "2025-09-01T13:07:09.820Z",
+    "updated_at": "2025-09-01T13:07:10.040Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$TZLcmZjn6F2bKZi6MpjuyD$gF4lmz2CjJrcDWobPXOxOWC0uh6JvrjQYyJSc/Q9ui0=",
+    "last_login": "2025-09-01T13:02:36.460Z",
+    "is_superuser": false,
+    "username": "TINO",
+    "first_name": "",
+    "last_name": "",
+    "email": "gupuret@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-09-01T13:02:20.343Z",
+    "user_type": "EMPLOYER",
+    "did": "did:authenticred:c4bdfb80-50ea-4ded-a728-27c773809e1e",
+    "public_key": "024be4fe5a3ac90ee2f2c81018db4815818eb0cd86665a0b7ddcc1ee616d50e10c",
+    "created_at": "2025-09-01T13:02:20.343Z",
+    "updated_at": "2025-09-01T13:02:20.552Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ZG4MGtXRboaPLylDYCHPXW$2Py1JLbyEjO3GRGM18fXIf+aX1gszr8LPPYk3qRn8v0=",
+    "last_login": "2025-08-31T18:48:28.161Z",
+    "is_superuser": false,
+    "username": "issuer",
+    "first_name": "",
+    "last_name": "",
+    "email": "issuer@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:23:57.009Z",
+    "user_type": "INSTITUTION",
+    "did": "did:authenticred:ca3e6c21-4441-467d-937d-701bd4154090",
+    "public_key": "0211e16c073a727803938c9186a1048b9d489907a0f14d031b760d4b9c6529076c",
+    "created_at": "2025-08-29T14:23:57.009Z",
+    "updated_at": "2025-08-29T14:23:57.228Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$YPL5VX5YBSHEKfHT8I6vd4$yOd8BmTBgrzt0gmnW/4eHoCxNjZ5QdaOMQxaMtKUoMY=",
+    "last_login": "2025-09-01T12:59:14.144Z",
+    "is_superuser": false,
+    "username": "verifier",
+    "first_name": "",
+    "last_name": "",
+    "email": "verifier@authenticred.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T14:38:33.071Z",
+    "user_type": "EMPLOYER",
+    "did": "did:authenticred:dcb85a2a-26ca-4314-afe7-1896f63b16f2",
+    "public_key": "03ff815612733c41b955d2d7e6fdff12380ccbd430b7cbf06db3166d84d1a51ea8",
+    "created_at": "2025-08-29T14:38:33.071Z",
+    "updated_at": "2025-08-29T15:20:14.586Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.institutionprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "issuer"
+    ],
+    "name": "UNIME",
+    "description": null,
+    "website": "https://www.unime.it/",
+    "accreditation_proof": "accreditations/II_YEAR_1_SEMESTER_ORARIO_n9irOtQ.pdf",
+    "is_trusted": true,
+    "created_at": "2025-08-29T14:23:57.207Z"
+  }
+},
+{
+  "model": "users.institutionprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "UNIPA"
+    ],
+    "name": "UNIPA",
+    "description": null,
+    "website": "https://www.unipa.it",
+    "accreditation_proof": "accreditations/Receivutto.pdf",
+    "is_trusted": true,
+    "created_at": "2025-09-01T13:07:10.018Z"
+  }
+}
+]
