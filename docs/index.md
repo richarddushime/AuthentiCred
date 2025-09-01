@@ -1,41 +1,30 @@
 # AuthentiCred
 
-**Where Technology Meets Trust**
-
-*Blockchain-based credential verification platform for the digital age*
+*A Simple, Secure, and Global Way to Verify Academic Credentials & Recommendations*
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/richarddushime/AuthentiCred)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
 [![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white)](https://ethereum.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-
-## Technology Stack
-
-### Frontend
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Django Templates](https://img.shields.io/badge/Django_Templates-092E20?style=for-the-badge&logo=django&logoColor=white)](https://docs.djangoproject.com/en/stable/topics/templates/)
-
-### Backend
 [![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
 [![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)](https://celeryproject.org)
-
-### Blockchain
 [![Web3.py](https://img.shields.io/badge/Web3.py-F16822?style=for-the-badge&logo=web3&logoColor=white)](https://web3py.readthedocs.io/)
 [![Solidity](https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org)
 [![Ganache](https://img.shields.io/badge/Ganache-5E464D?style=for-the-badge&logo=ganache&logoColor=white)](https://trufflesuite.com/ganache/)
 [![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white)](https://ethereum.org)
-
-### Security
 [![ECDSA](https://img.shields.io/badge/ECDSA-000000?style=for-the-badge&logo=bitcoin&logoColor=white)](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)
 [![SHA256](https://img.shields.io/badge/SHA256-000000?style=for-the-badge&logo=bitcoin&logoColor=white)](https://en.wikipedia.org/wiki/SHA-2)
 [![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io)
 [![PKI](https://img.shields.io/badge/PKI-000000?style=for-the-badge&logo=key&logoColor=white)](https://en.wikipedia.org/wiki/Public_key_infrastructure)
+
+*Blockchain-based credential verification platform for the digital age*
 
 ---
 
@@ -85,19 +74,43 @@
 
 ---
 
-## Quick Start
+## Documentation Structure
 
-### Prerequisites
+Based on the comprehensive AuthentiCred academic report, our documentation is organized as follows:
 
-- Python 3.13+
-- Node.js 18+
-- Ganache (for local blockchain)
-- Git
+### 📚 Core Documentation
 
-### Platform Overview
+- **[Technical Documentation](authenticred_technical_documentation.md)** - In-depth technical implementation guide
+- **[Technology Stack](authenticred_technology_stack.md)** - Comprehensive technology overview and architecture
+
+### 🛠️ Development Guides
+- **[Management Commands](authenticred_management_commands.md)** - Django management commands for blockchain operations
+- **[Contributing Guide](authenticred_contributing_guide.md)** - How to contribute to the project
+- **[Automation Setup](authenticred_automation_setup.md)** - CI/CD and automation configuration
+- **[Tailwind Setup](authenticred_tailwind_setup.md)** - Frontend styling and design system
+
+### 🔌 API & Integration
+- **[API Reference](authenticred_api_reference.md)** - Complete API documentation and endpoints
+- **[API Directory](api/)** - Detailed API documentation by module
+
+### 📱 Platform Overview
 
 ![User Authentication](images/loginpage.png)
 *Secure login interface with modern authentication*
+
+## 📄 Academic Report
+
+The complete AuthentiCred academic report is available as a [PDF document](AuthentiCred.pdf) containing:
+
+- **Problem Statement** - Analysis of current credential verification challenges
+- **Solution Overview** - W3C Verifiable Credentials and blockchain approach
+- **System Architecture** - Technology stack and architectural flow
+- **Implementation Details** - Smart contracts and frontend components
+- **Technical Architecture** - Security, performance, and scalability
+- **Results & Analysis** - Performance metrics and competitive analysis
+- **Future Roadmap** - Development plans and expansion goals
+
+This comprehensive report serves as the foundation for all technical documentation and implementation guides.
 
 ![Dashboard Interface](images/issuer-dashboard.png)
 *Professional dashboard for managing credentials and users*
@@ -147,19 +160,19 @@ npm install
 
 ## Documentation Sections
 
-### [Project Overview](project_report.md)
+### [Project Overview](authenticred_academic_report.md)
 Complete project documentation with screenshots and visual guides. Perfect for presentations and stakeholder briefings.
 
-### [Technical Architecture](techstacks.md)
+### [Technical Architecture](authenticred_technology_stack.md)
 Deep dive into blockchain technology, smart contracts, and how everything works together.
 
-### [Technical Documentation](documentation.md)
+### [Technical Documentation](authenticred_technical_documentation.md)
 Comprehensive technical specifications, data models, and system architecture details.
 
-### [Management Commands](management_commands.md)
+### [Management Commands](authenticred_management_commands.md)
 Essential Django management commands for debugging, fixing, and maintaining the system.
 
-### [Automation Guide](AUTOMATION_README.md)
+### [Automation Guide](authenticred_automation_setup.md)
 Complete setup and automation instructions for development and deployment.
 
 ---
@@ -212,7 +225,7 @@ We welcome contributions from the community! Whether you're a developer, designe
 - **Improve Docs** - Help make our documentation even better
 - **Spread the Word** - Share AuthentiCred with your network
 
-See our [Contributing Guide](contributing.md) for more details.
+See our [Contributing Guide](authenticred_contributing_guide.md) for more details.
 
 ---
 
@@ -235,4 +248,4 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 *Building the future of credential verification, one block at a time*
 
-[Get Started →](project_report.md)
+[Get Started →](authenticred_academic_report.md)

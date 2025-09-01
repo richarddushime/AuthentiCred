@@ -1,5 +1,21 @@
-# AuthentiCred Technical Architecture & Blockchain Deep Dive
+# AuthentiCred - Technology Stack & Architecture
+
 ## Understanding the Technology Stack and How Everything Works
+
+This document provides a comprehensive technical architecture overview based on the AuthentiCred academic report structure.
+
+## Table of Contents
+
+1. [Technology Stack Overview](#1-technology-stack-overview)
+2. [Blockchain Fundamentals](#2-blockchain-fundamentals)
+3. [Smart Contract Architecture](#3-smart-contract-architecture)
+4. [System Integration](#4-system-integration)
+5. [Security Implementation](#5-security-implementation)
+6. [Performance & Scalability](#6-performance--scalability)
+7. [Development Workflow](#7-development-workflow)
+8. [Deployment & Production](#8-deployment--production)
+
+---
 
 ## 1. Technology Stack Overview
 

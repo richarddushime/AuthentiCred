@@ -1,6 +1,6 @@
 # AuthentiCred
 
-> **A Simple, Secure, and Global Way to Verify Academic Credentials & Recommendations**
+*A Simple, Secure, and Global Way to Verify Academic Credentials & Recommendations*
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/richarddushime/AuthentiCred)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -78,7 +78,7 @@ pip install -r requirements.txt
 ### **Manual Setup**
 ```bash
 # 1. Start Ganache blockchain
-ganache --port 8545
+ganache --port 7545
 
 # 2. Deploy contracts
 python manage.py deploy_contracts
@@ -96,7 +96,19 @@ celery -A AuthentiCred worker --loglevel=info
 python manage.py runserver
 ```
 
-For detailed setup instructions, see [AUTOMATION_README.md](https://richarddushime.github.io/AuthentiCred/AUTOMATION_README/)
+## Documentation
+
+For comprehensive documentation, visit our [Documentation Hub](docs/index.md) which includes:
+
+- **[Academic Report](docs/authenticred_academic_report.md)** - Complete project report with technical details
+- **[Technical Documentation](docs/authenticred_technical_documentation.md)** - Implementation guide
+- **[Technology Stack](docs/authenticred_technology_stack.md)** - Architecture overview
+- **[Management Commands](docs/authenticred_management_commands.md)** - Django commands
+- **[Contributing Guide](docs/authenticred_contributing_guide.md)** - How to contribute
+- **[Automation Setup](docs/authenticred_automation_setup.md)** - CI/CD configuration
+- **[API Reference](docs/authenticred_api_reference.md)** - API documentation
+
+For detailed setup instructions, see [Automation Setup](docs/authenticred_automation_setup.md)
 
 ##  Getting Started
 
@@ -134,7 +146,7 @@ For detailed setup instructions, see [AUTOMATION_README.md](https://richarddushi
 ![Blockchain Transactions](docs/images/transactions-ganache.png)
 *Real-time blockchain transaction monitoring and management*
 
-> **Ready to secure and simplify your credential journey?**  
+**Ready to secure and simplify your credential journey?**  
 > Visit [AuthentiCred](https://authenticred-8a4c46d20c03.herokuapp.com/) or contact us 
 
-For more read the Documentation [here](https://richarddushime.github.io/AuthentiCred/documentation/)
+For more read the Documentation [here](https://richarddushime.github.io/AuthentiCred/authenticred_technical_documentation/)

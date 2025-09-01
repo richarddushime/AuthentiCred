@@ -1,6 +1,23 @@
-## **OVERVIEW**
+# AuthentiCred - Technical Documentation
 
-AuthentiCred is a **Django-based web application** that implements a **decentralized credential verification system** using blockchain technology and W3C Verifiable Credentials (VCs). The system consists of four main Django apps:
+## Overview
+
+AuthentiCred is a **Django-based web application** that implements a **decentralized credential verification system** using blockchain technology and W3C Verifiable Credentials (VCs). This document provides comprehensive technical implementation details based on the academic report structure.
+
+The system consists of four main Django apps:
+
+## Table of Contents
+
+1. [Core Apps](#core-apps)
+2. [Purpose & Problem Statement](#purpose--problem-statement)
+3. [User Types & Roles](#-user-types--roles)
+4. [Blockchain Integration](#blockchain-integration)
+5. [Cryptographic Security](#cryptographic-security)
+6. [Data Models](#data-models)
+7. [API Endpoints](#api-endpoints)
+8. [Deployment & Configuration](#deployment--configuration)
+
+---
 
 ### **Core Apps:**
 1. **`users`** - User management and authentication
