@@ -190,8 +190,8 @@ run_migrations() {
 import_data() {
     print_status "📥 Importing data to Heroku..."
     
-    # Create fixtures directory on Heroku
-    heroku run mkdir -p fixtures --app "$APP_NAME"
+    # Create fixtures directory on Heroku (without -p flag for Heroku compatibility)
+    heroku run mkdir fixtures --app "$APP_NAME"
     
     # Upload fixture files
     for fixture_file in fixtures/*.json; do
@@ -218,8 +218,8 @@ upload_media_files() {
     
     print_status "📁 Uploading media files..."
     
-    # Create media directory on Heroku
-    heroku run mkdir -p media --app "$APP_NAME"
+    # Create media directory on Heroku (without -p flag for Heroku compatibility)
+    heroku run mkdir media --app "$APP_NAME"
     
     # Upload the zip file
     print_status "📤 Uploading media package..."

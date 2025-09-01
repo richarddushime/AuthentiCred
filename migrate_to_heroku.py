@@ -245,7 +245,7 @@ class HerokuMigrationManager:
         print("\n🗃️ Running database migrations...")
         
         try:
-            subprocess.run(['heroku', 'run', 'python', 'manage.py', 'migrate', 
+            subprocess.run(['heroku', 'run', 'python3', 'manage.py', 'migrate', 
                           '--app', self.app_name], check=True)
             print("✅ Migrations completed!")
         except subprocess.CalledProcessError as e:
@@ -266,7 +266,8 @@ class HerokuMigrationManager:
         
         # Copy fixtures to Heroku
         try:
-            subprocess.run(['heroku', 'run', 'mkdir', '-p', 'fixtures', 
+            # Create fixtures directory (without -p flag for Heroku compatibility)
+            subprocess.run(['heroku', 'run', 'mkdir', 'fixtures', 
                           '--app', self.app_name], check=True)
             
             # Upload each fixture file
@@ -278,7 +279,7 @@ class HerokuMigrationManager:
             
             # Import data
             print("📥 Loading data...")
-            subprocess.run(['heroku', 'run', 'python', 'manage.py', 'loaddata', 
+            subprocess.run(['heroku', 'run', 'python3', 'manage.py', 'loaddata', 
                           'fixtures/complete_backup.json', '--app', self.app_name], check=True)
             
             print("✅ Data import completed!")
@@ -298,8 +299,8 @@ class HerokuMigrationManager:
         print("\n📁 Uploading media files...")
         
         try:
-            # Extract media package on Heroku
-            subprocess.run(['heroku', 'run', 'mkdir', '-p', 'media', 
+            # Extract media package on Heroku (without -p flag for Heroku compatibility)
+            subprocess.run(['heroku', 'run', 'mkdir', 'media', 
                           '--app', self.app_name], check=True)
             
             # Upload the zip file
@@ -330,12 +331,12 @@ class HerokuMigrationManager:
         print("\n👤 Creating superuser...")
         
         try:
-            subprocess.run(['heroku', 'run', 'python', 'manage.py', 'createsuperuser', 
+            subprocess.run(['heroku', 'run', 'python3', 'manage.py', 'createsuperuser', 
                           '--noinput', '--app', self.app_name], check=True)
             print("✅ Superuser created!")
         except subprocess.CalledProcessError as e:
             print(f"⚠️ Could not create superuser: {e}")
-            print("You can create one manually with: heroku run python manage.py createsuperuser")
+            print("You can create one manually with: heroku run python3 manage.py createsuperuser")
     
     def cleanup(self):
         """Clean up temporary files"""
