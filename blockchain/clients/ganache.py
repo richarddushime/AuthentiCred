@@ -16,15 +16,42 @@ class GanacheClient:
         
         # Handle private key format - ensure it's in the correct format for Web3.py
         private_key = settings.BLOCKCHAIN_OPERATOR_KEY
-        if private_key.startswith('0x'):
-            private_key = private_key[2:]
-        # Ensure private key is exactly 64 characters (32 bytes)
-        if len(private_key) != 64:
-            raise BlockchainError(f"Invalid private key length: {len(private_key)} (expected 64)")
-        # Add 0x prefix back for Web3.py
-        self.private_key = f"0x{private_key}"
         
-        self.sender_address = settings.BLOCKCHAIN_OPERATOR_ADDRESS
+        # If no private key is configured, use the first funded Ganache account
+        if not private_key:
+            # Get the first account from Ganache (usually has 1000 ETH)
+            accounts = self.w3.eth.accounts
+            if accounts:
+                self.sender_address = accounts[0]
+                # For Ganache, accounts are unlocked by default, so we don't need a private key
+                self.private_key = None
+                print(f"Using Ganache funded account: {self.sender_address}")
+            else:
+                raise BlockchainError("No accounts available in Ganache")
+        else:
+            if private_key.startswith('0x'):
+                private_key = private_key[2:]
+            # Ensure private key is exactly 64 characters (32 bytes)
+            if len(private_key) != 64:
+                raise BlockchainError(f"Invalid private key length: {len(private_key)} (expected 64)")
+            # Add 0x prefix back for Web3.py
+            self.private_key = f"0x{private_key}"
+            self.sender_address = settings.BLOCKCHAIN_OPERATOR_ADDRESS
+            
+            # Check if the configured account has sufficient funds
+            balance = self.w3.eth.get_balance(self.sender_address)
+            if balance < self.w3.to_wei('0.1', 'ether'):  # Less than 0.1 ETH
+                print(f"Warning: Configured account {self.sender_address} has insufficient funds ({self.w3.from_wei(balance, 'ether')} ETH)")
+                print("Switching to funded Ganache account...")
+                
+                # Switch to the first funded Ganache account
+                accounts = self.w3.eth.accounts
+                if accounts:
+                    self.sender_address = accounts[0]
+                    self.private_key = None
+                    print(f"Now using Ganache funded account: {self.sender_address}")
+                else:
+                    raise BlockchainError("No funded accounts available in Ganache")
     
     def _load_contract(self, contract_name):
         """Load contract ABI and address from settings"""
@@ -76,7 +103,10 @@ class GanacheClient:
             
             # For Ganache, if we're using a different account than the configured one,
             # we can use send_transaction directly since accounts are unlocked
-            if self.sender_address != settings.BLOCKCHAIN_OPERATOR_ADDRESS:
+            if self.private_key is None:
+                # Using unlocked Ganache account - send transaction directly
+                tx_hash = self.w3.eth.send_transaction(tx)
+            elif self.sender_address != settings.BLOCKCHAIN_OPERATOR_ADDRESS:
                 # Use the unlocked account directly
                 tx_hash = self.w3.eth.send_transaction(tx)
             else:
@@ -98,7 +128,7 @@ class GanacheClient:
                         elif hasattr(signed_tx, 'raw_transaction'):
                             raw_tx = signed_tx.raw_transaction
                         else:
-                            raise BlockchainError(f"Could not access raw transaction from signed transaction. Available attributes: {dir(signed_tx)}")
+                            raise BlockchainError("Could not extract raw transaction from signed transaction")
                 
                 tx_hash = self.w3.eth.send_raw_transaction(raw_tx)
             
@@ -132,4 +162,3 @@ class GanacheClient:
             return receipt
         except Exception as e:
             raise BlockchainError(f"Failed to get transaction receipt: {str(e)}")
-    
