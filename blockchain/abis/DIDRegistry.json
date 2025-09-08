@@ -7920,12 +7920,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x898035a3a121a7A73F82D33DE520C7F7cA7b13c6",
-      "transactionHash": "0xa1319d65f87635e6067fcf0170fc8608011757239299a8a3d281f1c6752de0d3"
+      "address": "0x65dbA964Bd4e02029C4988dc40D19411B23fF75a",
+      "transactionHash": "0x2efffc090c7288b935e4889461328e9b56a71e44ec7ec2eb69c5390460f2973a"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-09-01T12:58:18.111Z",
+  "updatedAt": "2025-09-08T07:42:17.632Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

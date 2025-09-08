@@ -18,3 +18,5 @@ contract DIDRegistry {
         return didToPublicKey[did];
     }
 }
+
+// Decentralisez Identifiers 
